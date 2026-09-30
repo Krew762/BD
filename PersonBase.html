@@ -1,252 +1,1381 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PersonBase</title>
-<style>
-:root{--bg:#eef1f5;--panel:#fff;--side:#1c2433;--side2:#273247;--sidet:#c5cee0;--line:#dde3ec;--text:#1a2233;--mut:#6b778c;--acc:#2f6bff;--acc2:#e8efff;--danger:#e5484d;--ok:#22a06b;--hover:#f4f7fb;--warning:#e0a100;--shadow:0 8px 30px rgba(14,22,38,.12)}
-:root[data-theme="dark"]{--bg:#0f141d;--panel:#171e2b;--side:#0b0f16;--side2:#1a2233;--line:#26304a;--text:#e6ebf5;--mut:#8b97ad;--acc:#5b8cff;--acc2:#1d2b4d;--hover:#1c2434;--warning:#e3bc55;--shadow:0 8px 30px rgba(0,0,0,.4)}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--text);font:14px/1.45 "Segoe UI",Tahoma,Arial,sans-serif}
-button,input,textarea,select{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:8px}
-.btn:hover{background:var(--hover)}
-.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
-.btn.pri:hover{opacity:.9}
-.btn.dng{color:var(--danger);border-color:var(--danger);background:transparent}
-input,textarea,select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
-input:focus,textarea:focus,select:focus{border-color:var(--acc);outline:none;box-shadow:0 0 0 3px var(--acc2)}
-label{display:block;font-size:12px;color:var(--mut);margin:0 0 4px}
-.auth{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
-.acard{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;box-shadow:var(--shadow)}
-.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;margin-bottom:4px}
-.logo i{width:32px;height:32px;border-radius:9px;background:var(--acc);display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:16px}
-.sub{color:var(--mut);margin:0 0 20px}
-.fld{margin-bottom:14px}
-.err{color:var(--danger);font-size:13px;min-height:18px;margin:-4px 0 10px}
-.stack .btn{width:100%;margin-bottom:10px}
-.tabs{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:18px}
-.tabs button{flex:1;border:0;background:none;padding:7px;border-radius:7px;color:var(--mut)}
-.tabs button.on{background:var(--panel);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.app{height:100vh;display:grid;grid-template-columns:260px 1fr;grid-template-rows:auto 1fr}
-.top{grid-column:1/3;display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
-.top .sp{flex:1}
-.pill{font-size:12px;color:var(--mut);display:flex;align-items:center;gap:6px;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
-.pill b{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
-.pill.sv b{background:var(--warning)}
-.pill.er b{background:var(--danger)}
-.user{display:flex;align-items:center;gap:8px;color:var(--mut)}
-.ava{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
-.side{background:var(--side);color:var(--sidet);padding:14px 10px;overflow:auto}
-.side h4{margin:4px 8px 10px;font-size:12px;font-weight:600;color:#7d8aa6;display:flex;justify-content:space-between;align-items:center}
-.side h4 button{background:none;border:0;color:#9db4ff;font-size:20px;line-height:1;padding:0 4px}
-.dbi{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;border:0;background:none;width:100%;text-align:left;color:inherit}
-.dbi:hover{background:var(--side2)}
-.dbi.on{background:var(--acc);color:#fff}
-.dbi.no{opacity:.45}
-.dbi .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dbi .c{font-size:12px;opacity:.7}
-.main{display:flex;flex-direction:column;min-width:0;min-height:0;padding:18px 22px}
-.head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
-.head h2{margin:0;font-size:20px;flex:1;min-width:140px}
-.head .srch{max-width:280px;flex:1 1 200px;width:auto}
-.tw{flex:1;min-height:0;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
-table{border-collapse:collapse;width:100%;min-width:640px}
-th{position:sticky;top:0;background:var(--panel);text-align:left;font-weight:600;color:var(--mut);font-size:12px;padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
-td{padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis}
-tbody tr{cursor:pointer}
-tbody tr:hover{background:var(--hover)}
-.nm{display:flex;align-items:center;gap:10px;font-weight:600}
-.nm .ava{width:28px;height:28px;font-size:12px;flex:none}
-.empty{padding:60px 20px;text-align:center;color:var(--mut)}
-.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:6px}
-.ov{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(10,15,30,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
-.md{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);width:100%;max-width:700px;max-height:92vh;display:flex;flex-direction:column}
-.md.sm{max-width:380px}
-.mh{padding:16px 20px;border-bottom:1px solid var(--line);font-weight:700;font-size:16px}
-.mb{padding:18px 20px;overflow:auto}
-.mf{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
-.mf .l{margin-right:auto}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.sec{font-size:12px;font-weight:600;color:var(--acc);margin:18px 0 10px}
-.cr{display:grid;grid-template-columns:1fr 1.4fr 36px;gap:8px;margin-bottom:8px}
-.cr button{border:1px solid var(--line);background:none;border-radius:8px;color:var(--danger)}
-.ucard{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
-.uh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-.uh span{flex:1;color:var(--mut);font-size:12px}
-.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
-.ck2{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin:0;cursor:pointer}
-input[type=checkbox]{width:auto;margin:0}
-input:disabled,textarea:disabled,select:disabled{opacity:.75;cursor:default}
-.grp{margin:12px 8px 4px;font-size:11px;font-weight:600;color:#7d8aa6;white-space:nowrap}
-.photo-box{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);display:flex;gap:12px;align-items:center;margin-bottom:16px}
-.photo-box img{width:84px;height:84px;border-radius:10px;object-fit:cover;border:1px solid var(--line);background:#fff}
-.photo-tools{display:flex;flex-direction:column;gap:10px;flex:1}
-.tag-grid{display:grid;grid-template-columns:repeat(2, minmax(140px, 1fr));gap:12px}
-.tag-box{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
-.family-list,.doc-list{display:flex;flex-direction:column;gap:10px}
-.family-item,.doc-item{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
-.doc-item{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.doc-item .meta{flex:1;min-width:0}
-.doc-item .meta div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.doc-item a{color:var(--acc);text-decoration:none}
-.inline{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mt8{margin-top:8px}
-.hint{font-size:12px;color:var(--mut);margin-top:6px}
-@media(max-width:760px){
-.app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;height:100vh}
-.top{grid-column:1}
-.side{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:8px 10px}
-.side h4{margin:0 6px 0 0;flex:none}
-.dbi{width:auto;flex:none}
-.main{padding:12px}
-.g2,.tag-grid,.inline{grid-template-columns:1fr}
-.user span,.pill span{display:none}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonBase</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --panel: #ffffff;
+      --panel-2: #f6f9fc;
+      --line: #dfe7f1;
+      --text: #1f2a37;
+      --muted: #64748b;
+      --primary: #2f6bff;
+      --primary-soft: #e8efff;
+      --danger: #dc3545;
+      --success: #198754;
+      --warning: #d97706;
+      --shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); }
+    body { min-height: 100vh; }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      height: 100vh;
+    }
+    .sidebar {
+      background: #1d2737;
+      color: #dfeaf8;
+      padding: 14px 10px;
+      overflow: auto;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 8px 12px;
+      color: #a8b9d6;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .sidebar-header .plus {
+      font-size: 22px;
+      line-height: 1;
+      color: #c9d9ff;
+    }
+    .db-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      margin-bottom: 6px;
+    }
+    .db-item:hover { background: rgba(255,255,255,0.05); }
+    .db-item.active {
+      background: var(--primary);
+      color: white;
+    }
+    .db-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .db-count { opacity: 0.8; font-size: 12px; }
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      padding: 18px 22px 22px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 20px;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .status {
+      min-width: 160px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .status.ok { color: var(--success); }
+    .status.error { color: var(--danger); }
+    .status.wait { color: var(--warning); }
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      transition: 0.15s ease;
+    }
+    .btn:hover { background: var(--panel-2); }
+    .btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .btn.primary:hover { opacity: 0.94; }
+    .btn.danger {
+      color: var(--danger);
+      border-color: rgba(220,53,69,0.4);
+      background: white;
+    }
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .head h2 {
+      margin: 0;
+      font-size: 20px;
+      flex: 1;
+      min-width: 160px;
+    }
+    .search {
+      width: min(340px, 100%);
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+    }
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: auto;
+      min-height: 200px;
+      box-shadow: var(--shadow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background: var(--panel-2);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    tbody tr:hover { background: rgba(47,107,255,0.02); }
+    tbody tr { cursor: pointer; }
+    .avatar {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .cell-name { display: flex; align-items: center; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(15, 23, 42, 0.42);
+      z-index: 30;
+      padding: 16px;
+    }
+    .modal {
+      width: min(760px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .modal-header, .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modal-footer {
+      border-top: 1px solid var(--line);
+      border-bottom: 0;
+      justify-content: flex-end;
+    }
+    .modal-body { padding: 18px 20px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .field { margin-bottom: 12px; }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 9px 11px;
+      color: var(--text);
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .section {
+      margin-top: 18px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .photo-box {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel-2);
+    }
+    .photo-box img {
+      width: 90px;
+      height: 90px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: white;
+    }
+    .photo-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tag-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .family-item, .doc-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-2);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .small { font-size: 12px; color: var(--muted); }
+    .error { color: var(--danger); font-size: 12px; min-height: 18px; margin-top: 6px; }
+    .auth-wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .auth-card {
+      width: min(420px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 28px 24px;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 4px;
+    }
+    .tab-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    .tab-btn.active {
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .empty {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty strong { display: block; font-size: 18px; color: var(--text); margin-bottom: 8px; }
+    @media (max-width: 900px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { min-height: auto; }
+      .grid-2, .grid-3, .tag-grid { grid-template-columns: 1fr; }
+      .toolbar { width: 100%; }
+    }
+  </style>
 </head>
 <body>
-<div id="root"></div>
-<div id="modal"></div>
-<script>
-(function(){
-"use strict";
-var cur=null, owner=null, dbId=null, q="", sortK="fio", sortD=1, mode="login";
-var fh=null, lastMod=0, store={users:{},dbs:[],tomb:{}}, queue=Promise.resolve(), pending=false, stState="ok", stText="";
-var $=function(s){return document.querySelector(s)};
-function esc(s){return String(s==null?"":s).replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function now(){return Date.now()}
-function ini(n){var p=String(n||"?").trim().split(/\s+/);return((p[0]||"?").charAt(0)+(p[1]?p[1].charAt(0):"")).toUpperCase()}
-function fmtD(t){if(!t)return"";var d=new Date(t);return isNaN(d.getTime())?"":d.toLocaleDateString("ru-RU")}
-var SUPER="Krew762",SH=["557c578170a45f676c9a99518d721ca7b2c318951fa21a202c155deacb5f67dc","s-118762667"];
-var DEF={read:true,add:true,edit:true,delRec:true,createDb:true,renameDb:true,delDb:false};
-var PL=[["read","Чтение"],["add","Добавление записей"],["edit","Изменение записей"],["delRec","Удаление записей"],["createDb","Создание базы"],["renameDb","Переименование базы"],["delDb","Удаление базы"],["blocked","Заблокирован"]];
-function isSuper(){return cur===SUPER}
-function perms(n){var u=store.users[n],o={},k;for(k in DEF)o[k]=DEF[k];if(u&&u.perms)for(k in u.perms)o[k]=u.perms[k];return o}
-function can(p){return isSuper()||perms(cur)[p]===true}
-function user(){if(!store.users[owner])owner=cur;return store.users[owner]}
-function defaultDbPerms(){return {read:true,add:true,edit:true,delRec:true,createDb:true,renameDb:true,delDb:false};}
-function getDbPerms(userName, dbId){
-  var u=store.users[userName]||{};
-  var map=u.dbPerms||{};
-  if(!dbId){return defaultDbPerms();}
-  var permsObj = map[dbId] || {};
-  var out=defaultDbPerms();
-  for(var k in permsObj){if(permsObj[k]!==undefined)out[k]=permsObj[k];}
-  return out;
-}
-function canDb(action,dbId){
-  if(!dbId)return true;
-  if(isSuper())return true;
-  return !!getDbPerms(cur,dbId)[action];
-}
-function db(){
-  if(!store.dbs||!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}
-  var hit=store.dbs.filter(function(d){return d.id===dbId})[0];
-  if(!hit){dbId=store.dbs[0].id;hit=store.dbs[0];}
-  return hit;
-}
-function ensureDbAccess(username, dbId){
-  if(!username || !dbId)return;
-  var u=store.users[username];
-  if(!u){return;}
-  if(!u.dbPerms)u.dbPerms={};
-  if(!u.dbPerms[dbId])u.dbPerms[dbId]=defaultDbPerms();
-}
-var FIELDS=[["fio","ФИО","text"],["personalNumber","Личный номер","text"],["birth","Дата рождения","date"],["phone","Телефон","tel"],["email","Почта","email"],["address","Адрес","text"],["position","Должность / звание","text"],["deathDate","Дата смерти","date"],["militaryCommissariat","Военкомат","text"],["relativeContact","Связь с родственниками","text"]];
-var TAG_FIELDS=[["paymentStatus","Статус выплаты",["Не выплачено","Выплачено"]],["exclusionStatus","Статус исключения",["Не исключен","Исключен"]],["ninetyEightStatus","98 указ",["Нет","Да"]]];
-function normaliseRecord(r){if(!r)return {id:uid(),fio:"",custom:[],family:[],documents:[],photo:"",notes:""};if(!Array.isArray(r.custom))r.custom=[];if(!Array.isArray(r.family))r.family=[];if(!Array.isArray(r.documents))r.documents=[];if(!r.photo)r.photo="";if(!r.notes)r.notes="";return r;}
-function simple(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return"s"+h}
-function hash(s){
-  try{
-    if(window.crypto&&crypto.subtle&&window.TextEncoder){
-      return crypto.subtle.digest("SHA-256",new TextEncoder().encode("pb:"+s)).then(function(b){
-        return Array.prototype.map.call(new Uint8Array(b),function(x){return("0"+x.toString(16)).slice(-2)}).join("");
-      }).catch(function(){return simple(s)});
-    }
-  }catch(e){}
-  return Promise.resolve(simple(s));
-}
-function mergeDbs(l1,l2){
-  var m={},order=[];
-  [l1,l2].forEach(function(l){(l||[]).forEach(function(d){
-    var e=m[d.id];
-    if(!e){e=m[d.id]={id:d.id,name:d.name,nts:d.nts||0,recs:{}};order.push(d.id)}
-    else if((d.nts||0)>e.nts){e.name=d.name;e.nts=d.nts||0}
-    (d.recs||[]).forEach(function(r){var o=e.recs[r.id];if(!o||(r.upd||0)>(o.upd||0))e.recs[r.id]=r});
-  })});
-  return order.map(function(id){var e=m[id];return{id:id,name:e.name,nts:e.nts,recs:Object.keys(e.recs).map(function(k){return e.recs[k]})}});
-}
-function merge(a,b){
-  var tomb={},k;
-  [a.tomb||{},b.tomb||{}].forEach(function(t){for(k in t){if(!tomb[k]||t[k]>tomb[k])tomb[k]=t[k]}});
-  var users={},names={},allDbs=[];
-  Object.keys(a.users||{}).concat(Object.keys(b.users||{})).forEach(function(n){names[n]=1});
-  Object.keys(names).forEach(function(n){
-    var x=(a.users||{})[n],y=(b.users||{})[n];
-    if(x&&x.dbPerms){};
-    if(x&&x.dbs)allDbs=allDbs.concat(x.dbs||[]);
-    if(y&&y.dbs)allDbs=allDbs.concat(y.dbs||[]);
-    var dbs=mergeDbs((x&&x.dbs)||(a.dbs||[]),(y&&y.dbs)||(b.dbs||[])).filter(function(d){return !tomb[d.id]});
-    dbs.forEach(function(d){d.recs=d.recs.filter(function(r){return !(tomb[r.id]&&tomb[r.id]>=(r.upd||0))})});
-    var src=!y?x:!x?y:((x.pts||0)>=(y.pts||0)?x:y);users[n]={hash:src.hash,perms:src.perms,pts:src.pts||0,dbPerms:src.dbPerms||{},dbs:(src.dbs||[])};
-  });
-  var shared=mergeDbs((a.dbs||[]),(b.dbs||[]));
-  if(!shared.length&&allDbs.length)shared=mergeDbs(allDbs,[]);
-  return{users:users,dbs:shared,tomb:tomb};
-}
-async function refreshLatestFromFile(){
-  if(!fh)return false;
-  try{await pull();return true;}catch(e){setStatus("er","Не удалось обновить данные");return false;}
-}
-function setStatus(s,t){stState=s;stText=t||"";var el=$("#st");if(el){el.className="pill "+s;el.innerHTML="<b></b><span>"+esc(stText)+"</span>"}}
-function fname(){return fh?fh.name:""}
-async function readRemote(){var f=await fh.getFile();lastMod=f.lastModified;var t=await f.text();if(!t.trim())return null;return JSON.parse(t);}
-async function pull(){var r=await readRemote();if(r){store=merge(store,r);if(!store.dbs)store.dbs=[];Object.keys(store.users||{}).forEach(function(un){var u=store.users[un];if(!u.dbPerms)u.dbPerms={};(store.dbs||[]).forEach(function(db){ensureDbAccess(un,db.id)});});}}
-function persist(){queue=queue.then(async function(){if(!fh)return;try{setStatus("sv","Сохранение…");await refreshLatestFromFile();var w=await fh.createWritable();await w.write(JSON.stringify(store));await w.close();lastMod=(await fh.getFile()).lastModified;setStatus("ok","Синхронизировано · "+fname());}catch(e){setStatus("er","Ошибка записи в файл")}});return queue;}
-function modalOpen(){return !!$("#modal").innerHTML}
-async function poll(){if(!fh)return;try{var f=await fh.getFile();if(f.lastModified!==lastMod){await queue;await pull();pending=true;setStatus("ok","Обновлено · "+fname())}if(pending&&cur&&!modalOpen()){var a=document.activeElement;if(!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT"))){pending=false;if(store.users[cur])renderApp();else{cur=null;renderAuth()}}}else if(pending&&!cur){pending=false;renderAuth()}}catch(e){setStatus("er","Нет доступа к файлу")}}
-function idb(){return new Promise(function(res,rej){var r=indexedDB.open("personbase",1);r.onupgradeneeded=function(){r.result.createObjectStore("kv")};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}})}
-async function idbGet(k){try{var d=await idb();return await new Promise(function(res){var r=d.transaction("kv").objectStore("kv").get(k);r.onsuccess=function(){res(r.result)};r.onerror=function(){res(null)}})}catch(e){return null}}
-async function idbSet(k,v){try{var d=await idb();await new Promise(function(res){var t=d.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=res;t.onerror=res})}catch(e){}}
-var PICK={types:[{description:"База PersonBase (JSON)",accept:{"application/json":[".json"]}}]};
-async function attach(handle,isNew){fh=handle;try{store={users:{},dbs:[],tomb:{}};var r=await readRemote();if(r)store=merge(store,r);if(!store.dbs)store.dbs=[];Object.keys(store.users||{}).forEach(function(un){var u=store.users[un];if(!u.dbPerms)u.dbPerms={};(store.dbs||[]).forEach(function(db){ensureDbAccess(un,db.id)});});await idbSet("fh",handle);if(isNew||!r)await persist();try{var s=sessionStorage.getItem("pb_user");if(s&&store.users[s]){cur=s;owner=s}}catch(e){}setStatus("ok","Синхронизировано · "+fname());setInterval(poll,3000);render();}catch(e){fh=null;renderConnect("Не удалось прочитать файл. Это точно файл базы PersonBase?")}}
-async function openFile(){try{var h=await window.showOpenFilePicker(PICK);await attach(h[0],false)}catch(e){}}
-async function createFile(){try{var h=await window.showSaveFilePicker({suggestedName:"personbase.json",types:PICK.types});await attach(h,true)}catch(e){}}
-async function resume(h){try{var p=await h.requestPermission({mode:"readwrite"});if(p==="granted")await attach(h,false);else renderConnect("Нужно разрешение на доступ к файлу")}catch(e){renderConnect("Невозможно продолжить с этим файлом")}}
-var saved=null;
-function renderConnect(msg){if(!window.showOpenFilePicker){$("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Этот браузер не умеет работать с общим файловым хранилищем. Используйте Chromium/Chrome/Edge.</p></div></div>';return}$("#root").innerHTML='<div class="auth"><div class="acard stack"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Подключите файл базы. Положите его в любое место на компьютере.</p>'+(saved?'<button class="btn pri" data-a="resume">Продолжить с файлом «'+esc(saved.name)+'»</button>':"")+'<button class="btn'+(saved?"":" pri")+'" data-a="openf">Открыть существующий файл</button><button class="btn" data-a="newf">Создать новый файл базы</button>'+(msg?'<div class="err" style="margin-top:10px">'+esc(msg)+'</div>':'')+'</div></div>'}
-function render(){if(!fh)renderConnect();else if(cur&&store.users[cur])renderApp();else renderAuth()}
-function renderAuth(){var reg=mode==="reg";$("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">У каждого аккаунта свои базы данных.</p>'+'<div class="tabs"><button data-a="mode" data-m="login" class="'+(reg?"":"on")+'">Вход</button><button data-a="mode" data-m="reg" class="'+(reg?"on":"")+'">Регистрация</button></div>'+'<div class="fld"><label for="lu">Логин</label><input id="lu" autocomplete="username" maxlength="30"></div>'+'<div class="fld"><label for="lp">Пароль</label><input id="lp" type="password" autocomplete="'+(reg?"new-password":"current-password")+'"></div>'+(reg?'<div class="fld"><label for="lp2">Повторите пароль</label><input id="lp2" type="password" autocomplete="new-password"></div>':"")+'<div class="err" id="aerr"></div><button class="btn pri" style="width:100%" data-a="auth">'+(reg?"Создать аккаунт":"Войти")+'</button>'+'<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center"><div class="pill" id="st"></div><button class="btn" data-a="chfile" style="padding:5px 10px;font-size:12px">Сменить файл</button></div>'+'</div></div>';setStatus(stState,stText)}
-async function doAuth(){var u=$("#lu").value.trim(),p=$("#lp").value,err=$("#aerr");if(!u||!p){err.textContent="Введите логин и пароль";return}try{await queue;await refreshLatestFromFile()}catch(e){err.textContent="Нет доступа к файлу базы";return}var h=await hash(p);if(mode==="reg"){if(u.length<3){err.textContent="Логин — минимум 3 символа";return}if(u.toLowerCase()===SUPER.toLowerCase()){err.textContent="Этот логин зарезервирован";return}if(p.length<4){err.textContent="Пароль — минимум 4 символа";return}if(p!==$("#lp2").value){err.textContent="Пароли не совпадают";return}if(store.users[u]){err.textContent="Такой логин уже занят";return}store.users[u]={hash:h,perms:{},dbPerms:{},pts:now()};if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}store.dbs.forEach(function(db){ensureDbAccess(u,db.id);});persist();}else{if(u===SUPER){if(SH.indexOf(h)<0){err.textContent="Неверный пароль";return}if(!store.users[SUPER]){store.users[SUPER]={hash:"-",perms:{},dbPerms:{},pts:now()};if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}store.dbs.forEach(function(db){ensureDbAccess(SUPER,db.id)});persist()}}else{var us=store.users[u];if(!us){err.textContent="Аккаунт не найден";return}if(us.hash!==h){err.textContent="Неверный пароль";return}if(perms(u).blocked){err.textContent="Аккаунт заблокирован администратором";return}}}cur=u;owner=u;dbId=null;q="";try{sessionStorage.setItem("pb_user",u)}catch(e){}renderApp();}
-function renderApp(){if(!isSuper()&&perms(cur).blocked){cur=null;renderAuth();return}var u=user();if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}if(!dbId||!store.dbs.some(function(d){return d.id===dbId)){dbId=store.dbs[0].id;}var d=db();store.dbs.forEach(function(db){ensureDbAccess(cur,db.id);});function items(n,dbs){return dbs.map(function(x){var allowed=canDb("read",x.id);return '<button class="dbi'+(n===owner&&x.id===d.id?" on":"")+(allowed?"":" no")+'" data-a="pick" data-o="'+esc(n)+'" data-id="'+x.id+'"><span>🗄</span><span class="n">'+esc(x.name)+'</span><span class="c">'+x.recs.length+'</span></button>'}).join("")}
-var side;if(isSuper()){side=Object.keys(store.users).sort(function(a,b){return a===SUPER?-1:b===SUPER?1:(a.toLowerCase()<b.toLowerCase()?-1:1)}).map(function(n){return'<div class="grp">'+esc(n)+(n===SUPER?' <small>(admin)</small>':'')+'</div>'+'<div class="dbs">'+items(n,store.dbs)+'</div>'}).join("")}else side=items(cur,store.dbs);$("#root").innerHTML='<div class="app"><div class="top"><div class="logo" style="margin:0;font-size:17px"><i>▤</i>PersonBase</div><div class="sp"></div><div class="pill" id="st"></div>'+(isSuper()?'<button class="btn" data-a="users">Пользователи</button>':"")+'<button class="btn" data-a="theme" title="Тема">◐</button><div class="user"><div class="ava">'+esc(ini(cur))+'</div><span>'+esc(cur)+'</span></div><button class="btn" data-a="logout">Выход</button></div>'+'<aside class="side"><h4>Базы данных'+(can("createDb")?'<button data-a="newdb" title="Новая база">+</button>':'')+'</h4>'+side+'</aside>'+'<main class="main"><div class="head"><h2>'+esc(d.name)+(isSuper()&&owner!==cur?' <small style="color:var(--mut);font-weight:400">· '+esc(owner)+'</small>':"")+'</h2><input class="srch" id="q" value="'+esc(q)+'" type="search" placeholder="Поиск по ФИО, личному номеру, телефону..."><button class="btn" data-a="add"'+(canDb("add",d.id)?'':' disabled')+'>Добавить человека</button>'+(canDb("renameDb",d.id)?'<button class="btn" data-a="rendb">Переименовать</button>':'')+(canDb("delDb",d.id)?'<button class="btn dng" data-a="deldb">Удалить базу</button>':'')+'</div><div class="tw" id="tw"></div></main></div>';setStatus(stState,stText);renderTable();}
-function renderTable(){var d=db(),s=q.toLowerCase();if(!canDb("read",d.id)){ $("#tw").innerHTML='<div class="empty"><b>Нет доступа</b>У вас нет прав на чтение этой базы.</div>';return;}var rows=d.recs.filter(function(r){r=normaliseRecord(r);if(!s)return true;var hay=[r.fio,r.notes,r.personalNumber,r.phone,r.email,r.address,r.position,r.militaryCommissariat,r.relativeContact,r.deathDate].concat((r.custom||[]).map(function(c){return c.k+" "+c.v})).concat((r.family||[]).map(function(f){return (f.name||"")+" "+(f.relation||"")+" "+(f.phone||"")+" "+(f.notes||"") })).join(" ").toLowerCase();return hay.indexOf(s)>-1;});rows.sort(function(a,b){var x=String(a[sortK]||"").toLowerCase(),y=String(b[sortK]||"").toLowerCase();return x<y?-sortD:x>y?sortD:0});var tw=$("#tw");if(!d.recs.length){tw.innerHTML='<div class="empty"><b>В этой базе пока пусто</b>Нажмите «Добавить человека», введите ФИО и заполните карточку.</div>';return}if(!rows.length){tw.innerHTML='<div class="empty"><b>Ничего не найдено</b>Измените запрос поиска.</div>';return}var cols=[["fio","ФИО"],["personalNumber","Личный номер"],["birth","Дата рождения"],["phone","Телефон"],["position","Должность / звание"],["paymentStatus","Выплата"],["upd","Обновлено"]];var th=cols.map(function(c){return'<th data-a="sort" data-k="'+c[0]+'">'+c[1]+(sortK===c[0]?(sortD>0?" ▲":" ▼"):"")+'</th>'}).join("");var tb=rows.map(function(r){r=normaliseRecord(r);var tag = r.paymentStatus || "Не выплачено";return '<tr data-a="open" data-id="'+r.id+'"><td><div class="nm"><span class="ava">'+esc(ini(r.fio))+'</span>'+esc(r.fio)+'</div></td><td>'+esc(r.personalNumber||"")+'</td><td>'+esc(fmtD(r.birth))+'</td><td>'+esc(r.phone||"")+'</td><td>'+esc(r.position||"")+'</td><td>'+esc(tag)+'</td><td>'+esc(fmtD(r.upd))+'</td></tr>'}).join("");tw.innerHTML='<table><thead><tr>'+th+'</tr></thead><tbody>'+tb+'</tbody></table>'}
-function modal(html,cls){$("#modal").innerHTML='<div class="ov" data-a="ovclose"><div class="md '+(cls||"")+'" role="dialog" aria-modal="true">'+html+'</div></div>'}
-function closeM(){ $("#modal").innerHTML="" }
-function crow(c,ro){c=c||{};var d=ro?" disabled":"";return '<div class="cr"><input placeholder="Название поля" class="ck" value="'+esc(c.k)+'"'+d+'><input placeholder="Значение" class="cv" value="'+esc(c.v)+'"'+d+'><button type="button" class="btn" data-a="rmc"'+(ro?' disabled':'')+'>×</button></div>'}
-function familyRow(member,ro){member=member||{};return '<div class="family-item"><div class="inline"><div><label>ФИО</label><input value="'+esc(member.name||"")+'"'+(ro?" disabled":"")+'></div><div><label>Родство</label><input value="'+esc(member.relation||"")+'"'+(ro?" disabled":"")+'></div></div><div class="inline mt8"><div><label>Телефон</label><input value="'+esc(member.phone||"")+'"'+(ro?" disabled":"")+'></div><div><label>Связь</label><input value="'+esc(member.contact||"")+'"'+(ro?" disabled":"")+'></div></div><div class="mt8"><label>Примечание</label><textarea rows="2"'+(ro?" disabled":"")+'>'+esc(member.notes||"")+'</textarea></div><div class="mt8"><button type="button" class="btn dng" data-a="rmFamily"'+(ro?' disabled':'')+'>Удалить члена семьи</button></div></div>'}
-function docRow(doc,ro){doc=doc||{};return '<div class="doc-item"><div class="meta"><div><strong>'+esc(doc.name||"PDF документ")+'</strong></div><div class="hint">'+esc(doc.size||"")+'</div></div><div style="display:flex;gap:8px">'+(doc.dataUrl?'<a class="btn" href="'+esc(doc.dataUrl)+'" target="_blank" rel="noopener">Открыть</a>':'')+'<button type="button" class="btn dng" data-a="rmDoc" data-doc="'+esc(doc.id||"")+'"'+(ro?' disabled':'')+'>Удалить</button></div></div>'}
-function card(id){if(!canDb("read",dbId))return;var r=id?db().recs.filter(function(x){return x.id===id})[0]:null;r=normaliseRecord(r||{custom:[],family:[],documents:[],photo:""});var ro=id?!canDb("edit",dbId):!canDb("add",dbId),dis=ro?" disabled":"";var photoHtml=r.photo?'<div class="photo-box"><img id="cardPhoto" src="'+esc(r.photo)+'" alt="Фото"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"'+dis+'><input type="hidden" id="photoData" value="'+esc(r.photo)+'"><button type="button" class="btn" data-a="clearPhoto"'+(ro?' disabled':'')+'>Убрать фото</button></div></div>':'<div class="photo-box"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"'+dis+'><input type="hidden" id="photoData" value=""><div class="hint">Фото не добавлено</div></div></div>';var f=FIELDS.map(function(x){return '<div class="fld"><label for="f_'+x[0]+'">'+x[1]+'</label><input id="f_'+x[0]+'" type="'+x[2]+'" value="'+esc(r[x[0]])+'"'+dis+'></div>'}).join("");var tags=TAG_FIELDS.map(function(x){var val=r[x[0]]||x[2][0];var opts=x[2].map(function(v){return '<option value="'+esc(v)+'"'+(val===v?' selected':'')+'>'+esc(v)+'</option>'}).join("");return '<div class="tag-box"><label for="tag_'+x[0]+'">'+x[1]+'</label><select id="tag_'+x[0]+'"'+dis+'>'+opts+'</select></div>'}).join("");var familyHtml=(r.family||[]).map(function(m){return familyRow(m,ro)}).join("")||'<div class="hint">Членов семьи пока нет</div>';var docHtml=(r.documents||[]).map(function(d){return docRow(d,ro)}).join("")||'<div class="hint">PDF документы не добавлены</div>';modal('<div class="mh">'+(id?(ro?"Карточка человека (только чтение)":"Карточка человека"):"Новый человек")+'</div><div class="mb" data-id="'+esc(id||"")+'">'+photoHtml+'<div class="g2">'+f+'</div><div class="sec">Теги</div><div class="tag-grid">'+tags+'</div><div class="sec">Члены семьи</div><div class="family-list" id="familyList">'+familyHtml+'</div>'+(ro?"":'<button type="button" class="btn mt8" data-a="addFamily">+ Добавить члена семьи</button>')+'<div class="sec">Документы PDF</div><div class="doc-list" id="docList">'+docHtml+'</div>'+(ro?"":'<input type="file" accept="application/pdf" data-a="pdfFiles" multiple><div class="hint">Для одного человека можно добавить несколько PDF-файлов.</div>')+'<div class="sec">Дополнительные поля</div><div id="cust">'+(r.custom||[]).map(function(c){return crow(c,ro)}).join("")+'</div>'+(ro?"":'<button type="button" class="btn" data-a="addc">+ Добавить поле</button>')+'<div class="sec">Заметки</div><textarea id="f_notes" rows="4" placeholder="Любая информация по человеку"'+dis+'>'+esc(r.notes||"")+'</textarea><div class="err" id="cerr"></div></div><div class="mf">'+(id&&canDb("delRec",dbId)?'<button class="btn dng l" data-a="delrec">Удалить</button>':'')+'<button class="btn" data-a="close">'+(ro?"Закрыть":"Отмена")+'</button>'+(ro?"":'<button class="btn pri" data-a="saverec" id="cardb" data-id="'+esc(id||"")+'">Сохранить</button>')+'</div>'," ");if(!id&&!ro)$("#f_fio").focus();}
-function usersModal(){var names=Object.keys(store.users).filter(function(n){return n!==SUPER}).sort();var body=names.length?names.map(function(n){var u=store.users[n],o=perms(n),cnt=(u.dbs||[]).reduce(function(a,d){return a+d.recs.length},0);var dbRows=store.dbs.map(function(db){var p=getDbPerms(n,db.id);return '<div class="ucard"><div class="uh"><b>'+esc(db.name)+'</b><span>доступ</span></div><div class="pg">'+["read","add","edit","delRec","createDb","renameDb","delDb"].map(function(key){return '<label class="ck2"><input type="checkbox" data-a="dbperm" data-u="'+esc(n)+'" data-db="'+db.id+'" data-p="'+key+'"'+(p[key]?" checked":"")+'>'+key+'</label>'}).join("")+'</div></div>'}).join("");return '<div class="ucard"><div class="uh"><b>'+esc(n)+'</b><span>баз: '+(store.dbs.length)+', записей: '+cnt+'</span><button class="btn" data-a="pw" data-u="'+esc(n)+'" style="padding:4px 10px;font-size:12px">Сменить пароль</button></div>'+'<div class="pg">'+PL.map(function(p){return '<label class="ck2"><input type="checkbox" data-a="perm" data-u="'+esc(n)+'" data-p="'+p[0]+'"'+(o[p[0]]?" checked":"")+'>'+p[1]+'</label>'}).join("")+'</div>'+dbRows+'</div>'}).join(""):'<div class="empty"><b>Пока нет других пользователей</b>Они появятся после регистрации.</div>';modal('<div class="mh">Пользователи и права</div><div class="mb">'+body+'</div><div class="mf"><button class="btn pri" data-a="close">Готово</button></div>')}
-function getFamilyData(){var out=[];var items=document.querySelectorAll('#familyList .family-item');items.forEach(function(item){var inputs=item.querySelectorAll('input,textarea');var obj={name:(inputs[0]||{}).value||"",relation:(inputs[1]||{}).value||"",phone:(inputs[2]||{}).value||"",contact:(inputs[3]||{}).value||"",notes:(inputs[4]||{}).value||""};if(obj.name||obj.relation||obj.phone||obj.contact||obj.notes)out.push(obj)});return out}
-function getDocumentData(){var out=[];var items=document.querySelectorAll('#docList .doc-item');items.forEach(function(item){var name=item.getAttribute('data-name')||item.querySelector('strong')&&item.querySelector('strong').textContent||"PDF";var dataUrl=item.getAttribute('data-url')||"";var size=item.getAttribute('data-size')||"";var id=item.getAttribute('data-id')||uid();if(dataUrl){out.push({id:id,name:name,dataUrl:dataUrl,size:size})}});return out}
-function saveRec(){if(!canDb("add",dbId)&&$("#cardb").getAttribute("data-id")!==""||$("#cardb").getAttribute("data-id")&&!canDb("edit",dbId))return;var fio=$("#f_fio").value.trim();if(!fio){$("#cerr").textContent="Введите ФИО";$("#f_fio").focus();return}var id=$("#cardb").getAttribute("data-id"),d=db(),r=id?d.recs.filter(function(x){return x.id===id})[0]:null;if(!r){r={id:uid()};d.recs.push(r)}r=normaliseRecord(r);r.fio=fio;FIELDS.forEach(function(x){r[x[0]]=$("#f_"+x[0]).value.trim()});TAG_FIELDS.forEach(function(x){r[x[0]]=$("#tag_"+x[0]).value||x[2][0]});r.notes=$("#f_notes").value.trim();r.photo=$("#photoData").value||"";r.custom=Array.prototype.map.call(document.querySelectorAll("#cust .cr"),function(row){return{k:row.querySelector(".ck").value.trim(),v:row.querySelector(".cv").value.trim()}}).filter(function(x){return x.k||x.v});r.family=getFamilyData();r.documents=getDocumentData();r.upd=now();persist();closeM();renderApp();}
-function ask(title,val,okLabel,cb){modal('<div class="mh">'+title+'</div><div class="mb"><input id="ask" value="'+esc(val)+'" maxlength="60"><div class="err" id="aserr" style="margin:8px 0 0"></div></div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn pri" data-a="askok">'+okLabel+'</button></div>');window.__ask=cb;var i=$("#ask");i.focus();i.select();}
-function confirmM(title,text,cb){modal('<div class="mh">'+title+'</div><div class="mb">'+text+'</div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn dng" data-a="cfok">Удалить</button></div>');window.__cf=cb;}
-function readAsDataURL(file){return new Promise(function(res,rej){var reader=new FileReader();reader.onload=function(){res(reader.result)};reader.onerror=function(){rej(reader.error)};reader.readAsDataURL(file)})}
-function addPdfFiles(files){if(!files||!files.length)return;Array.from(files).forEach(async function(file){if(!/\.pdf$/i.test(file.name)&&file.type!="application/pdf")return;var dataUrl=await readAsDataURL(file);var id=uid();var html='<div class="doc-item" data-id="'+esc(id)+'" data-name="'+esc(file.name)+'" data-url="'+esc(dataUrl)+'" data-size="'+esc(String(Math.round(file.size/1024))+' KB')+'"><div class="meta"><div><strong>'+esc(file.name)+'</strong></div><div class="hint">'+esc(String(Math.round(file.size/1024))+' KB')+'</div></div><div style="display:flex;gap:8px"><a class="btn" href="'+esc(dataUrl)+'" target="_blank" rel="noopener">Открыть</a><button type="button" class="btn dng" data-a="rmDoc" data-doc="'+esc(id)+'">Удалить</button></div></div>';var list=$("#docList");if(list){list.insertAdjacentHTML("beforeend",html)}})}
-function addFamilyRow(){var box=$("#familyList");if(!box)return;box.insertAdjacentHTML('beforeend',familyRow({},false));}
-document.addEventListener("click",function(e){var t=e.target.closest("[data-a]");if(!t)return;var a=t.getAttribute("data-a");if(a==="ovclose"){if(e.target===t)closeM();return}if(a==="mode"){mode=t.getAttribute("data-m");renderAuth();return}if(a==="openf")openFile();else if(a==="newf")createFile();else if(a==="resume")resume(saved);else if(a==="chfile"){fh=null;cur=null;renderConnect()}else if(a==="auth")doAuth();else if(a==="logout"){cur=null;dbId=null;mode="login";try{sessionStorage.removeItem("pb_user")}catch(x){}renderAuth()}else if(a==="theme"){var r=document.documentElement,dark=r.getAttribute("data-theme")==="dark";r.setAttribute("data-theme",dark?"light":"dark")}else if(a==="pick"){refreshLatestFromFile();owner=isSuper()?(t.getAttribute("data-o")||cur):cur;dbId=t.getAttribute("data-id");q="";renderApp()}else if(a==="sort"){var k=t.getAttribute("data-k");if(sortK===k)sortD=-sortD;else{sortK=k;sortD=1}renderTable()}else if(a==="add"&&canDb("add",dbId))card(null);else if(a==="open")card(t.getAttribute("data-id"));else if(a==="close")closeM();else if(a==="addc"){$("#cust").insertAdjacentHTML("beforeend",crow());var ks=document.querySelectorAll("#cust .ck");ks[ks.length-1].focus()}else if(a==="rmc"){t.closest(".cr").remove()}else if(a==="saverec"){refreshLatestFromFile();saveRec()}else if(a==="delrec"&&canDb("delRec",dbId)){var rid=$("#cardb").getAttribute("data-id");refreshLatestFromFile();confirmM("Удалить запись?","Карточка будет удалена у всех без возможности восстановления.",function(){var d=db();d.recs=d.recs.filter(function(r){return r.id!==rid});persist();closeM();renderApp()})}else if(a==="newdb"&&can("createDb")){ask("Новая база данных","","Создать",function(n){refreshLatestFromFile();var b={id:uid(),name:n||"Новая база",nts:now(),recs:[]};store.dbs.push(b);store.dbs.forEach(function(db){Object.keys(store.users||{}).forEach(function(un){ensureDbAccess(un,db.id);if(un!==SUPER){var p=getDbPerms(un,db.id);if(!p.read){p.read=true;p.add=true;p.edit=true;p.delRec=true;}}})});dbId=b.id;persist();closeM();renderApp()})}else if(a==="rendb"&&canDb("renameDb",dbId)){ask("Переименовать базу",db().name,"Сохранить",function(n){refreshLatestFromFile();var d=db();d.name=n||d.name;d.nts=now();persist();closeM();renderApp()})}else if(a==="deldb"&&canDb("delDb",dbId)){if(store.dbs.length<2){modal('<div class="mh">Нельзя удалить</div><div class="mb">В аккаунте должна остаться хотя бы одна база. Создайте другую базу и повторите попытку.</div><div class="mf"><button class="btn pri" data-a="close">Закрыть</button></div>');return}var d0=db();refreshLatestFromFile();confirmM("Удалить базу «"+esc(d0.name)+"»?","Вместе с базой удалятся все записи ("+d0.recs.length+"). Это нельзя отменить.",function(){store.dbs=store.dbs.filter(function(d){return d.id!==d0.id});if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}dbId=store.dbs[0].id;persist();closeM();renderApp()})}else if(a==="users"&&isSuper())usersModal();else if(a==="pw"&&isSuper()){var pn=t.getAttribute("data-u");ask("Новый пароль для "+pn,"","Сменить",async function(pw){if(pw.length<4){$("#aserr").textContent="Мин. 4 символа";return}var u=store.users[pn];if(!u)return;u.hash=await hash(pw);u.pts=now();persist();closeM();})}else if(a==="askok"){var v=$("#ask").value.trim();if(!v){$("#aserr").textContent="Поле не может быть пустым";return}window.__ask(v)}else if(a==="cfok")window.__cf();else if(a==="addFamily")addFamilyRow();else if(a==="rmFamily")t.closest(".family-item").remove();else if(a==="rmDoc"){var docId=t.getAttribute("data-doc");var item=document.querySelector('[data-doc="'+docId+'"]');if(item)item.closest('.doc-item').remove();}else if(a==="clearPhoto"){$('#photoData').value='';var img=$('#cardPhoto'); if(img){img.src=''; img.style.display='none';}}});
-document.addEventListener("change",function(e){var t=e.target;if(!t)return;if(t.getAttribute("data-a")==="perm"&&isSuper()){var n=t.getAttribute("data-u"),k=t.getAttribute("data-p"),u=store.users[n];if(!u)return;var o=perms(n);o[k]=t.checked;u.perms=o;u.pts=now();persist();}if(t.getAttribute("data-a")==="dbperm"&&isSuper()){var n=t.getAttribute("data-u"),dbid=t.getAttribute("data-db"),k=t.getAttribute("data-p"),u=store.users[n];if(!u)return;ensureDbAccess(n,dbid);u.dbPerms[dbid][k]=t.checked;u.pts=now();persist();}if(t.getAttribute("data-a")==="photoFile"){var file=t.files&&t.files[0];if(!file)return;readAsDataURL(file).then(function(data){$("#photoData").value=data;var img=$("#cardPhoto");if(img){img.src=data;img.style.display='block';}else{var wrap=t.closest('.photo-box');if(wrap){wrap.innerHTML='<img id="cardPhoto" src="'+esc(data)+'" alt="Фото"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"><input type="hidden" id="photoData" value="'+esc(data)+'"><button type="button" class="btn" data-a="clearPhoto">Убрать фото</button></div>'}}}).catch(function(){})}if(t.getAttribute("data-a")==="pdfFiles"){addPdfFiles(t.files);t.value='';}});
-document.addEventListener("input",function(e){if(e.target.id==="q"){q=e.target.value;renderTable()}});
-document.addEventListener("keydown",function(e){if(e.key==="Escape"&&modalOpen())closeM();if(e.key==="Enter"){if(e.target.id==="lu"||e.target.id==="lp"||e.target.id==="lp2")doAuth();if(e.target.id==="ask")$("[data-a=askok]").click();}});
-(async function(){if(window.showOpenFilePicker){saved=await idbGet("fh");if(saved){try{var p=await saved.queryPermission({mode:"readwrite"});if(p==="granted"){await attach(saved,false);return}}catch(e){}}}renderConnect();})();})();</script>
+  <div id="root"></div>
+  <script>
+    (() => {
+      const STORAGE_KEY = 'personbase_store_v1';
+      const ADMIN = 'Krew762';
+
+      const state = {
+        store: { users: {}, dbs: [] },
+        currentUser: null,
+        activeDbId: null,
+        search: '',
+        mode: 'login',
+        fileHandle: null,
+        statusClass: 'ok',
+        statusText: 'Готово'
+      };
+
+      function uid() {
+        return 'id_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      }
+
+      function nowTs() {
+        return Date.now();
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? '').replace(/[&<>"']/g, ch => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[ch]));
+      }
+
+      function initials(name) {
+        const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+        if (!parts.length) return '?';
+        const a = parts[0][0] || '';
+        const b = parts[1] ? parts[1][0] : '';
+        return (a + b).toUpperCase();
+      }
+
+      function fmtDate(value) {
+        if (!value) return '';
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return '';
+        return d.toLocaleDateString('ru-RU');
+      }
+
+      function defaultPerms() {
+        return {
+          read: true,
+          add: true,
+          edit: true,
+          delRec: true,
+          createDb: true,
+          renameDb: true,
+          delDb: false,
+          blocked: false
+        };
+      }
+
+      function defaultDbPerms() {
+        return {
+          read: true,
+          add: true,
+          edit: true,
+          delRec: true,
+          createDb: true,
+          renameDb: true,
+          delDb: false
+        };
+      }
+
+      function ensureUser(username) {
+        if (!state.store.users[username]) {
+          state.store.users[username] = { hash: '', perms: defaultPerms(), dbPerms: {} };
+        }
+      }
+
+      function ensureDbAccess(username, dbId) {
+        ensureUser(username);
+        if (!state.store.users[username].dbPerms[dbId]) {
+          state.store.users[username].dbPerms[dbId] = defaultDbPerms();
+        }
+      }
+
+      function ensureDefaultData() {
+        if (!Array.isArray(state.store.dbs) || !state.store.dbs.length) {
+          state.store.dbs.push({ id: uid(), name: 'Основная база', recs: [] });
+        }
+        for (const name of Object.keys(state.store.users)) {
+          for (const db of state.store.dbs) ensureDbAccess(name, db.id);
+        }
+        if (state.currentUser) ensureDbAccess(state.currentUser, state.activeDbId || state.store.dbs[0].id);
+      }
+
+      function loadLocal() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            state.store = { users: {}, dbs: [] };
+            return;
+          }
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.dbs) {
+            state.store = parsed;
+          }
+        } catch (error) {
+          console.error('Load local error:', error);
+          state.store = { users: {}, dbs: [] };
+        }
+        ensureDefaultData();
+      }
+
+      function saveLocal() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store));
+      }
+
+      function setStatus(cls, text) {
+        state.statusClass = cls;
+        state.statusText = text;
+        const el = document.getElementById('status');
+        if (el) {
+          el.className = 'status ' + cls;
+          el.textContent = text;
+        }
+      }
+
+      async function sha256(value) {
+        const text = typeof value === 'string' ? value : String(value ?? '');
+        if (window.crypto && crypto.subtle && window.TextEncoder) {
+          const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('personbase:' + text));
+          return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        let h = 2166136261 >>> 0;
+        for (let i = 0; i < text.length; i++) {
+          h ^= text.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return (h >>> 0).toString(16);
+      }
+
+      function isAdmin() {
+        return state.currentUser === ADMIN;
+      }
+
+      function getUserPerms(username) {
+        ensureUser(username);
+        return state.store.users[username].perms;
+      }
+
+      function getDbPerms(username, dbId) {
+        ensureUser(username);
+        ensureDbAccess(username, dbId);
+        return state.store.users[username].dbPerms[dbId];
+      }
+
+      function canGlobal(action) {
+        if (!state.currentUser) return false;
+        if (isAdmin()) return true;
+        return !!(getUserPerms(state.currentUser)[action]);
+      }
+
+      function canDb(action, dbId) {
+        if (!state.currentUser) return false;
+        if (isAdmin()) return true;
+        if (!dbId) return true;
+        const p = getDbPerms(state.currentUser, dbId);
+        return !!p[action];
+      }
+
+      function currentDb() {
+        if (!state.store.dbs.length) {
+          state.store.dbs = [{ id: uid(), name: 'Основная база', recs: [] }];
+        }
+        if (!state.activeDbId) {
+          state.activeDbId = state.store.dbs[0].id;
+        }
+        return state.store.dbs.find(db => db.id === state.activeDbId) || state.store.dbs[0];
+      }
+
+      function saveStore() {
+        saveLocal();
+        if (state.fileHandle && window.showSaveFilePicker) {
+          // noop for now; optional file save can be added later
+        }
+      }
+
+      function renderAuth() {
+        const reg = state.mode === 'register';
+        document.getElementById('root').innerHTML = `
+          <div class="auth-wrap">
+            <div class="auth-card">
+              <div class="brand" style="margin-bottom: 12px;">
+                <div class="brand-mark">▤</div>
+                <div>PersonBase</div>
+              </div>
+
+              <div class="tabs">
+                <button class="tab-btn ${reg ? '' : 'active'}" data-action="switch-mode" data-mode="login">Вход</button>
+                <button class="tab-btn ${reg ? 'active' : ''}" data-action="switch-mode" data-mode="register">Регистрация</button>
+              </div>
+
+              <div class="field">
+                <label for="login-user">Логин</label>
+                <input id="login-user" placeholder="Введите логин" />
+              </div>
+
+              <div class="field">
+                <label for="login-pass">Пароль</label>
+                <input id="login-pass" type="password" placeholder="Введите пароль" />
+              </div>
+
+              ${reg ? `
+                <div class="field">
+                  <label for="login-pass2">Повторите пароль</label>
+                  <input id="login-pass2" type="password" placeholder="Повторите пароль" />
+                </div>
+              ` : ''}
+
+              <div class="error" id="auth-error"></div>
+              <button class="btn primary" style="width: 100%;" data-action="do-auth">
+                ${reg ? 'Создать аккаунт' : 'Войти'}
+              </button>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
+                <button class="btn" data-action="reset-store" style="padding: 6px 10px; font-size: 12px;">Сброс</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderApp() {
+        const db = currentDb();
+        const dbs = state.store.dbs || [];
+        const sidebarHtml = dbs.map(d => {
+          const access = canDb('read', d.id);
+          return `
+            <button class="db-item ${d.id === db.id ? 'active' : ''} ${access ? '' : 'hidden'}" data-action="select-db" data-db-id="${d.id}">
+              <span class="db-name">${escapeHtml(d.name)}</span>
+              <span class="db-count">${(d.recs || []).length}</span>
+            </button>
+          `;
+        }).join('');
+
+        document.getElementById('root').innerHTML = `
+          <div class="app-shell">
+            <aside class="sidebar">
+              <div class="sidebar-header">
+                <span>Базы</span>
+                ${canGlobal('createDb') ? '<button class="btn" data-action="new-db" style="padding:5px 10px;">+</button>' : ''}
+              </div>
+              ${sidebarHtml || '<div class="empty"><strong>Нет баз</strong>Создайте первую базу.</div>'}
+            </aside>
+
+            <main class="main">
+              <div class="topbar">
+                <div class="brand">
+                  <div class="brand-mark">▤</div>
+                  <div>${escapeHtml(db.name)}</div>
+                </div>
+
+                <div class="toolbar">
+                  <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
+                  ${isAdmin() ? '<button class="btn" data-action="open-admin">Пользователи</button>' : ''}
+                  <button class="btn" data-action="logout">Выход</button>
+                </div>
+              </div>
+
+              <div class="head">
+                <h2>Список людей</h2>
+                <input class="search" type="search" id="person-search" placeholder="Поиск по ФИО, телефону, личному номеру" value="${escapeHtml(state.search)}" />
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  ${canDb('add', db.id) ? '<button class="btn primary" data-action="new-person">Добавить</button>' : ''}
+                  ${canDb('renameDb', db.id) ? '<button class="btn" data-action="rename-db">Переименовать</button>' : ''}
+                  ${canDb('delDb', db.id) ? '<button class="btn danger" data-action="delete-db">Удалить</button>' : ''}
+                </div>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ФИО</th>
+                      <th>Личный номер</th>
+                      <th>Дата рождения</th>
+                      <th>Телефон</th>
+                      <th>Выплата</th>
+                      <th>Статус</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${renderRows(db.recs || [])}
+                  </tbody>
+                </table>
+              </div>
+            </main>
+          </div>
+        `;
+      }
+
+      function renderRows(recs) {
+        const term = state.search.trim().toLowerCase();
+        const rows = (recs || []).filter(rec => {
+          if (!term) return true;
+          const hay = [
+            rec.fio || '',
+            rec.personalNumber || '',
+            rec.phone || '',
+            rec.position || '',
+            rec.address || '',
+            rec.notes || ''
+          ].join(' ').toLowerCase();
+          return hay.includes(term);
+        });
+
+        if (!rows.length) {
+          return `<tr><td colspan="6"><div class="empty"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>`;
+        }
+
+        return rows.map(rec => {
+          return `
+            <tr data-action="open-person" data-person-id="${rec.id}">
+              <td>
+                <div class="cell-name">
+                  <span class="avatar">${escapeHtml(initials(rec.fio))}</span>
+                  ${escapeHtml(rec.fio || '—')}
+                </div>
+              </td>
+              <td>${escapeHtml(rec.personalNumber || '—')}</td>
+              <td>${escapeHtml(fmtDate(rec.birth))}</td>
+              <td>${escapeHtml(rec.phone || '—')}</td>
+              <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
+              <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      function openPersonModal(personId = null) {
+        const db = currentDb();
+        const rec = personId ? (db.recs || []).find(r => r.id === personId) : null;
+        const item = rec || {
+          id: uid(),
+          fio: '',
+          personalNumber: '',
+          paymentStatus: 'Не выплачено',
+          exclusionStatus: 'Не исключен',
+          ninetyEightStatus: 'Нет',
+          family: [],
+          documents: [],
+          custom: [],
+          photo: '',
+          notes: ''
+        };
+
+        const isReadOnly = !!personId && !canDb('edit', db.id);
+        const isCreate = !personId;
+
+        const photoHtml = item.photo
+          ? `<div class="photo-box"><img src="${escapeHtml(item.photo)}" alt="Фото" /><div class="photo-meta"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><button class="btn danger" data-action="remove-photo" ${isReadOnly ? 'disabled' : ''}>Убрать фото</button></div></div>`
+          : `<div class="photo-box"><div class="photo-meta"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><span class="small">Фото не добавлено</span></div></div>`;
+
+        const customRows = (item.custom || []).map((field, idx) => `
+          <div class="grid-2" style="margin-bottom:8px;">
+            <input data-custom-key="${idx}" data-custom-type="key" value="${escapeHtml(field.key || '')}" ${isReadOnly ? 'disabled' : ''} />
+            <div style="display:flex; gap:8px;">
+              <input data-custom-key="${idx}" data-custom-type="value" value="${escapeHtml(field.value || '')}" ${isReadOnly ? 'disabled' : ''} />
+              ${!isReadOnly ? '<button class="btn danger" data-action="remove-custom" data-index="' + idx + '">×</button>' : ''}
+            </div>
+          </div>
+        `).join('');
+
+        const familyRows = (item.family || []).map((member, idx) => `
+          <div class="family-item">
+            <div class="grid-2">
+              <div class="field"><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" value="${escapeHtml(member.name || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div class="field"><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" value="${escapeHtml(member.relation || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" value="${escapeHtml(member.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div class="field"><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" value="${escapeHtml(member.contact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+            </div>
+            <div class="field"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(member.notes || '')}</textarea></div>
+            ${!isReadOnly ? '<button class="btn danger" data-action="remove-family" data-index="' + idx + '">Удалить члена семьи</button>' : ''}
+          </div>
+        `).join('');
+
+        const documentsHtml = (item.documents || []).map(doc => `
+          <div class="doc-item">
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(doc.name || 'Документ')}</div>
+              <div class="small">${escapeHtml(doc.size || '')}</div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              ${doc.dataUrl ? `<a class="btn" href="${doc.dataUrl}" target="_blank" rel="noopener">Открыть</a>` : ''}
+              ${!isReadOnly ? '<button class="btn danger" data-action="remove-document" data-doc-id="' + (doc.id || '') + '">Удалить</button>' : ''}
+            </div>
+          </div>
+        `).join('');
+
+        document.getElementById('root').insertAdjacentHTML('beforeend', `
+          <div class="modal-backdrop">
+            <div class="modal">
+              <div class="modal-header">
+                <h3 style="margin:0;">${isCreate ? 'Новый человек' : 'Карточка человека'}</h3>
+                <button class="btn" data-action="close-modal">Закрыть</button>
+              </div>
+
+              <div class="modal-body">
+                ${photoHtml}
+
+                <div class="section">Основная информация</div>
+                <div class="grid-2">
+                  <div class="field"><label>ФИО</label><input id="person-fio" value="${escapeHtml(item.fio || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Личный номер</label><input id="person-personalNumber" value="${escapeHtml(item.personalNumber || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Дата рождения</label><input type="date" id="person-birth" value="${escapeHtml(item.birth || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Телефон</label><input id="person-phone" value="${escapeHtml(item.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Почта</label><input id="person-email" value="${escapeHtml(item.email || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Адрес</label><input id="person-address" value="${escapeHtml(item.address || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Должность / звание</label><input id="person-position" value="${escapeHtml(item.position || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Дата смерти</label><input type="date" id="person-deathDate" value="${escapeHtml(item.deathDate || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Военкомат</label><input id="person-militaryCommissariat" value="${escapeHtml(item.militaryCommissariat || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div class="field"><label>Связь с родственниками</label><input id="person-relativeContact" value="${escapeHtml(item.relativeContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                </div>
+
+                <div class="section">Теги</div>
+                <div class="tag-grid">
+                  <div class="field"><label>Выплата</label><select id="person-paymentStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.paymentStatus === 'Не выплачено' ? 'selected' : ''}>Не выплачено</option><option ${item.paymentStatus === 'Выплачено' ? 'selected' : ''}>Выплачено</option></select></div>
+                  <div class="field"><label>Исключение</label><select id="person-exclusionStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.exclusionStatus === 'Не исключен' ? 'selected' : ''}>Не исключен</option><option ${item.exclusionStatus === 'Исключен' ? 'selected' : ''}>Исключен</option></select></div>
+                  <div class="field"><label>98 указ</label><select id="person-ninetyEightStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.ninetyEightStatus === 'Нет' ? 'selected' : ''}>Нет</option><option ${item.ninetyEightStatus === 'Да' ? 'selected' : ''}>Да</option></select></div>
+                  <div class="field"><label>Связь с родственниками</label><input id="person-familyContact" value="${escapeHtml(item.familyContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                </div>
+
+                <div class="section">Члены семьи</div>
+                ${familyRows || '<div class="small">Членов семьи пока нет</div>'}
+                ${!isReadOnly ? '<button class="btn" data-action="add-family-row">+ Добавить члена семьи</button>' : ''}
+
+                <div class="section">Документы PDF</div>
+                ${documentsHtml || '<div class="small">PDF не добавлены</div>'}
+                ${!isReadOnly ? '<input type="file" accept="application/pdf" multiple data-role="pdf-upload" />' : ''}
+
+                <div class="section">Дополнительные поля</div>
+                ${customRows || '<div class="small">Дополнительных полей нет</div>'}
+                ${!isReadOnly ? '<button class="btn" data-action="add-custom-row">+ Добавить поле</button>' : ''}
+
+                <div class="section">Заметки</div>
+                <textarea id="person-notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(item.notes || '')}</textarea>
+              </div>
+
+              <div class="modal-footer">
+                ${personId && canDb('delRec', db.id) && !isReadOnly ? '<button class="btn danger" data-action="delete-person" data-person-id="' + item.id + '">Удалить</button>' : ''}
+                <button class="btn" data-action="close-modal">Отмена</button>
+                ${!isReadOnly ? '<button class="btn primary" data-action="save-person" data-person-id="' + item.id + '">Сохранить</button>' : ''}
+              </div>
+            </div>
+          </div>
+        `);
+      }
+
+      function closeModal() {
+        const modal = document.querySelector('.modal-backdrop');
+        if (modal) modal.remove();
+      }
+
+      function addFamilyRow() {
+        const container = document.querySelector('.modal-body');
+        if (!container) return;
+        const existing = container.querySelectorAll('.family-item');
+        const idx = existing.length;
+        const html = `
+          <div class="family-item">
+            <div class="grid-2">
+              <div class="field"><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" /></div>
+              <div class="field"><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" /></div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" /></div>
+              <div class="field"><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" /></div>
+            </div>
+            <div class="field"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes"></textarea></div>
+            <button class="btn danger" data-action="remove-family" data-index="${idx}">Удалить члена семьи</button>
+          </div>
+        `;
+        const placeholder = container.querySelector('.small');
+        if (placeholder && placeholder.textContent.includes('Членов')) {
+          placeholder.remove();
+        }
+        const section = container.querySelectorAll('.section')[2];
+        if (section) {
+          section.insertAdjacentHTML('afterend', html);
+        } else {
+          container.insertAdjacentHTML('beforeend', html);
+        }
+      }
+
+      function addCustomRow() {
+        const container = document.querySelector('.modal-body');
+        if (!container) return;
+        const idx = container.querySelectorAll('[data-custom-key]').length;
+        const html = `
+          <div class="grid-2" style="margin-bottom:8px;">
+            <input data-custom-key="${idx}" data-custom-type="key" placeholder="Название" />
+            <div style="display:flex; gap:8px;">
+              <input data-custom-key="${idx}" data-custom-type="value" placeholder="Значение" />
+              <button class="btn danger" data-action="remove-custom" data-index="${idx}">×</button>
+            </div>
+          </div>
+        `;
+        const lastSection = document.querySelectorAll('.section');
+        const targetSection = lastSection[lastSection.length - 2];
+        if (targetSection) {
+          targetSection.insertAdjacentHTML('afterend', html);
+        } else {
+          container.insertAdjacentHTML('beforeend', html);
+        }
+      }
+
+      function collectCustomFields() {
+        const result = [];
+        const nodeList = document.querySelectorAll('[data-custom-type]');
+        const map = new Map();
+        nodeList.forEach(el => {
+          const idx = el.getAttribute('data-custom-key');
+          if (!map.has(idx)) map.set(idx, {});
+          const item = map.get(idx);
+          item[el.getAttribute('data-custom-type')] = el.value.trim();
+        });
+        map.forEach(item => {
+          if (item.key || item.value) result.push({ key: item.key || '', value: item.value || '' });
+        });
+        return result;
+      }
+
+      function collectFamilyFields() {
+        const result = [];
+        const items = document.querySelectorAll('[data-family-field]');
+        const map = new Map();
+        items.forEach(el => {
+          const idx = el.getAttribute('data-family-index');
+          if (!map.has(idx)) map.set(idx, {});
+          const item = map.get(idx);
+          item[el.getAttribute('data-family-field')] = el.value.trim();
+        });
+        map.forEach(item => {
+          if (item.name || item.relation || item.phone || item.contact || item.notes) {
+            result.push({
+              name: item.name || '',
+              relation: item.relation || '',
+              phone: item.phone || '',
+              contact: item.contact || '',
+              notes: item.notes || ''
+            });
+          }
+        });
+        return result;
+      }
+
+      async function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function savePerson() {
+        const db = currentDb();
+        const form = document.querySelector('.modal-body');
+        if (!form) return;
+
+        const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+        let rec = (db.recs || []).find(r => r.id === personId);
+        if (!rec) {
+          rec = { id: uid() };
+          db.recs.push(rec);
+        }
+
+        const fio = document.getElementById('person-fio')?.value?.trim();
+        if (!fio) {
+          setStatus('error', 'ФИО обязательно');
+          return;
+        }
+
+        rec.fio = fio;
+        rec.personalNumber = document.getElementById('person-personalNumber')?.value || '';
+        rec.birth = document.getElementById('person-birth')?.value || '';
+        rec.phone = document.getElementById('person-phone')?.value || '';
+        rec.email = document.getElementById('person-email')?.value || '';
+        rec.address = document.getElementById('person-address')?.value || '';
+        rec.position = document.getElementById('person-position')?.value || '';
+        rec.deathDate = document.getElementById('person-deathDate')?.value || '';
+        rec.militaryCommissariat = document.getElementById('person-militaryCommissariat')?.value || '';
+        rec.relativeContact = document.getElementById('person-relativeContact')?.value || '';
+        rec.paymentStatus = document.getElementById('person-paymentStatus')?.value || 'Не выплачено';
+        rec.exclusionStatus = document.getElementById('person-exclusionStatus')?.value || 'Не исключен';
+        rec.ninetyEightStatus = document.getElementById('person-ninetyEightStatus')?.value || 'Нет';
+        rec.familyContact = document.getElementById('person-familyContact')?.value || '';
+        rec.notes = document.getElementById('person-notes')?.value || '';
+        rec.custom = collectCustomFields();
+        rec.family = collectFamilyFields();
+        rec.documents = rec.documents || [];
+        rec.photo = rec.photo || '';
+        rec.upd = nowTs();
+
+        saveLocal();
+        closeModal();
+        renderApp();
+        setStatus('ok', 'Данные сохранены');
+      }
+
+      function deletePerson(personId) {
+        const db = currentDb();
+        db.recs = (db.recs || []).filter(r => r.id !== personId);
+        saveLocal();
+        closeModal();
+        renderApp();
+        setStatus('ok', 'Запись удалена');
+      }
+
+      function addDb() {
+        const name = prompt('Название новой базы:', 'Новая база');
+        if (!name || !name.trim()) return;
+        const db = { id: uid(), name: name.trim(), recs: [] };
+        state.store.dbs.push(db);
+        for (const user of Object.keys(state.store.users)) ensureDbAccess(user, db.id);
+        state.activeDbId = db.id;
+        saveLocal();
+        renderApp();
+      }
+
+      function renameDb() {
+        const db = currentDb();
+        const name = prompt('Новое имя базы:', db.name || '');
+        if (name === null) return;
+        if (!name.trim()) return;
+        db.name = name.trim();
+        saveLocal();
+        renderApp();
+      }
+
+      function deleteDb() {
+        const db = currentDb();
+        if (!db) return;
+        if (state.store.dbs.length <= 1) {
+          setStatus('error', 'Нужна хотя бы одна база');
+          return;
+        }
+        if (!confirm('Удалить базу "' + db.name + '"?')) return;
+        state.store.dbs = state.store.dbs.filter(item => item.id !== db.id);
+        state.activeDbId = state.store.dbs[0].id;
+        saveLocal();
+        renderApp();
+      }
+
+      function openAdmin() {
+        const users = Object.keys(state.store.users).sort();
+        const html = users.map(username => {
+          const perms = state.store.users[username].perms || defaultPerms();
+          const dbRows = state.store.dbs.map(db => {
+            const permsDb = state.store.users[username].dbPerms?.[db.id] || defaultDbPerms();
+            const lines = [
+              'read', 'add', 'edit', 'delRec', 'createDb', 'renameDb', 'delDb'
+            ].map(key => `
+              <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <input type="checkbox" data-user="${escapeHtml(username)}" data-db="${db.id}" data-key="${key}" ${permsDb[key] ? 'checked' : ''} />
+                ${key}
+              </label>
+            `).join('');
+            return `
+              <div style="border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:10px;">
+                <strong>${escapeHtml(db.name)}</strong>
+                ${lines}
+              </div>
+            `;
+          }).join('');
+
+          const globalLines = ['read','add','edit','delRec','createDb','renameDb','delDb','blocked'].map(key => `
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <input type="checkbox" data-global-user="${escapeHtml(username)}" data-key="${key}" ${perms[key] ? 'checked' : ''} />
+              ${key}
+            </label>
+          `).join('');
+
+          return `
+            <div style="border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px;">
+              <div style="font-weight:700; margin-bottom:10px;">${escapeHtml(username)}</div>
+              <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px;">
+                ${globalLines}
+              </div>
+              ${dbRows}
+            </div>
+          `;
+        }).join('') || '<div class="empty"><strong>Нет пользователей</strong>Пока никто не зарегистрировался.</div>';
+
+        document.getElementById('root').insertAdjacentHTML('beforeend', `
+          <div class="modal-backdrop">
+            <div class="modal">
+              <div class="modal-header">
+                <h3 style="margin:0;">Пользователи и права</h3>
+                <button class="btn" data-action="close-modal">Закрыть</button>
+              </div>
+              <div class="modal-body">${html}</div>
+            </div>
+          </div>
+        `);
+      }
+
+      function setUserPermission(username, key, value) {
+        ensureUser(username);
+        state.store.users[username].perms[key] = !!value;
+        saveLocal();
+      }
+
+      function setDbPermission(username, dbId, key, value) {
+        ensureUser(username);
+        ensureDbAccess(username, dbId);
+        state.store.users[username].dbPerms[dbId][key] = !!value;
+        saveLocal();
+      }
+
+      function handleAuthSubmit() {
+        const user = document.getElementById('login-user')?.value.trim();
+        const pass = document.getElementById('login-pass')?.value;
+        const pass2 = document.getElementById('login-pass2')?.value;
+        const err = document.getElementById('auth-error');
+
+        if (!user || !pass) {
+          err.textContent = 'Введите логин и пароль';
+          return;
+        }
+
+        if (state.mode === 'register') {
+          if (pass.length < 4) {
+            err.textContent = 'Пароль слишком короткий';
+            return;
+          }
+          if (!pass2 || pass !== pass2) {
+            err.textContent = 'Пароли не совпадают';
+            return;
+          }
+          if (state.store.users[user]) {
+            err.textContent = 'Такой пользователь уже существует';
+            return;
+          }
+
+          (async () => {
+            const hash = await sha256(pass);
+            state.store.users[user] = { hash, perms: defaultPerms(), dbPerms: {} };
+            ensureDefaultData();
+            for (const db of state.store.dbs) ensureDbAccess(user, db.id);
+            state.currentUser = user;
+            state.activeDbId = state.store.dbs[0].id;
+            saveLocal();
+            renderApp();
+            setStatus('ok', 'Аккаунт создан');
+          })();
+          return;
+        }
+
+        (async () => {
+          const userData = state.store.users[user];
+          if (!userData) {
+            err.textContent = 'Пользователь не найден';
+            return;
+          }
+          const hash = await sha256(pass);
+          if (userData.hash !== hash) {
+            err.textContent = 'Неверный пароль';
+            return;
+          }
+          if (userData.perms.blocked) {
+            err.textContent = 'Аккаунт заблокирован';
+            return;
+          }
+          state.currentUser = user;
+          if (!state.activeDbId && state.store.dbs.length) state.activeDbId = state.store.dbs[0].id;
+          renderApp();
+          setStatus('ok', 'Вход выполнен');
+        })();
+      }
+
+      function resetStore() {
+        if (!confirm('Сбросить локальные данные?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        state.store = { users: {}, dbs: [] };
+        state.currentUser = null;
+        state.activeDbId = null;
+        state.mode = 'login';
+        ensureDefaultData();
+        renderAuth();
+      }
+
+      function bindActions() {
+        document.addEventListener('click', async (event) => {
+          const target = event.target.closest('[data-action]');
+          if (!target) return;
+
+          const action = target.dataset.action;
+
+          if (action === 'switch-mode') {
+            state.mode = target.dataset.mode;
+            renderAuth();
+            return;
+          }
+
+          if (action === 'do-auth') {
+            handleAuthSubmit();
+            return;
+          }
+
+          if (action === 'reset-store') {
+            resetStore();
+            return;
+          }
+
+          if (action === 'logout') {
+            state.currentUser = null;
+            state.activeDbId = null;
+            renderAuth();
+            return;
+          }
+
+          if (action === 'select-db') {
+            state.activeDbId = target.dataset.dbId;
+            renderApp();
+            return;
+          }
+
+          if (action === 'new-db') {
+            addDb();
+            return;
+          }
+
+          if (action === 'rename-db') {
+            renameDb();
+            return;
+          }
+
+          if (action === 'delete-db') {
+            deleteDb();
+            return;
+          }
+
+          if (action === 'new-person') {
+            if (!canDb('add', currentDb().id)) return;
+            openPersonModal();
+            return;
+          }
+
+          if (action === 'open-person') {
+            const personId = target.dataset.personId;
+            if (personId) openPersonModal(personId);
+            return;
+          }
+
+          if (action === 'close-modal') {
+            closeModal();
+            return;
+          }
+
+          if (action === 'save-person') {
+            if (!canDb('edit', currentDb().id) && !canDb('add', currentDb().id)) return;
+            savePerson();
+            return;
+          }
+
+          if (action === 'delete-person') {
+            const personId = target.dataset.personId;
+            if (personId) deletePerson(personId);
+            return;
+          }
+
+          if (action === 'add-custom-row') {
+            addCustomRow();
+            return;
+          }
+
+          if (action === 'remove-custom') {
+            const idx = Number(target.dataset.index);
+            const inputs = document.querySelectorAll('[data-custom-key="' + idx + '"]');
+            inputs.forEach(node => node.closest('.grid-2')?.remove());
+            return;
+          }
+
+          if (action === 'add-family-row') {
+            addFamilyRow();
+            return;
+          }
+
+          if (action === 'remove-family') {
+            const idx = Number(target.dataset.index);
+            document.querySelectorAll('[data-family-index="' + idx + '"]').forEach(node => node.closest('.family-item')?.remove());
+            return;
+          }
+
+          if (action === 'remove-photo') {
+            const db = currentDb();
+            const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+            const rec = (db.recs || []).find(r => r.id === personId);
+            if (rec) rec.photo = '';
+            closeModal();
+            openPersonModal(personId);
+            return;
+          }
+
+          if (action === 'open-admin') {
+            openAdmin();
+            return;
+          }
+        });
+
+        document.addEventListener('input', (event) => {
+          const target = event.target;
+          if (target.id === 'person-search') {
+            state.search = target.value;
+            renderApp();
+          }
+        });
+
+        document.addEventListener('change', (event) => {
+          const target = event.target;
+
+          if (target.matches('[data-global-user]')) {
+            const user = target.dataset.globalUser;
+            const key = target.dataset.key;
+            setUserPermission(user, key, target.checked);
+            return;
+          }
+
+          if (target.matches('[data-user][data-db]')) {
+            const user = target.dataset.user;
+            const db = target.dataset.db;
+            const key = target.dataset.key;
+            setDbPermission(user, db, key, target.checked);
+            return;
+          }
+
+          if (target.matches('[data-role="photo-upload"]')) {
+            const file = target.files && target.files[0];
+            if (!file) return;
+            (async () => {
+              const dataUrl = await readFileAsDataUrl(file);
+              const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+              const db = currentDb();
+              let rec = (db.recs || []).find(r => r.id === personId);
+              if (!rec) {
+                rec = { id: uid() };
+                db.recs.push(rec);
+              }
+              rec.photo = dataUrl;
+              const modal = document.querySelector('.modal-backdrop');
+              if (modal) modal.remove();
+              openPersonModal(personId || rec.id);
+            })();
+            return;
+          }
+
+          if (target.matches('[data-role="pdf-upload"]')) {
+            const files = target.files || [];
+            (async () => {
+              const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+              const db = currentDb();
+              let rec = (db.recs || []).find(r => r.id === personId);
+              if (!rec) {
+                rec = { id: uid() };
+                db.recs.push(rec);
+              }
+              rec.documents = rec.documents || [];
+              for (const file of files) {
+                const dataUrl = await readFileAsDataUrl(file);
+                rec.documents.push({
+                  id: uid(),
+                  name: file.name,
+                  size: (file.size / 1024).toFixed(1) + ' KB',
+                  dataUrl
+                });
+              }
+              saveLocal();
+              closeModal();
+              openPersonModal(personId || rec.id);
+            })();
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            const modal = document.querySelector('.modal-backdrop');
+            if (modal) modal.remove();
+          }
+          if (event.key === 'Enter') {
+            const active = document.activeElement;
+            if (active && (active.id === 'login-user' || active.id === 'login-pass' || active.id === 'login-pass2')) {
+              handleAuthSubmit();
+            }
+          }
+        });
+      }
+
+      function start() {
+        loadLocal();
+        ensureDefaultData();
+        bindActions();
+        if (state.store.users[ADMIN]) {
+          state.currentUser = ADMIN;
+          state.activeDbId = state.store.dbs[0]?.id || null;
+          renderApp();
+          setStatus('ok', 'Готово');
+        } else {
+          renderAuth();
+        }
+      }
+
+      start();
+    })();
+  </script>
 </body>
 </html>
