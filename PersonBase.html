@@ -6,104 +6,238 @@
   <title>PersonBase</title>
   <style>
     :root {
-      --bg: #eef3f8;
+      --bg: #eef4ff;
       --panel: #ffffff;
-      --panel-2: #f6f9fc;
-      --line: #dfe7f1;
-      --text: #1f2a37;
-      --muted: #64748b;
-      --primary: #2f6bff;
-      --primary-soft: #e8efff;
-      --danger: #dc3545;
-      --success: #198754;
-      --warning: #d97706;
-      --shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+      --panel-2: #f6f9ff;
+      --line: #dfe7f5;
+      --text: #1d2a3a;
+      --muted: #5b6d85;
+      --primary: #2457d7;
+      --primary-strong: #1a46b3;
+      --primary-soft: #eaf0ff;
+      --danger: #d93d57;
+      --danger-soft: #fff1f3;
+      --success: #1b8f59;
+      --warning: #c57a09;
+      --shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
     }
+
     * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; font-family: "Segoe UI", Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
     body { min-height: 100vh; }
-    button, input, textarea, select { font: inherit; }
-    button { cursor: pointer; }
+    button, input, textarea, select {
+      font: inherit;
+    }
+    button {
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 9px 12px;
+      transition: 0.15s ease;
+    }
+    button:hover { background: var(--panel-2); }
+    button.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    button.primary:hover { background: var(--primary-strong); }
+    button.danger {
+      background: var(--danger-soft);
+      border-color: rgba(217, 61, 87, 0.25);
+      color: var(--danger);
+    }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(36, 87, 215, 0.75);
+      box-shadow: 0 0 0 3px rgba(36, 87, 215, 0.12);
+    }
     .hidden { display: none !important; }
-    .app-shell {
+    .root-wrap {
+      min-height: 100vh;
       display: grid;
-      grid-template-columns: 260px 1fr;
-      height: 100vh;
+      place-items: center;
+      padding: 24px;
+    }
+    .auth-card {
+      width: min(440px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 28px 24px 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      font-weight: 800;
+      font-size: 28px;
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), #5d8cff);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 20px rgba(36, 87, 215, 0.2);
+    }
+    .tab-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 5px;
+      margin-bottom: 18px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+    .tab-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 9px;
+      font-weight: 700;
+      padding: 10px 12px;
+    }
+    .tab-btn.active {
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+    .field { margin-bottom: 14px; }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .error {
+      min-height: 18px;
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
+    .auth-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .status.ok { color: var(--success); }
+    .status.error { color: var(--danger); }
+    .status.wait { color: var(--warning); }
+
+    .app-shell {
+      width: 100%;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      background: var(--bg);
     }
     .sidebar {
-      background: #1d2737;
-      color: #dfeaf8;
-      padding: 14px 10px;
-      overflow: auto;
+      background: #1b2435;
+      color: #e1ebfb;
+      padding: 18px 12px 12px;
+      min-height: 100vh;
     }
     .sidebar-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 4px 8px 12px;
-      color: #a8b9d6;
+      gap: 8px;
+      padding: 4px 8px 12px;
       font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
       text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      color: #adc2de;
     }
-    .sidebar-header .plus {
-      font-size: 22px;
-      line-height: 1;
-      color: #c9d9ff;
-    }
+    .db-list { margin-top: 6px; }
     .db-item {
       width: 100%;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 8px;
-      background: transparent;
-      border: 0;
-      color: inherit;
-      border-radius: 10px;
       padding: 10px 12px;
-      text-align: left;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      border-radius: 12px;
       margin-bottom: 6px;
+      text-align: left;
     }
-    .db-item:hover { background: rgba(255,255,255,0.05); }
     .db-item.active {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), #4d7ef7);
       color: white;
+      box-shadow: 0 8px 18px rgba(36, 87, 215, 0.22);
     }
-    .db-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .db-count { opacity: 0.8; font-size: 12px; }
-    .main {
-      display: flex;
-      flex-direction: column;
+    .db-name {
+      flex: 1;
       min-width: 0;
-      min-height: 0;
-      padding: 18px 22px 22px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .db-count {
+      font-size: 12px;
+      opacity: 0.8;
+      min-width: 22px;
+      text-align: right;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 22px 24px 28px;
     }
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 16px;
       flex-wrap: wrap;
+      margin-bottom: 18px;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 20px;
-    }
-    .brand-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: var(--primary);
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 16px;
+    .topbar .brand {
+      margin: 0;
+      font-size: 22px;
     }
     .toolbar {
       display: flex;
@@ -111,43 +245,11 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-    .status {
-      min-width: 160px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .status.ok { color: var(--success); }
-    .status.error { color: var(--danger); }
-    .status.wait { color: var(--warning); }
-    .btn {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      color: var(--text);
-      border-radius: 8px;
-      padding: 8px 12px;
-      transition: 0.15s ease;
-    }
-    .btn:hover { background: var(--panel-2); }
-    .btn.primary {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
-    .btn.primary:hover { opacity: 0.94; }
-    .btn.danger {
-      color: var(--danger);
-      border-color: rgba(220,53,69,0.4);
-      background: white;
-    }
     .head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 16px;
     }
@@ -155,28 +257,21 @@
       margin: 0;
       font-size: 20px;
       flex: 1;
-      min-width: 160px;
+      min-width: 180px;
     }
-    .search {
-      width: min(340px, 100%);
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--panel);
-      color: var(--text);
-    }
+    .search { width: min(360px, 100%); }
     .table-wrap {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       overflow: auto;
       min-height: 200px;
-      box-shadow: var(--shadow);
     }
     table {
       width: 100%;
+      min-width: 760px;
       border-collapse: collapse;
-      min-width: 700px;
     }
     th, td {
       padding: 12px 14px;
@@ -186,53 +281,66 @@
     }
     th {
       background: var(--panel-2);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 800;
       position: sticky;
       top: 0;
       z-index: 1;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
     }
-    tbody tr:hover { background: rgba(47,107,255,0.02); }
+    tbody tr:hover { background: rgba(36, 87, 215, 0.02); }
     tbody tr { cursor: pointer; }
+    .cell-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .avatar {
+      width: 30px;
+      height: 30px;
       display: inline-grid;
       place-items: center;
-      width: 28px;
-      height: 28px;
       border-radius: 50%;
       background: var(--primary-soft);
       color: var(--primary);
-      font-size: 12px;
-      font-weight: 700;
-      margin-right: 8px;
-      vertical-align: middle;
+      font-size: 11px;
+      font-weight: 800;
     }
-    .cell-name { display: flex; align-items: center; }
+    .empty-row {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+    }
+    .empty-row strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 18px;
+    }
     .modal-backdrop {
       position: fixed;
       inset: 0;
+      background: rgba(15, 23, 42, 0.42);
       display: grid;
       place-items: center;
-      background: rgba(15, 23, 42, 0.42);
-      z-index: 30;
-      padding: 16px;
+      padding: 18px;
+      z-index: 20;
     }
     .modal {
-      width: min(760px, 100%);
+      width: min(820px, 100%);
       max-height: 90vh;
       overflow: auto;
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 18px;
       box-shadow: var(--shadow);
     }
     .modal-header, .modal-footer {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
       padding: 18px 20px;
       border-bottom: 1px solid var(--line);
@@ -242,125 +350,95 @@
       border-bottom: 0;
       justify-content: flex-end;
     }
-    .modal-body { padding: 18px 20px; }
-    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .field { margin-bottom: 12px; }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 600;
+    .modal-body {
+      padding: 18px 20px 12px;
     }
-    input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: white;
-      padding: 9px 11px;
-      color: var(--text);
-    }
-    textarea { min-height: 110px; resize: vertical; }
     .section {
-      margin-top: 18px;
+      margin-top: 16px;
       margin-bottom: 8px;
       font-size: 12px;
-      font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted);
+      font-weight: 800;
     }
-    .photo-box {
-      display: flex;
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+    }
+    .field-full { grid-column: 1 / -1; }
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .avatar-box {
+      display: flex;
       align-items: center;
-      padding: 10px;
+      gap: 12px;
       border: 1px solid var(--line);
       border-radius: 12px;
+      padding: 12px;
       background: var(--panel-2);
     }
-    .photo-box img {
-      width: 90px;
-      height: 90px;
-      border-radius: 10px;
+    .avatar-box img {
+      width: 86px;
+      height: 86px;
       object-fit: cover;
+      border-radius: 12px;
       border: 1px solid var(--line);
       background: white;
     }
-    .photo-meta {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .tag-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .family-item, .doc-item {
+    .muted { color: var(--muted); font-size: 12px; }
+    .mini-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .family-box, .doc-box, .custom-box {
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 12px;
       background: var(--panel-2);
       padding: 12px;
       margin-bottom: 10px;
     }
-    .small { font-size: 12px; color: var(--muted); }
-    .error { color: var(--danger); font-size: 12px; min-height: 18px; margin-top: 6px; }
-    .auth-wrap {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-    }
-    .auth-card {
-      width: min(420px, 100%);
+    .admin-panel {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 16px;
-      box-shadow: var(--shadow);
-      padding: 28px 24px;
+      padding: 18px;
+      max-width: 700px;
+      margin: 0 auto;
     }
-    .tabs {
+    .admin-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 18px;
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 4px;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
     }
-    .tab-btn {
-      border: 0;
-      background: transparent;
+    .admin-row:last-child { border-bottom: 0; }
+    .admin-row small {
+      display: block;
       color: var(--muted);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-weight: 700;
+      margin-top: 4px;
     }
-    .tab-btn.active {
-      background: var(--panel);
-      color: var(--text);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-    .empty {
-      padding: 60px 20px;
-      text-align: center;
-      color: var(--muted);
-    }
-    .empty strong { display: block; font-size: 18px; color: var(--text); margin-bottom: 8px; }
     @media (max-width: 900px) {
       .app-shell { grid-template-columns: 1fr; }
       .sidebar { min-height: auto; }
-      .grid-2, .grid-3, .tag-grid { grid-template-columns: 1fr; }
-      .toolbar { width: 100%; }
+      .form-grid, .tag-grid { grid-template-columns: 1fr; }
+      .head { align-items: stretch; }
+      .search { width: 100%; }
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
+
   <script>
     (() => {
       const STORAGE_KEY = 'personbase_store_v1';
-      const ADMIN = 'Krew762';
+      const ADMIN_USER = 'Krew762';
+      const ADMIN_PASSWORD = 'A8G95S87';
+      const DEFAULT_DB_NAME = 'Основная база';
 
       const state = {
         store: { users: {}, dbs: [] },
@@ -368,7 +446,6 @@
         activeDbId: null,
         search: '',
         mode: 'login',
-        fileHandle: null,
         statusClass: 'ok',
         statusText: 'Готово'
       };
@@ -414,7 +491,7 @@
           delRec: true,
           createDb: true,
           renameDb: true,
-          delDb: false,
+          delDb: true,
           blocked: false
         };
       }
@@ -427,7 +504,7 @@
           delRec: true,
           createDb: true,
           renameDb: true,
-          delDb: false
+          delDb: true
         };
       }
 
@@ -446,12 +523,39 @@
 
       function ensureDefaultData() {
         if (!Array.isArray(state.store.dbs) || !state.store.dbs.length) {
-          state.store.dbs.push({ id: uid(), name: 'Основная база', recs: [] });
+          state.store.dbs.push({ id: uid(), name: DEFAULT_DB_NAME, recs: [] });
         }
         for (const name of Object.keys(state.store.users)) {
           for (const db of state.store.dbs) ensureDbAccess(name, db.id);
         }
-        if (state.currentUser) ensureDbAccess(state.currentUser, state.activeDbId || state.store.dbs[0].id);
+        if (state.currentUser) {
+          ensureDbAccess(state.currentUser, state.activeDbId || state.store.dbs[0].id);
+        }
+      }
+
+      async function sha256(value) {
+        const text = String(value ?? '');
+        if (window.crypto && crypto.subtle && window.TextEncoder) {
+          const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('personbase:' + text));
+          return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        let hash = 2166136261 >>> 0;
+        for (let i = 0; i < text.length; i++) {
+          hash ^= text.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return (hash >>> 0).toString(16);
+      }
+
+      async function ensureAdminSeed() {
+        if (!state.store.users[ADMIN_USER]) {
+          state.store.users[ADMIN_USER] = {
+            hash: await sha256(ADMIN_PASSWORD),
+            perms: defaultPerms(),
+            dbPerms: {}
+          };
+        }
+        for (const db of state.store.dbs) ensureDbAccess(ADMIN_USER, db.id);
       }
 
       function loadLocal() {
@@ -462,14 +566,13 @@
             return;
           }
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.dbs) {
+          if (parsed && Array.isArray(parsed.dbs)) {
             state.store = parsed;
           }
         } catch (error) {
           console.error('Load local error:', error);
           state.store = { users: {}, dbs: [] };
         }
-        ensureDefaultData();
       }
 
       function saveLocal() {
@@ -479,29 +582,15 @@
       function setStatus(cls, text) {
         state.statusClass = cls;
         state.statusText = text;
-        const el = document.getElementById('status');
-        if (el) {
-          el.className = 'status ' + cls;
-          el.textContent = text;
+        const statusEl = document.getElementById('status');
+        if (statusEl) {
+          statusEl.className = `status ${cls}`;
+          statusEl.textContent = text;
         }
-      }
-
-      async function sha256(value) {
-        const text = typeof value === 'string' ? value : String(value ?? '');
-        if (window.crypto && crypto.subtle && window.TextEncoder) {
-          const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('personbase:' + text));
-          return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-        let h = 2166136261 >>> 0;
-        for (let i = 0; i < text.length; i++) {
-          h ^= text.charCodeAt(i);
-          h = Math.imul(h, 16777619);
-        }
-        return (h >>> 0).toString(16);
       }
 
       function isAdmin() {
-        return state.currentUser === ADMIN;
+        return state.currentUser === ADMIN_USER;
       }
 
       function getUserPerms(username) {
@@ -525,13 +614,13 @@
         if (!state.currentUser) return false;
         if (isAdmin()) return true;
         if (!dbId) return true;
-        const p = getDbPerms(state.currentUser, dbId);
-        return !!p[action];
+        const perms = getDbPerms(state.currentUser, dbId);
+        return !!perms[action];
       }
 
       function currentDb() {
         if (!state.store.dbs.length) {
-          state.store.dbs = [{ id: uid(), name: 'Основная база', recs: [] }];
+          state.store.dbs = [{ id: uid(), name: DEFAULT_DB_NAME, recs: [] }];
         }
         if (!state.activeDbId) {
           state.activeDbId = state.store.dbs[0].id;
@@ -539,31 +628,24 @@
         return state.store.dbs.find(db => db.id === state.activeDbId) || state.store.dbs[0];
       }
 
-      function saveStore() {
-        saveLocal();
-        if (state.fileHandle && window.showSaveFilePicker) {
-          // noop for now; optional file save can be added later
-        }
-      }
-
       function renderAuth() {
         const reg = state.mode === 'register';
         document.getElementById('root').innerHTML = `
-          <div class="auth-wrap">
+          <div class="root-wrap">
             <div class="auth-card">
-              <div class="brand" style="margin-bottom: 12px;">
+              <div class="brand">
                 <div class="brand-mark">▤</div>
                 <div>PersonBase</div>
               </div>
 
-              <div class="tabs">
+              <div class="tab-list">
                 <button class="tab-btn ${reg ? '' : 'active'}" data-action="switch-mode" data-mode="login">Вход</button>
                 <button class="tab-btn ${reg ? 'active' : ''}" data-action="switch-mode" data-mode="register">Регистрация</button>
               </div>
 
               <div class="field">
                 <label for="login-user">Логин</label>
-                <input id="login-user" placeholder="Введите логин" />
+                <input id="login-user" placeholder="Введите логин" value="${escapeHtml(ADMIN_USER)}" />
               </div>
 
               <div class="field">
@@ -579,13 +661,13 @@
               ` : ''}
 
               <div class="error" id="auth-error"></div>
-              <button class="btn primary" style="width: 100%;" data-action="do-auth">
+              <button class="primary" data-action="do-auth" style="width:100%;">
                 ${reg ? 'Создать аккаунт' : 'Войти'}
               </button>
 
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+              <div class="auth-footer">
                 <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
-                <button class="btn" data-action="reset-store" style="padding: 6px 10px; font-size: 12px;">Сброс</button>
+                <button data-action="reset-store">Сброс</button>
               </div>
             </div>
           </div>
@@ -610,32 +692,33 @@
             <aside class="sidebar">
               <div class="sidebar-header">
                 <span>Базы</span>
-                ${canGlobal('createDb') ? '<button class="btn" data-action="new-db" style="padding:5px 10px;">+</button>' : ''}
+                ${canGlobal('createDb') ? '<button data-action="new-db" style="padding:5px 10px;">+</button>' : ''}
               </div>
-              ${sidebarHtml || '<div class="empty"><strong>Нет баз</strong>Создайте первую базу.</div>'}
+              <div class="db-list">
+                ${sidebarHtml || '<div class="empty-row"><strong>Нет баз</strong>Создайте первую базу.</div>'}
+              </div>
             </aside>
 
             <main class="main">
               <div class="topbar">
-                <div class="brand">
+                <div class="brand" style="display:flex;align-items:center;gap:12px;">
                   <div class="brand-mark">▤</div>
                   <div>${escapeHtml(db.name)}</div>
                 </div>
-
                 <div class="toolbar">
                   <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
-                  ${isAdmin() ? '<button class="btn" data-action="open-admin">Пользователи</button>' : ''}
-                  <button class="btn" data-action="logout">Выход</button>
+                  ${isAdmin() ? '<button data-action="open-admin">Пользователи</button>' : ''}
+                  <button data-action="logout">Выход</button>
                 </div>
               </div>
 
               <div class="head">
                 <h2>Список людей</h2>
-                <input class="search" type="search" id="person-search" placeholder="Поиск по ФИО, телефону, личному номеру" value="${escapeHtml(state.search)}" />
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  ${canDb('add', db.id) ? '<button class="btn primary" data-action="new-person">Добавить</button>' : ''}
-                  ${canDb('renameDb', db.id) ? '<button class="btn" data-action="rename-db">Переименовать</button>' : ''}
-                  ${canDb('delDb', db.id) ? '<button class="btn danger" data-action="delete-db">Удалить</button>' : ''}
+                <input class="search" type="search" id="person-search" placeholder="Поиск по ФИО, телефону, номеру" value="${escapeHtml(state.search)}" />
+                <div class="mini-btns">
+                  ${canDb('add', db.id) ? '<button class="primary" data-action="new-person">Добавить</button>' : ''}
+                  ${canDb('renameDb', db.id) ? '<button data-action="rename-db">Переименовать</button>' : ''}
+                  ${canDb('delDb', db.id) ? '<button class="danger" data-action="delete-db">Удалить</button>' : ''}
                 </div>
               </div>
 
@@ -677,26 +760,69 @@
         });
 
         if (!rows.length) {
-          return `<tr><td colspan="6"><div class="empty"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>`;
+          return `<tr><td colspan="6"><div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>`;
         }
 
-        return rows.map(rec => {
+        return rows.map(rec => `
+          <tr data-action="open-person" data-person-id="${rec.id}">
+            <td>
+              <div class="cell-name">
+                <span class="avatar">${escapeHtml(initials(rec.fio))}</span>
+                ${escapeHtml(rec.fio || '—')}
+              </div>
+            </td>
+            <td>${escapeHtml(rec.personalNumber || '—')}</td>
+            <td>${escapeHtml(fmtDate(rec.birth))}</td>
+            <td>${escapeHtml(rec.phone || '—')}</td>
+            <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
+            <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
+          </tr>
+        `).join('');
+      }
+
+      function openAdminPanel() {
+        const users = Object.keys(state.store.users).sort();
+        const html = users.map(username => {
+          const user = state.store.users[username];
+          const perms = user.perms || defaultPerms();
           return `
-            <tr data-action="open-person" data-person-id="${rec.id}">
-              <td>
-                <div class="cell-name">
-                  <span class="avatar">${escapeHtml(initials(rec.fio))}</span>
-                  ${escapeHtml(rec.fio || '—')}
-                </div>
-              </td>
-              <td>${escapeHtml(rec.personalNumber || '—')}</td>
-              <td>${escapeHtml(fmtDate(rec.birth))}</td>
-              <td>${escapeHtml(rec.phone || '—')}</td>
-              <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
-              <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
-            </tr>
+            <div class="admin-row">
+              <div>
+                <strong>${escapeHtml(username)}</strong>
+                <small>${username === ADMIN_USER ? 'Администратор' : 'Пользователь'}</small>
+              </div>
+              <label style="display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" data-user="${escapeHtml(username)}" data-role="toggle-block" ${perms.blocked ? 'checked' : ''} />
+                <span>Блок.</span>
+              </label>
+              <button class="danger" data-action="delete-user" data-user="${escapeHtml(username)}">Удалить</button>
+            </div>
           `;
         }).join('');
+
+        document.getElementById('root').insertAdjacentHTML('beforeend', `
+          <div class="modal-backdrop">
+            <div class="modal">
+              <div class="modal-header">
+                <h3 style="margin:0;">Пользователи</h3>
+                <button data-action="close-modal">Закрыть</button>
+              </div>
+              <div class="modal-body">
+                <div class="admin-panel">
+                  ${html || '<div class="muted">Пользователей нет</div>'}
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="primary" data-action="close-modal">Готово</button>
+              </div>
+            </div>
+          </div>
+        `);
+      }
+
+      function closeModal() {
+        const modal = document.querySelector('.modal-backdrop');
+        if (modal) modal.remove();
       }
 
       function openPersonModal(personId = null) {
@@ -720,43 +846,41 @@
         const isCreate = !personId;
 
         const photoHtml = item.photo
-          ? `<div class="photo-box"><img src="${escapeHtml(item.photo)}" alt="Фото" /><div class="photo-meta"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><button class="btn danger" data-action="remove-photo" ${isReadOnly ? 'disabled' : ''}>Убрать фото</button></div></div>`
-          : `<div class="photo-box"><div class="photo-meta"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><span class="small">Фото не добавлено</span></div></div>`;
-
-        const customRows = (item.custom || []).map((field, idx) => `
-          <div class="grid-2" style="margin-bottom:8px;">
-            <input data-custom-key="${idx}" data-custom-type="key" value="${escapeHtml(field.key || '')}" ${isReadOnly ? 'disabled' : ''} />
-            <div style="display:flex; gap:8px;">
-              <input data-custom-key="${idx}" data-custom-type="value" value="${escapeHtml(field.value || '')}" ${isReadOnly ? 'disabled' : ''} />
-              ${!isReadOnly ? '<button class="btn danger" data-action="remove-custom" data-index="' + idx + '">×</button>' : ''}
-            </div>
-          </div>
-        `).join('');
+          ? `<div class="avatar-box"><img src="${escapeHtml(item.photo)}" alt="Фото" /><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><button class="danger" data-action="remove-photo" ${isReadOnly ? 'disabled' : ''}>Удалить фото</button></div></div>`
+          : `<div class="avatar-box"><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><span class="muted">Фото не добавлено</span></div></div>`;
 
         const familyRows = (item.family || []).map((member, idx) => `
-          <div class="family-item">
-            <div class="grid-2">
-              <div class="field"><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" value="${escapeHtml(member.name || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div class="field"><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" value="${escapeHtml(member.relation || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+          <div class="family-box">
+            <div class="form-grid">
+              <div><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" value="${escapeHtml(member.name || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" value="${escapeHtml(member.relation || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" value="${escapeHtml(member.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" value="${escapeHtml(member.contact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div class="field-full"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(member.notes || '')}</textarea></div>
             </div>
-            <div class="grid-2">
-              <div class="field"><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" value="${escapeHtml(member.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div class="field"><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" value="${escapeHtml(member.contact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-            </div>
-            <div class="field"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(member.notes || '')}</textarea></div>
-            ${!isReadOnly ? '<button class="btn danger" data-action="remove-family" data-index="' + idx + '">Удалить члена семьи</button>' : ''}
+            ${!isReadOnly ? '<div style="margin-top:10px;"><button class="danger" data-action="remove-family" data-index="' + idx + '">Удалить члена семьи</button></div>' : ''}
           </div>
         `).join('');
 
-        const documentsHtml = (item.documents || []).map(doc => `
-          <div class="doc-item">
-            <div style="flex:1; min-width:0;">
-              <div style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(doc.name || 'Документ')}</div>
-              <div class="small">${escapeHtml(doc.size || '')}</div>
+        const customRows = (item.custom || []).map((field, idx) => `
+          <div class="custom-box">
+            <div class="form-grid">
+              <div><label>Название</label><input data-custom-key="${idx}" data-custom-type="key" value="${escapeHtml(field.key || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+              <div><label>Значение</label><input data-custom-key="${idx}" data-custom-type="value" value="${escapeHtml(field.value || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              ${doc.dataUrl ? `<a class="btn" href="${doc.dataUrl}" target="_blank" rel="noopener">Открыть</a>` : ''}
-              ${!isReadOnly ? '<button class="btn danger" data-action="remove-document" data-doc-id="' + (doc.id || '') + '">Удалить</button>' : ''}
+            ${!isReadOnly ? '<div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="' + idx + '">Удалить</button></div>' : ''}
+          </div>
+        `).join('');
+
+        const documentRows = (item.documents || []).map(doc => `
+          <div class="doc-box" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:700;">${escapeHtml(doc.name || 'Документ')}</div>
+              <div class="muted">${escapeHtml(doc.size || '')}</div>
+            </div>
+            <div class="mini-btns">
+              ${doc.dataUrl ? `<a href="${escapeHtml(doc.dataUrl)}" target="_blank" rel="noopener">Открыть</a>` : ''}
+              ${!isReadOnly ? '<button class="danger" data-action="remove-document" data-doc-id="' + (doc.id || '') + '">Удалить</button>' : ''}
             </div>
           </div>
         `).join('');
@@ -766,89 +890,80 @@
             <div class="modal">
               <div class="modal-header">
                 <h3 style="margin:0;">${isCreate ? 'Новый человек' : 'Карточка человека'}</h3>
-                <button class="btn" data-action="close-modal">Закрыть</button>
+                <button data-action="close-modal">Закрыть</button>
               </div>
 
               <div class="modal-body">
                 ${photoHtml}
 
                 <div class="section">Основная информация</div>
-                <div class="grid-2">
-                  <div class="field"><label>ФИО</label><input id="person-fio" value="${escapeHtml(item.fio || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Личный номер</label><input id="person-personalNumber" value="${escapeHtml(item.personalNumber || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Дата рождения</label><input type="date" id="person-birth" value="${escapeHtml(item.birth || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Телефон</label><input id="person-phone" value="${escapeHtml(item.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Почта</label><input id="person-email" value="${escapeHtml(item.email || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Адрес</label><input id="person-address" value="${escapeHtml(item.address || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Должность / звание</label><input id="person-position" value="${escapeHtml(item.position || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Дата смерти</label><input type="date" id="person-deathDate" value="${escapeHtml(item.deathDate || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Военкомат</label><input id="person-militaryCommissariat" value="${escapeHtml(item.militaryCommissariat || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div class="field"><label>Связь с родственниками</label><input id="person-relativeContact" value="${escapeHtml(item.relativeContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                <div class="form-grid">
+                  <div><label>ФИО</label><input id="person-fio" value="${escapeHtml(item.fio || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Личный номер</label><input id="person-personalNumber" value="${escapeHtml(item.personalNumber || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Дата рождения</label><input type="date" id="person-birth" value="${escapeHtml(item.birth || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Телефон</label><input id="person-phone" value="${escapeHtml(item.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Почта</label><input id="person-email" value="${escapeHtml(item.email || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Адрес</label><input id="person-address" value="${escapeHtml(item.address || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Должность / звание</label><input id="person-position" value="${escapeHtml(item.position || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Дата смерти</label><input type="date" id="person-deathDate" value="${escapeHtml(item.deathDate || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Военкомат</label><input id="person-militaryCommissariat" value="${escapeHtml(item.militaryCommissariat || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Связь с родственниками</label><input id="person-relativeContact" value="${escapeHtml(item.relativeContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
                 </div>
 
                 <div class="section">Теги</div>
                 <div class="tag-grid">
-                  <div class="field"><label>Выплата</label><select id="person-paymentStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.paymentStatus === 'Не выплачено' ? 'selected' : ''}>Не выплачено</option><option ${item.paymentStatus === 'Выплачено' ? 'selected' : ''}>Выплачено</option></select></div>
-                  <div class="field"><label>Исключение</label><select id="person-exclusionStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.exclusionStatus === 'Не исключен' ? 'selected' : ''}>Не исключен</option><option ${item.exclusionStatus === 'Исключен' ? 'selected' : ''}>Исключен</option></select></div>
-                  <div class="field"><label>98 указ</label><select id="person-ninetyEightStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.ninetyEightStatus === 'Нет' ? 'selected' : ''}>Нет</option><option ${item.ninetyEightStatus === 'Да' ? 'selected' : ''}>Да</option></select></div>
-                  <div class="field"><label>Связь с родственниками</label><input id="person-familyContact" value="${escapeHtml(item.familyContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
+                  <div><label>Выплата</label><select id="person-paymentStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.paymentStatus === 'Не выплачено' ? 'selected' : ''}>Не выплачено</option><option ${item.paymentStatus === 'Выплачено' ? 'selected' : ''}>Выплачено</option></select></div>
+                  <div><label>Исключение</label><select id="person-exclusionStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.exclusionStatus === 'Не исключен' ? 'selected' : ''}>Не исключен</option><option ${item.exclusionStatus === 'Исключен' ? 'selected' : ''}>Исключен</option></select></div>
+                  <div><label>98 указ</label><select id="person-ninetyEightStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.ninetyEightStatus === 'Нет' ? 'selected' : ''}>Нет</option><option ${item.ninetyEightStatus === 'Да' ? 'selected' : ''}>Да</option></select></div>
+                  <div><label>Связь с родственниками</label><input id="person-familyContact" value="${escapeHtml(item.familyContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
                 </div>
 
                 <div class="section">Члены семьи</div>
-                ${familyRows || '<div class="small">Членов семьи пока нет</div>'}
-                ${!isReadOnly ? '<button class="btn" data-action="add-family-row">+ Добавить члена семьи</button>' : ''}
+                ${familyRows || '<div class="muted">Членов семьи пока нет</div>'}
+                ${!isReadOnly ? '<button data-action="add-family-row" style="margin-top:8px;">+ Добавить члена семьи</button>' : ''}
 
                 <div class="section">Документы PDF</div>
-                ${documentsHtml || '<div class="small">PDF не добавлены</div>'}
-                ${!isReadOnly ? '<input type="file" accept="application/pdf" multiple data-role="pdf-upload" />' : ''}
+                ${documentRows || '<div class="muted">PDF не добавлены</div>'}
+                ${!isReadOnly ? '<input type="file" accept="application/pdf" multiple data-role="pdf-upload" style="margin-top:10px;" />' : ''}
 
                 <div class="section">Дополнительные поля</div>
-                ${customRows || '<div class="small">Дополнительных полей нет</div>'}
-                ${!isReadOnly ? '<button class="btn" data-action="add-custom-row">+ Добавить поле</button>' : ''}
+                ${customRows || '<div class="muted">Дополнительных полей нет</div>'}
+                ${!isReadOnly ? '<button data-action="add-custom-row" style="margin-top:8px;">+ Добавить поле</button>' : ''}
 
                 <div class="section">Заметки</div>
                 <textarea id="person-notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(item.notes || '')}</textarea>
               </div>
 
               <div class="modal-footer">
-                ${personId && canDb('delRec', db.id) && !isReadOnly ? '<button class="btn danger" data-action="delete-person" data-person-id="' + item.id + '">Удалить</button>' : ''}
-                <button class="btn" data-action="close-modal">Отмена</button>
-                ${!isReadOnly ? '<button class="btn primary" data-action="save-person" data-person-id="' + item.id + '">Сохранить</button>' : ''}
+                ${personId && canDb('delRec', db.id) && !isReadOnly ? '<button class="danger" data-action="delete-person" data-person-id="' + item.id + '">Удалить</button>' : ''}
+                <button data-action="close-modal">Отмена</button>
+                ${!isReadOnly ? '<button class="primary" data-action="save-person" data-person-id="' + item.id + '">Сохранить</button>' : ''}
               </div>
             </div>
           </div>
         `);
       }
 
-      function closeModal() {
-        const modal = document.querySelector('.modal-backdrop');
-        if (modal) modal.remove();
-      }
-
       function addFamilyRow() {
         const container = document.querySelector('.modal-body');
         if (!container) return;
-        const existing = container.querySelectorAll('.family-item');
+        const existing = container.querySelectorAll('.family-box');
         const idx = existing.length;
         const html = `
-          <div class="family-item">
-            <div class="grid-2">
-              <div class="field"><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" /></div>
-              <div class="field"><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" /></div>
+          <div class="family-box">
+            <div class="form-grid">
+              <div><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" /></div>
+              <div><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" /></div>
+              <div><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" /></div>
+              <div><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" /></div>
+              <div class="field-full"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes"></textarea></div>
             </div>
-            <div class="grid-2">
-              <div class="field"><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" /></div>
-              <div class="field"><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" /></div>
-            </div>
-            <div class="field"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes"></textarea></div>
-            <button class="btn danger" data-action="remove-family" data-index="${idx}">Удалить члена семьи</button>
+            <div style="margin-top:10px;"><button class="danger" data-action="remove-family" data-index="${idx}">Удалить члена семьи</button></div>
           </div>
         `;
-        const placeholder = container.querySelector('.small');
-        if (placeholder && placeholder.textContent.includes('Членов')) {
-          placeholder.remove();
-        }
-        const section = container.querySelectorAll('.section')[2];
+        const placeholder = container.querySelector('.muted');
+        if (placeholder && placeholder.textContent.includes('Членов')) placeholder.remove();
+        const section = Array.from(container.querySelectorAll('.section')).find(el => el.textContent.includes('Члены семьи'));
         if (section) {
           section.insertAdjacentHTML('afterend', html);
         } else {
@@ -861,33 +976,31 @@
         if (!container) return;
         const idx = container.querySelectorAll('[data-custom-key]').length;
         const html = `
-          <div class="grid-2" style="margin-bottom:8px;">
-            <input data-custom-key="${idx}" data-custom-type="key" placeholder="Название" />
-            <div style="display:flex; gap:8px;">
-              <input data-custom-key="${idx}" data-custom-type="value" placeholder="Значение" />
-              <button class="btn danger" data-action="remove-custom" data-index="${idx}">×</button>
+          <div class="custom-box">
+            <div class="form-grid">
+              <div><label>Название</label><input data-custom-key="${idx}" data-custom-type="key" placeholder="Название" /></div>
+              <div><label>Значение</label><input data-custom-key="${idx}" data-custom-type="value" placeholder="Значение" /></div>
             </div>
+            <div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="${idx}">Удалить</button></div>
           </div>
         `;
-        const lastSection = document.querySelectorAll('.section');
-        const targetSection = lastSection[lastSection.length - 2];
-        if (targetSection) {
-          targetSection.insertAdjacentHTML('afterend', html);
+        const section = Array.from(container.querySelectorAll('.section')).find(el => el.textContent.includes('Дополнительные поля'));
+        if (section) {
+          section.insertAdjacentHTML('afterend', html);
         } else {
           container.insertAdjacentHTML('beforeend', html);
         }
       }
 
       function collectCustomFields() {
-        const result = [];
-        const nodeList = document.querySelectorAll('[data-custom-type]');
         const map = new Map();
-        nodeList.forEach(el => {
+        document.querySelectorAll('[data-custom-type]').forEach(el => {
           const idx = el.getAttribute('data-custom-key');
           if (!map.has(idx)) map.set(idx, {});
           const item = map.get(idx);
           item[el.getAttribute('data-custom-type')] = el.value.trim();
         });
+        const result = [];
         map.forEach(item => {
           if (item.key || item.value) result.push({ key: item.key || '', value: item.value || '' });
         });
@@ -895,36 +1008,20 @@
       }
 
       function collectFamilyFields() {
-        const result = [];
-        const items = document.querySelectorAll('[data-family-field]');
         const map = new Map();
-        items.forEach(el => {
+        document.querySelectorAll('[data-family-field]').forEach(el => {
           const idx = el.getAttribute('data-family-index');
           if (!map.has(idx)) map.set(idx, {});
           const item = map.get(idx);
           item[el.getAttribute('data-family-field')] = el.value.trim();
         });
+        const result = [];
         map.forEach(item => {
           if (item.name || item.relation || item.phone || item.contact || item.notes) {
-            result.push({
-              name: item.name || '',
-              relation: item.relation || '',
-              phone: item.phone || '',
-              contact: item.contact || '',
-              notes: item.notes || ''
-            });
+            result.push({ name: item.name || '', relation: item.relation || '', phone: item.phone || '', contact: item.contact || '', notes: item.notes || '' });
           }
         });
         return result;
-      }
-
-      async function readFileAsDataUrl(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(file);
-        });
       }
 
       function savePerson() {
@@ -1004,377 +1101,288 @@
 
       function deleteDb() {
         const db = currentDb();
-        if (!db) return;
         if (state.store.dbs.length <= 1) {
-          setStatus('error', 'Нужна хотя бы одна база');
+          setStatus('error', 'Нельзя удалить последнюю базу');
           return;
         }
-        if (!confirm('Удалить базу "' + db.name + '"?')) return;
+        if (!confirm(`Удалить базу "${db.name}"?`)) return;
         state.store.dbs = state.store.dbs.filter(item => item.id !== db.id);
-        state.activeDbId = state.store.dbs[0].id;
+        state.activeDbId = state.store.dbs[0]?.id || null;
         saveLocal();
         renderApp();
       }
 
-      function openAdmin() {
-        const users = Object.keys(state.store.users).sort();
-        const html = users.map(username => {
-          const perms = state.store.users[username].perms || defaultPerms();
-          const dbRows = state.store.dbs.map(db => {
-            const permsDb = state.store.users[username].dbPerms?.[db.id] || defaultDbPerms();
-            const lines = [
-              'read', 'add', 'edit', 'delRec', 'createDb', 'renameDb', 'delDb'
-            ].map(key => `
-              <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                <input type="checkbox" data-user="${escapeHtml(username)}" data-db="${db.id}" data-key="${key}" ${permsDb[key] ? 'checked' : ''} />
-                ${key}
-              </label>
-            `).join('');
-            return `
-              <div style="border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:10px;">
-                <strong>${escapeHtml(db.name)}</strong>
-                ${lines}
-              </div>
-            `;
-          }).join('');
+      async function doAuth() {
+        const username = document.getElementById('login-user')?.value.trim();
+        const password = document.getElementById('login-pass')?.value || '';
+        const errorEl = document.getElementById('auth-error');
+        const reg = state.mode === 'register';
 
-          const globalLines = ['read','add','edit','delRec','createDb','renameDb','delDb','blocked'].map(key => `
-            <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-              <input type="checkbox" data-global-user="${escapeHtml(username)}" data-key="${key}" ${perms[key] ? 'checked' : ''} />
-              ${key}
-            </label>
-          `).join('');
-
-          return `
-            <div style="border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px;">
-              <div style="font-weight:700; margin-bottom:10px;">${escapeHtml(username)}</div>
-              <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px;">
-                ${globalLines}
-              </div>
-              ${dbRows}
-            </div>
-          `;
-        }).join('') || '<div class="empty"><strong>Нет пользователей</strong>Пока никто не зарегистрировался.</div>';
-
-        document.getElementById('root').insertAdjacentHTML('beforeend', `
-          <div class="modal-backdrop">
-            <div class="modal">
-              <div class="modal-header">
-                <h3 style="margin:0;">Пользователи и права</h3>
-                <button class="btn" data-action="close-modal">Закрыть</button>
-              </div>
-              <div class="modal-body">${html}</div>
-            </div>
-          </div>
-        `);
-      }
-
-      function setUserPermission(username, key, value) {
-        ensureUser(username);
-        state.store.users[username].perms[key] = !!value;
-        saveLocal();
-      }
-
-      function setDbPermission(username, dbId, key, value) {
-        ensureUser(username);
-        ensureDbAccess(username, dbId);
-        state.store.users[username].dbPerms[dbId][key] = !!value;
-        saveLocal();
-      }
-
-      function handleAuthSubmit() {
-        const user = document.getElementById('login-user')?.value.trim();
-        const pass = document.getElementById('login-pass')?.value;
-        const pass2 = document.getElementById('login-pass2')?.value;
-        const err = document.getElementById('auth-error');
-
-        if (!user || !pass) {
-          err.textContent = 'Введите логин и пароль';
+        if (!username || !password) {
+          errorEl.textContent = 'Введите логин и пароль';
           return;
         }
 
-        if (state.mode === 'register') {
-          if (pass.length < 4) {
-            err.textContent = 'Пароль слишком короткий';
+        if (reg) {
+          const pass2 = document.getElementById('login-pass2')?.value || '';
+          if (password !== pass2) {
+            errorEl.textContent = 'Пароли не совпадают';
             return;
           }
-          if (!pass2 || pass !== pass2) {
-            err.textContent = 'Пароли не совпадают';
+          if (state.store.users[username]) {
+            errorEl.textContent = 'Такой пользователь уже существует';
             return;
           }
-          if (state.store.users[user]) {
-            err.textContent = 'Такой пользователь уже существует';
-            return;
-          }
-
-          (async () => {
-            const hash = await sha256(pass);
-            state.store.users[user] = { hash, perms: defaultPerms(), dbPerms: {} };
-            ensureDefaultData();
-            for (const db of state.store.dbs) ensureDbAccess(user, db.id);
-            state.currentUser = user;
-            state.activeDbId = state.store.dbs[0].id;
-            saveLocal();
-            renderApp();
-            setStatus('ok', 'Аккаунт создан');
-          })();
-          return;
-        }
-
-        (async () => {
-          const userData = state.store.users[user];
-          if (!userData) {
-            err.textContent = 'Пользователь не найден';
-            return;
-          }
-          const hash = await sha256(pass);
-          if (userData.hash !== hash) {
-            err.textContent = 'Неверный пароль';
-            return;
-          }
-          if (userData.perms.blocked) {
-            err.textContent = 'Аккаунт заблокирован';
-            return;
-          }
-          state.currentUser = user;
-          if (!state.activeDbId && state.store.dbs.length) state.activeDbId = state.store.dbs[0].id;
+          state.store.users[username] = {
+            hash: await sha256(password),
+            perms: defaultPerms(),
+            dbPerms: {}
+          };
+          for (const db of state.store.dbs) ensureDbAccess(username, db.id);
+          state.currentUser = username;
+          state.activeDbId = state.store.dbs[0]?.id || null;
+          saveLocal();
           renderApp();
-          setStatus('ok', 'Вход выполнен');
-        })();
+          setStatus('ok', 'Регистрация успешна');
+          return;
+        }
+
+        const user = state.store.users[username];
+        if (!user) {
+          errorEl.textContent = 'Пользователь не найден';
+          return;
+        }
+
+        const hash = await sha256(password);
+        if (user.hash !== hash) {
+          errorEl.textContent = 'Неверный логин или пароль';
+          return;
+        }
+
+        if (user.perms.blocked) {
+          errorEl.textContent = 'Пользователь заблокирован';
+          return;
+        }
+
+        state.currentUser = username;
+        errorEl.textContent = '';
+        renderApp();
+        setStatus('ok', `Добро пожаловать, ${username}`);
+      }
+
+      function logout() {
+        state.currentUser = null;
+        renderAuth();
+        setStatus('ok', 'Вы вышли из системы');
       }
 
       function resetStore() {
-        if (!confirm('Сбросить локальные данные?')) return;
+        if (!confirm('Сбросить локальные данные и вернуть форму входа?')) return;
         localStorage.removeItem(STORAGE_KEY);
         state.store = { users: {}, dbs: [] };
         state.currentUser = null;
         state.activeDbId = null;
         state.mode = 'login';
-        ensureDefaultData();
+        state.search = '';
         renderAuth();
+        setStatus('ok', 'Хранилище сброшено');
       }
 
-      function bindActions() {
+      function bindRootEvents() {
         document.addEventListener('click', async (event) => {
           const target = event.target.closest('[data-action]');
           if (!target) return;
-
           const action = target.dataset.action;
 
-          if (action === 'switch-mode') {
-            state.mode = target.dataset.mode;
-            renderAuth();
-            return;
-          }
-
-          if (action === 'do-auth') {
-            handleAuthSubmit();
-            return;
-          }
-
-          if (action === 'reset-store') {
-            resetStore();
-            return;
-          }
-
-          if (action === 'logout') {
-            state.currentUser = null;
-            state.activeDbId = null;
-            renderAuth();
-            return;
-          }
-
-          if (action === 'select-db') {
-            state.activeDbId = target.dataset.dbId;
-            renderApp();
-            return;
-          }
-
-          if (action === 'new-db') {
-            addDb();
-            return;
-          }
-
-          if (action === 'rename-db') {
-            renameDb();
-            return;
-          }
-
-          if (action === 'delete-db') {
-            deleteDb();
-            return;
-          }
-
-          if (action === 'new-person') {
-            if (!canDb('add', currentDb().id)) return;
-            openPersonModal();
-            return;
-          }
-
-          if (action === 'open-person') {
-            const personId = target.dataset.personId;
-            if (personId) openPersonModal(personId);
-            return;
-          }
-
-          if (action === 'close-modal') {
-            closeModal();
-            return;
-          }
-
-          if (action === 'save-person') {
-            if (!canDb('edit', currentDb().id) && !canDb('add', currentDb().id)) return;
-            savePerson();
-            return;
-          }
-
-          if (action === 'delete-person') {
-            const personId = target.dataset.personId;
-            if (personId) deletePerson(personId);
-            return;
-          }
-
-          if (action === 'add-custom-row') {
-            addCustomRow();
-            return;
-          }
-
-          if (action === 'remove-custom') {
-            const idx = Number(target.dataset.index);
-            const inputs = document.querySelectorAll('[data-custom-key="' + idx + '"]');
-            inputs.forEach(node => node.closest('.grid-2')?.remove());
-            return;
-          }
-
-          if (action === 'add-family-row') {
-            addFamilyRow();
-            return;
-          }
-
-          if (action === 'remove-family') {
-            const idx = Number(target.dataset.index);
-            document.querySelectorAll('[data-family-index="' + idx + '"]').forEach(node => node.closest('.family-item')?.remove());
-            return;
-          }
-
-          if (action === 'remove-photo') {
-            const db = currentDb();
-            const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-            const rec = (db.recs || []).find(r => r.id === personId);
-            if (rec) rec.photo = '';
-            closeModal();
-            openPersonModal(personId);
-            return;
-          }
-
-          if (action === 'open-admin') {
-            openAdmin();
-            return;
+          switch (action) {
+            case 'switch-mode':
+              state.mode = target.dataset.mode || 'login';
+              renderAuth();
+              break;
+            case 'do-auth':
+              await doAuth();
+              break;
+            case 'reset-store':
+              resetStore();
+              break;
+            case 'logout':
+              logout();
+              break;
+            case 'new-db':
+              addDb();
+              break;
+            case 'select-db':
+              state.activeDbId = target.dataset.dbId;
+              renderApp();
+              break;
+            case 'new-person':
+              openPersonModal(null);
+              break;
+            case 'open-person':
+              openPersonModal(target.dataset.personId);
+              break;
+            case 'close-modal':
+              closeModal();
+              break;
+            case 'save-person':
+              savePerson();
+              break;
+            case 'delete-person':
+              deletePerson(target.dataset.personId);
+              break;
+            case 'rename-db':
+              renameDb();
+              break;
+            case 'delete-db':
+              deleteDb();
+              break;
+            case 'open-admin':
+              openAdminPanel();
+              break;
+            case 'delete-user':
+              {
+                const user = target.dataset.user;
+                if (user === ADMIN_USER) {
+                  setStatus('error', 'Нельзя удалить администратора');
+                  return;
+                }
+                if (confirm(`Удалить пользователя ${user}?`)) {
+                  delete state.store.users[user];
+                  saveLocal();
+                  closeModal();
+                  renderApp();
+                }
+              }
+              break;
+            case 'add-family-row':
+              addFamilyRow();
+              break;
+            case 'remove-family':
+              {
+                const idx = Number(target.dataset.index);
+                const box = document.querySelector('[data-family-index="' + idx + '"]')?.closest('.family-box');
+                if (box) box.remove();
+              }
+              break;
+            case 'add-custom-row':
+              addCustomRow();
+              break;
+            case 'remove-custom':
+              {
+                const idx = Number(target.dataset.index);
+                const box = document.querySelector('[data-custom-key="' + idx + '"]')?.closest('.custom-box');
+                if (box) box.remove();
+              }
+              break;
+            case 'remove-photo':
+              {
+                const db = currentDb();
+                const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+                const rec = (db.recs || []).find(r => r.id === personId);
+                if (rec) rec.photo = '';
+                closeModal();
+                openPersonModal(personId || rec?.id);
+              }
+              break;
+            case 'remove-document':
+              {
+                const docId = target.dataset.docId;
+                const db = currentDb();
+                const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+                const rec = (db.recs || []).find(r => r.id === personId);
+                if (rec) rec.documents = (rec.documents || []).filter(doc => String(doc.id || '') !== String(docId));
+                saveLocal();
+                closeModal();
+                openPersonModal(personId);
+              }
+              break;
+            default:
+              break;
           }
         });
 
         document.addEventListener('input', (event) => {
-          const target = event.target;
-          if (target.id === 'person-search') {
-            state.search = target.value;
-            renderApp();
+          const searchInput = event.target.closest('#person-search');
+          if (searchInput) {
+            state.search = searchInput.value;
+            const db = currentDb();
+            const tableBody = document.querySelector('tbody');
+            if (tableBody) tableBody.innerHTML = renderRows(db.recs || []);
           }
         });
 
         document.addEventListener('change', (event) => {
-          const target = event.target;
+          const userCheckbox = event.target.closest('[data-role="toggle-block"]');
+          if (!userCheckbox) return;
+          const user = userCheckbox.dataset.user;
+          if (!user || !state.store.users[user]) return;
+          state.store.users[user].perms = state.store.users[user].perms || defaultPerms();
+          state.store.users[user].perms.blocked = !!userCheckbox.checked;
+          saveLocal();
+        });
 
-          if (target.matches('[data-global-user]')) {
-            const user = target.dataset.globalUser;
-            const key = target.dataset.key;
-            setUserPermission(user, key, target.checked);
-            return;
+        document.addEventListener('change', (event) => {
+          const imgInput = event.target.closest('[data-role="photo-upload"]');
+          if (!imgInput || !imgInput.files || !imgInput.files[0]) return;
+          const file = imgInput.files[0];
+          const reader = new FileReader();
+          reader.onload = () => {
+            const db = currentDb();
+            const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+            let rec = personId ? (db.recs || []).find(r => r.id === personId) : null;
+            if (!rec) {
+              rec = { id: uid() };
+              db.recs.push(rec);
+            }
+            rec.photo = reader.result;
+            saveLocal();
+            closeModal();
+            openPersonModal(personId || rec.id);
+          };
+          reader.readAsDataURL(file);
+        });
+
+        document.addEventListener('change', (event) => {
+          const pdfInput = event.target.closest('[data-role="pdf-upload"]');
+          if (!pdfInput || !pdfInput.files) return;
+          const files = Array.from(pdfInput.files);
+          if (!files.length) return;
+          const db = currentDb();
+          const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+          let rec = personId ? (db.recs || []).find(r => r.id === personId) : null;
+          if (!rec) {
+            rec = { id: uid() };
+            db.recs.push(rec);
           }
-
-          if (target.matches('[data-user][data-db]')) {
-            const user = target.dataset.user;
-            const db = target.dataset.db;
-            const key = target.dataset.key;
-            setDbPermission(user, db, key, target.checked);
-            return;
-          }
-
-          if (target.matches('[data-role="photo-upload"]')) {
-            const file = target.files && target.files[0];
-            if (!file) return;
-            (async () => {
-              const dataUrl = await readFileAsDataUrl(file);
-              const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-              const db = currentDb();
-              let rec = (db.recs || []).find(r => r.id === personId);
-              if (!rec) {
-                rec = { id: uid() };
-                db.recs.push(rec);
-              }
-              rec.photo = dataUrl;
-              const modal = document.querySelector('.modal-backdrop');
-              if (modal) modal.remove();
-              openPersonModal(personId || rec.id);
-            })();
-            return;
-          }
-
-          if (target.matches('[data-role="pdf-upload"]')) {
-            const files = target.files || [];
-            (async () => {
-              const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-              const db = currentDb();
-              let rec = (db.recs || []).find(r => r.id === personId);
-              if (!rec) {
-                rec = { id: uid() };
-                db.recs.push(rec);
-              }
-              rec.documents = rec.documents || [];
-              for (const file of files) {
-                const dataUrl = await readFileAsDataUrl(file);
-                rec.documents.push({
-                  id: uid(),
-                  name: file.name,
-                  size: (file.size / 1024).toFixed(1) + ' KB',
-                  dataUrl
-                });
-              }
+          rec.documents = rec.documents || [];
+          files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              rec.documents.push({
+                id: uid(),
+                name: file.name,
+                size: `${Math.round(file.size / 1024)} KB`,
+                dataUrl: reader.result
+              });
               saveLocal();
               closeModal();
               openPersonModal(personId || rec.id);
-            })();
-          }
-        });
-
-        document.addEventListener('keydown', (event) => {
-          if (event.key === 'Escape') {
-            const modal = document.querySelector('.modal-backdrop');
-            if (modal) modal.remove();
-          }
-          if (event.key === 'Enter') {
-            const active = document.activeElement;
-            if (active && (active.id === 'login-user' || active.id === 'login-pass' || active.id === 'login-pass2')) {
-              handleAuthSubmit();
-            }
-          }
+            };
+            reader.readAsDataURL(file);
+          });
         });
       }
 
-      function start() {
+      async function init() {
         loadLocal();
         ensureDefaultData();
-        bindActions();
-        if (state.store.users[ADMIN]) {
-          state.currentUser = ADMIN;
-          state.activeDbId = state.store.dbs[0]?.id || null;
-          renderApp();
-          setStatus('ok', 'Готово');
-        } else {
-          renderAuth();
-        }
+        await ensureAdminSeed();
+        saveLocal();
+        bindRootEvents();
+        renderAuth();
       }
 
-      start();
+      init();
     })();
   </script>
 </body>
