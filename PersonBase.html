@@ -48,6 +48,7 @@ label{display:block;font-size:12px;color:var(--mut);margin:0 0 4px}
 .dbi{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;border:0;background:none;width:100%;text-align:left;color:inherit}
 .dbi:hover{background:var(--side2)}
 .dbi.on{background:var(--acc);color:#fff}
+.dbi.no{opacity:.45}
 .dbi .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dbi .c{font-size:12px;opacity:.7}
 .main{display:flex;flex-direction:column;min-width:0;min-height:0;padding:18px 22px}
@@ -116,7 +117,7 @@ input:disabled,textarea:disabled,select:disabled{opacity:.75;cursor:default}
 (function(){
 "use strict";
 var cur=null, owner=null, dbId=null, q="", sortK="fio", sortD=1, mode="login";
-var fh=null, lastMod=0, store={users:{},tomb:{}}, queue=Promise.resolve(), pending=false, stState="ok", stText="";
+var fh=null, lastMod=0, store={users:{},dbs:[],tomb:{}}, queue=Promise.resolve(), pending=false, stState="ok", stText="";
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s==null?"":s).replace(/[&<>\"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
@@ -130,22 +131,37 @@ function isSuper(){return cur===SUPER}
 function perms(n){var u=store.users[n],o={},k;for(k in DEF)o[k]=DEF[k];if(u&&u.perms)for(k in u.perms)o[k]=u.perms[k];return o}
 function can(p){return isSuper()||perms(cur)[p]===true}
 function user(){if(!store.users[owner])owner=cur;return store.users[owner]}
-function db(){var u=user();if(!u||!u.dbs||!u.dbs.length)return {id:null,name:"База",recs:[]};return u.dbs.filter(function(d){return d.id===dbId})[0]||u.dbs[0]}
-var FIELDS=[["fio","ФИО","text"],["personalNumber","Личный номер","text"],["birth","Дата рождения","date"],["phone","Телефон","tel"],["email","Почта","email"],["address","Адрес","text"],["position","Должность / звание","text"],["deathDate","Дата смерти","date"],["militaryCommissariat","Военкомат","text"],["relativeContact","Связь с родственниками","text"]];
-var TAG_FIELDS=[
-  ["paymentStatus","Статус выплаты",["Не выплачено","Выплачено"]],
-  ["exclusionStatus","Статус исключения",["Не исключен","Исключен"]],
-  ["ninetyEightStatus","98 указ",["Нет","Да"]]
-];
-function normaliseRecord(r){
-  if(!r)return {id:uid(),fio:"",custom:[],family:[],documents:[],photo:"",notes:""};
-  if(!Array.isArray(r.custom))r.custom=[];
-  if(!Array.isArray(r.family))r.family=[];
-  if(!Array.isArray(r.documents))r.documents=[];
-  if(!r.photo)r.photo="";
-  if(!r.notes)r.notes="";
-  return r;
+function defaultDbPerms(){return {read:true,add:true,edit:true,delRec:true,createDb:true,renameDb:true,delDb:false};}
+function getDbPerms(userName, dbId){
+  var u=store.users[userName]||{};
+  var map=u.dbPerms||{};
+  if(!dbId){return defaultDbPerms();}
+  var permsObj = map[dbId] || {};
+  var out=defaultDbPerms();
+  for(var k in permsObj){if(permsObj[k]!==undefined)out[k]=permsObj[k];}
+  return out;
 }
+function canDb(action,dbId){
+  if(!dbId)return true;
+  if(isSuper())return true;
+  return !!getDbPerms(cur,dbId)[action];
+}
+function db(){
+  if(!store.dbs||!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}
+  var hit=store.dbs.filter(function(d){return d.id===dbId})[0];
+  if(!hit){dbId=store.dbs[0].id;hit=store.dbs[0];}
+  return hit;
+}
+function ensureDbAccess(username, dbId){
+  if(!username || !dbId)return;
+  var u=store.users[username];
+  if(!u){return;}
+  if(!u.dbPerms)u.dbPerms={};
+  if(!u.dbPerms[dbId])u.dbPerms[dbId]=defaultDbPerms();
+}
+var FIELDS=[["fio","ФИО","text"],["personalNumber","Личный номер","text"],["birth","Дата рождения","date"],["phone","Телефон","tel"],["email","Почта","email"],["address","Адрес","text"],["position","Должность / звание","text"],["deathDate","Дата смерти","date"],["militaryCommissariat","Военкомат","text"],["relativeContact","Связь с родственниками","text"]];
+var TAG_FIELDS=[["paymentStatus","Статус выплаты",["Не выплачено","Выплачено"]],["exclusionStatus","Статус исключения",["Не исключен","Исключен"]],["ninetyEightStatus","98 указ",["Нет","Да"]]];
+function normaliseRecord(r){if(!r)return {id:uid(),fio:"",custom:[],family:[],documents:[],photo:"",notes:""};if(!Array.isArray(r.custom))r.custom=[];if(!Array.isArray(r.family))r.family=[];if(!Array.isArray(r.documents))r.documents=[];if(!r.photo)r.photo="";if(!r.notes)r.notes="";return r;}
 function simple(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return"s"+h}
 function hash(s){
   try{
@@ -170,344 +186,67 @@ function mergeDbs(l1,l2){
 function merge(a,b){
   var tomb={},k;
   [a.tomb||{},b.tomb||{}].forEach(function(t){for(k in t){if(!tomb[k]||t[k]>tomb[k])tomb[k]=t[k]}});
-  var users={},names={};
+  var users={},names={},allDbs=[];
   Object.keys(a.users||{}).concat(Object.keys(b.users||{})).forEach(function(n){names[n]=1});
   Object.keys(names).forEach(function(n){
     var x=(a.users||{})[n],y=(b.users||{})[n];
-    var dbs=mergeDbs(x&&x.dbs,y&&y.dbs).filter(function(d){return !tomb[d.id]});
+    if(x&&x.dbPerms){};
+    if(x&&x.dbs)allDbs=allDbs.concat(x.dbs||[]);
+    if(y&&y.dbs)allDbs=allDbs.concat(y.dbs||[]);
+    var dbs=mergeDbs((x&&x.dbs)||(a.dbs||[]),(y&&y.dbs)||(b.dbs||[])).filter(function(d){return !tomb[d.id]});
     dbs.forEach(function(d){d.recs=d.recs.filter(function(r){return !(tomb[r.id]&&tomb[r.id]>=(r.upd||0))})});
-    var src=!y?x:!x?y:((x.pts||0)>=(y.pts||0)?x:y);users[n]={hash:src.hash,perms:src.perms,pts:src.pts||0,dbs:dbs};
+    var src=!y?x:!x?y:((x.pts||0)>=(y.pts||0)?x:y);users[n]={hash:src.hash,perms:src.perms,pts:src.pts||0,dbPerms:src.dbPerms||{},dbs:(src.dbs||[])};
   });
-  return{users:users,tomb:tomb};
+  var shared=mergeDbs((a.dbs||[]),(b.dbs||[]));
+  if(!shared.length&&allDbs.length)shared=mergeDbs(allDbs,[]);
+  return{users:users,dbs:shared,tomb:tomb};
 }
 async function refreshLatestFromFile(){
-  if(!fh) return false;
-  try {
-    await pull();
-    return true;
-  } catch (e) {
-    setStatus("er","Не удалось обновить данные");
-    return false;
-  }
+  if(!fh)return false;
+  try{await pull();return true;}catch(e){setStatus("er","Не удалось обновить данные");return false;}
 }
-function setStatus(s,t){
-  stState=s;stText=t||"";var el=$("#st");
-  if(el){el.className="pill "+s;el.innerHTML="<b></b><span>"+esc(stText)+"</span>"}
-}
+function setStatus(s,t){stState=s;stText=t||"";var el=$("#st");if(el){el.className="pill "+s;el.innerHTML="<b></b><span>"+esc(stText)+"</span>"}}
 function fname(){return fh?fh.name:""}
-async function readRemote(){
-  var f=await fh.getFile();lastMod=f.lastModified;
-  var t=await f.text();if(!t.trim())return null;
-  return JSON.parse(t);
-}
-async function pull(){
-  var r=await readRemote();
-  if(r)store=merge(store,r);
-}
-function persist(){
-  queue=queue.then(async function(){
-    if(!fh)return;
-    try{
-      setStatus("sv","Сохранение…");
-      await refreshLatestFromFile();
-      var w=await fh.createWritable();
-      await w.write(JSON.stringify(store));
-      await w.close();
-      lastMod=(await fh.getFile()).lastModified;
-      setStatus("ok","Синхронизировано · "+fname());
-    }catch(e){setStatus("er","Ошибка записи в файл")}
-  });
-  return queue;
-}
+async function readRemote(){var f=await fh.getFile();lastMod=f.lastModified;var t=await f.text();if(!t.trim())return null;return JSON.parse(t);}
+async function pull(){var r=await readRemote();if(r){store=merge(store,r);if(!store.dbs)store.dbs=[];Object.keys(store.users||{}).forEach(function(un){var u=store.users[un];if(!u.dbPerms)u.dbPerms={};(store.dbs||[]).forEach(function(db){ensureDbAccess(un,db.id)});});}}
+function persist(){queue=queue.then(async function(){if(!fh)return;try{setStatus("sv","Сохранение…");await refreshLatestFromFile();var w=await fh.createWritable();await w.write(JSON.stringify(store));await w.close();lastMod=(await fh.getFile()).lastModified;setStatus("ok","Синхронизировано · "+fname());}catch(e){setStatus("er","Ошибка записи в файл")}});return queue;}
 function modalOpen(){return !!$("#modal").innerHTML}
-async function poll(){
-  if(!fh)return;
-  try{
-    var f=await fh.getFile();
-    if(f.lastModified!==lastMod){await queue;await pull();pending=true;setStatus("ok","Обновлено · "+fname())}
-    if(pending&&cur&&!modalOpen()){
-      var a=document.activeElement;
-      if(!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT"))){pending=false;if(store.users[cur])renderApp();else{cur=null;renderAuth()}}
-    }else if(pending&&!cur){pending=false;renderAuth()}
-  }catch(e){setStatus("er","Нет доступа к файлу")}
-}
-function idb(){
-  return new Promise(function(res,rej){
-    var r=indexedDB.open("personbase",1);
-    r.onupgradeneeded=function(){r.result.createObjectStore("kv")};
-    r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)};
-  });
-}
+async function poll(){if(!fh)return;try{var f=await fh.getFile();if(f.lastModified!==lastMod){await queue;await pull();pending=true;setStatus("ok","Обновлено · "+fname())}if(pending&&cur&&!modalOpen()){var a=document.activeElement;if(!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT"))){pending=false;if(store.users[cur])renderApp();else{cur=null;renderAuth()}}}else if(pending&&!cur){pending=false;renderAuth()}}catch(e){setStatus("er","Нет доступа к файлу")}}
+function idb(){return new Promise(function(res,rej){var r=indexedDB.open("personbase",1);r.onupgradeneeded=function(){r.result.createObjectStore("kv")};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}})}
 async function idbGet(k){try{var d=await idb();return await new Promise(function(res){var r=d.transaction("kv").objectStore("kv").get(k);r.onsuccess=function(){res(r.result)};r.onerror=function(){res(null)}})}catch(e){return null}}
 async function idbSet(k,v){try{var d=await idb();await new Promise(function(res){var t=d.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=res;t.onerror=res})}catch(e){}}
 var PICK={types:[{description:"База PersonBase (JSON)",accept:{"application/json":[".json"]}}]};
-async function attach(handle,isNew){
-  fh=handle;
-  try{
-    store={users:{},tomb:{}};
-    var r=await readRemote();
-    if(r)store=merge(store,r);
-    await idbSet("fh",handle);
-    if(isNew||!r)await persist();
-    try{var s=sessionStorage.getItem("pb_user");if(s&&store.users[s]){cur=s;owner=s}}catch(e){}
-    setStatus("ok","Синхронизировано · "+fname());
-    setInterval(poll,3000);
-    render();
-  }catch(e){fh=null;renderConnect("Не удалось прочитать файл. Это точно файл базы PersonBase?")}
-}
+async function attach(handle,isNew){fh=handle;try{store={users:{},dbs:[],tomb:{}};var r=await readRemote();if(r)store=merge(store,r);if(!store.dbs)store.dbs=[];Object.keys(store.users||{}).forEach(function(un){var u=store.users[un];if(!u.dbPerms)u.dbPerms={};(store.dbs||[]).forEach(function(db){ensureDbAccess(un,db.id)});});await idbSet("fh",handle);if(isNew||!r)await persist();try{var s=sessionStorage.getItem("pb_user");if(s&&store.users[s]){cur=s;owner=s}}catch(e){}setStatus("ok","Синхронизировано · "+fname());setInterval(poll,3000);render();}catch(e){fh=null;renderConnect("Не удалось прочитать файл. Это точно файл базы PersonBase?")}}
 async function openFile(){try{var h=await window.showOpenFilePicker(PICK);await attach(h[0],false)}catch(e){}}
 async function createFile(){try{var h=await window.showSaveFilePicker({suggestedName:"personbase.json",types:PICK.types});await attach(h,true)}catch(e){}}
-async function resume(h){
-  try{var p=await h.requestPermission({mode:"readwrite"});if(p==="granted")await attach(h,false);else renderConnect("Нужно разрешение на доступ к файлу")}catch(e){renderConnect("Невозможно продолжить с этим файлом")}
-}
+async function resume(h){try{var p=await h.requestPermission({mode:"readwrite"});if(p==="granted")await attach(h,false);else renderConnect("Нужно разрешение на доступ к файлу")}catch(e){renderConnect("Невозможно продолжить с этим файлом")}}
 var saved=null;
-function renderConnect(msg){
-  if(!window.showOpenFilePicker){
-    $("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Этот браузер не умеет работать с общим файловым хранилищем. Используйте Chromium/Chrome/Edge.</p></div></div>';
-    return;
-  }
-  $("#root").innerHTML='<div class="auth"><div class="acard stack"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Подключите файл базы. Положите его в любое место на компьютере.</p>'+(saved?'<button class="btn pri" data-a="resume">Продолжить с файлом «'+esc(saved.name)+'»</button>':"")+'<button class="btn'+(saved?"":" pri")+'" data-a="openf">Открыть существующий файл</button><button class="btn" data-a="newf">Создать новый файл базы</button>'+(msg?'<div class="err" style="margin-top:10px">'+esc(msg)+'</div>':'')+'</div></div>';
-}
+function renderConnect(msg){if(!window.showOpenFilePicker){$("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Этот браузер не умеет работать с общим файловым хранилищем. Используйте Chromium/Chrome/Edge.</p></div></div>';return}$("#root").innerHTML='<div class="auth"><div class="acard stack"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Подключите файл базы. Положите его в любое место на компьютере.</p>'+(saved?'<button class="btn pri" data-a="resume">Продолжить с файлом «'+esc(saved.name)+'»</button>':"")+'<button class="btn'+(saved?"":" pri")+'" data-a="openf">Открыть существующий файл</button><button class="btn" data-a="newf">Создать новый файл базы</button>'+(msg?'<div class="err" style="margin-top:10px">'+esc(msg)+'</div>':'')+'</div></div>'}
 function render(){if(!fh)renderConnect();else if(cur&&store.users[cur])renderApp();else renderAuth()}
-function renderAuth(){
-  var reg=mode==="reg";
-  $("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">У каждого аккаунта свои базы данных.</p>'+'<div class="tabs"><button data-a="mode" data-m="login" class="'+(reg?"":"on")+'">Вход</button><button data-a="mode" data-m="reg" class="'+(reg?"on":"")+'">Регистрация</button></div>'+'<div class="fld"><label for="lu">Логин</label><input id="lu" autocomplete="username" maxlength="30"></div>'+'<div class="fld"><label for="lp">Пароль</label><input id="lp" type="password" autocomplete="'+(reg?"new-password":"current-password")+'"></div>'+(reg?'<div class="fld"><label for="lp2">Повторите пароль</label><input id="lp2" type="password" autocomplete="new-password"></div>':"")+'<div class="err" id="aerr"></div><button class="btn pri" style="width:100%" data-a="auth">'+(reg?"Создать аккаунт":"Войти")+'</button>'+'<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center"><div class="pill" id="st"></div><button class="btn" data-a="chfile" style="padding:5px 10px;font-size:12px">Сменить файл</button></div>'+'</div></div>';
-  setStatus(stState,stText);
-}
-async function doAuth(){
-  var u=$("#lu").value.trim(),p=$("#lp").value,err=$("#aerr");
-  if(!u||!p){err.textContent="Введите логин и пароль";return}
-  try{await queue;await refreshLatestFromFile()}catch(e){err.textContent="Нет доступа к файлу базы";return}
-  var h=await hash(p);
-  if(mode==="reg"){
-    if(u.length<3){err.textContent="Логин — минимум 3 символа";return}
-    if(u.toLowerCase()===SUPER.toLowerCase()){err.textContent="Этот логин зарезервирован";return}
-    if(p.length<4){err.textContent="Пароль — минимум 4 символа";return}
-    if(p!==$("#lp2").value){err.textContent="Пароли не совпадают";return}
-    if(store.users[u]){err.textContent="Такой логин уже занят";return}
-    store.users[u]={hash:h,dbs:[{id:uid(),name:"Основная база",nts:now(),recs:[]}]};
-    persist();
-  }else{
-    if(u===SUPER){
-      if(SH.indexOf(h)<0){err.textContent="Неверный пароль";return}
-      if(!store.users[SUPER]){store.users[SUPER]={hash:"-",dbs:[{id:uid(),name:"Основная база",nts:now(),recs:[]}]};persist()}
-    }else{
-      var us=store.users[u];
-      if(!us){err.textContent="Аккаунт не найден";return}
-      if(us.hash!==h){err.textContent="Неверный пароль";return}
-      if(perms(u).blocked){err.textContent="Аккаунт заблокирован администратором";return}
-    }
-  }
-  cur=u;owner=u;dbId=null;q="";try{sessionStorage.setItem("pb_user",u)}catch(e){}
-  renderApp();
-}
-function renderApp(){
-  if(!isSuper()&&perms(cur).blocked){cur=null;renderAuth();return}
-  var u=user(),d=db();if(!d||!d.id){u.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];d=u.dbs[0];dbId=d.id}
-  function items(n,dbs){return dbs.map(function(x){return'<button class="dbi'+(n===owner&&x.id===d.id?" on":"")+'" data-a="pick" data-o="'+esc(n)+'" data-id="'+x.id+'"><span>🗄</span><span class="n">'+esc(x.name)+'</span><span class="c">'+x.recs.length+'</span></button>'}).join("")}
-  var side;
-  if(isSuper()){side=Object.keys(store.users).sort(function(a,b){return a===SUPER?-1:b===SUPER?1:(a.toLowerCase()<b.toLowerCase()?-1:1)}).map(function(n){return'<div class="grp">'+esc(n)+(n===SUPER?' <small>(admin)</small>':'')+'</div>'+'<div class="dbs">'+items(n,store.users[n].dbs)+'</div>'}).join("")}
-  else side=items(cur,u.dbs);
-  $("#root").innerHTML='<div class="app"><div class="top"><div class="logo" style="margin:0;font-size:17px"><i>▤</i>PersonBase</div><div class="sp"></div><div class="pill" id="st"></div>'+(isSuper()?'<button class="btn" data-a="users">Пользователи</button>':"")+'<button class="btn" data-a="theme" title="Тема">◐</button><div class="user"><div class="ava">'+esc(ini(cur))+'</div><span>'+esc(cur)+'</span></div><button class="btn" data-a="logout">Выход</button></div>'+'<aside class="side"><h4>Базы данных'+(can("createDb")?'<button data-a="newdb" title="Новая база">+</button>':'')+'</h4>'+side+'</aside>'+'<main class="main"><div class="head"><h2>'+esc(d.name)+(isSuper()&&owner!==cur?' <small style="color:var(--mut);font-weight:400">· '+esc(owner)+'</small>':"")+'</h2><input class="srch" id="q" value="'+esc(q)+'" type="search" placeholder="Поиск по ФИО, личному номеру, телефону..."><button class="btn" data-a="add"'+(can("add")?'':' disabled')+'>Добавить человека</button>'+(can("renameDb")?'<button class="btn" data-a="rendb">Переименовать</button>':'')+(can("delDb")?'<button class="btn dng" data-a="deldb">Удалить базу</button>':'')+'</div><div class="tw" id="tw"></div></main></div>';
-  setStatus(stState,stText);renderTable();
-}
-function renderTable(){
-  var d=db(),s=q.toLowerCase();
-  var rows=d.recs.filter(function(r){
-    r=normaliseRecord(r);
-    if(!s)return true;
-    var hay=[r.fio,r.notes,r.personalNumber,r.phone,r.email,r.address,r.position,r.militaryCommissariat,r.relativeContact,r.deathDate].concat((r.custom||[]).map(function(c){return c.k+" "+c.v})).concat((r.family||[]).map(function(f){return (f.name||"")+" "+(f.relation||"")+" "+(f.phone||"")+" "+(f.notes||"") })).join(" ").toLowerCase();
-    return hay.indexOf(s)>-1;
-  });
-  rows.sort(function(a,b){var x=String(a[sortK]||"").toLowerCase(),y=String(b[sortK]||"").toLowerCase();return x<y?-sortD:x>y?sortD:0});
-  var tw=$("#tw");
-  if(!can("read")){tw.innerHTML='<div class="empty"><b>Нет доступа</b>Администратор не выдал вам право чтения.</div>';return}
-  if(!d.recs.length){tw.innerHTML='<div class="empty"><b>В этой базе пока пусто</b>Нажмите «Добавить человека», введите ФИО и заполните карточку.</div>';return}
-  if(!rows.length){tw.innerHTML='<div class="empty"><b>Ничего не найдено</b>Измените запрос поиска.</div>';return}
-  var cols=[["fio","ФИО"],["personalNumber","Личный номер"],["birth","Дата рождения"],["phone","Телефон"],["position","Должность / звание"],["paymentStatus","Выплата"],["upd","Обновлено"]];
-  var th=cols.map(function(c){return'<th data-a="sort" data-k="'+c[0]+'">'+c[1]+(sortK===c[0]?(sortD>0?" ▲":" ▼"):"")+'</th>'}).join("");
-  var tb=rows.map(function(r){
-    r=normaliseRecord(r);
-    var tag = r.paymentStatus || "Не выплачено";
-    return'<tr data-a="open" data-id="'+r.id+'"><td><div class="nm"><span class="ava">'+esc(ini(r.fio))+'</span>'+esc(r.fio)+'</div></td><td>'+esc(r.personalNumber||"")+'</td><td>'+esc(fmtD(r.birth))+'</td><td>'+esc(r.phone||"")+'</td><td>'+esc(r.position||"")+'</td><td>'+esc(tag)+'</td><td>'+esc(fmtD(r.upd))+'</td></tr>'
-  }).join("");
-  tw.innerHTML='<table><thead><tr>'+th+'</tr></thead><tbody>'+tb+'</tbody></table>';
-}
+function renderAuth(){var reg=mode==="reg";$("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">У каждого аккаунта свои базы данных.</p>'+'<div class="tabs"><button data-a="mode" data-m="login" class="'+(reg?"":"on")+'">Вход</button><button data-a="mode" data-m="reg" class="'+(reg?"on":"")+'">Регистрация</button></div>'+'<div class="fld"><label for="lu">Логин</label><input id="lu" autocomplete="username" maxlength="30"></div>'+'<div class="fld"><label for="lp">Пароль</label><input id="lp" type="password" autocomplete="'+(reg?"new-password":"current-password")+'"></div>'+(reg?'<div class="fld"><label for="lp2">Повторите пароль</label><input id="lp2" type="password" autocomplete="new-password"></div>':"")+'<div class="err" id="aerr"></div><button class="btn pri" style="width:100%" data-a="auth">'+(reg?"Создать аккаунт":"Войти")+'</button>'+'<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center"><div class="pill" id="st"></div><button class="btn" data-a="chfile" style="padding:5px 10px;font-size:12px">Сменить файл</button></div>'+'</div></div>';setStatus(stState,stText)}
+async function doAuth(){var u=$("#lu").value.trim(),p=$("#lp").value,err=$("#aerr");if(!u||!p){err.textContent="Введите логин и пароль";return}try{await queue;await refreshLatestFromFile()}catch(e){err.textContent="Нет доступа к файлу базы";return}var h=await hash(p);if(mode==="reg"){if(u.length<3){err.textContent="Логин — минимум 3 символа";return}if(u.toLowerCase()===SUPER.toLowerCase()){err.textContent="Этот логин зарезервирован";return}if(p.length<4){err.textContent="Пароль — минимум 4 символа";return}if(p!==$("#lp2").value){err.textContent="Пароли не совпадают";return}if(store.users[u]){err.textContent="Такой логин уже занят";return}store.users[u]={hash:h,perms:{},dbPerms:{},pts:now()};if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}store.dbs.forEach(function(db){ensureDbAccess(u,db.id);});persist();}else{if(u===SUPER){if(SH.indexOf(h)<0){err.textContent="Неверный пароль";return}if(!store.users[SUPER]){store.users[SUPER]={hash:"-",perms:{},dbPerms:{},pts:now()};if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}store.dbs.forEach(function(db){ensureDbAccess(SUPER,db.id)});persist()}}else{var us=store.users[u];if(!us){err.textContent="Аккаунт не найден";return}if(us.hash!==h){err.textContent="Неверный пароль";return}if(perms(u).blocked){err.textContent="Аккаунт заблокирован администратором";return}}}cur=u;owner=u;dbId=null;q="";try{sessionStorage.setItem("pb_user",u)}catch(e){}renderApp();}
+function renderApp(){if(!isSuper()&&perms(cur).blocked){cur=null;renderAuth();return}var u=user();if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}if(!dbId||!store.dbs.some(function(d){return d.id===dbId)){dbId=store.dbs[0].id;}var d=db();store.dbs.forEach(function(db){ensureDbAccess(cur,db.id);});function items(n,dbs){return dbs.map(function(x){var allowed=canDb("read",x.id);return '<button class="dbi'+(n===owner&&x.id===d.id?" on":"")+(allowed?"":" no")+'" data-a="pick" data-o="'+esc(n)+'" data-id="'+x.id+'"><span>🗄</span><span class="n">'+esc(x.name)+'</span><span class="c">'+x.recs.length+'</span></button>'}).join("")}
+var side;if(isSuper()){side=Object.keys(store.users).sort(function(a,b){return a===SUPER?-1:b===SUPER?1:(a.toLowerCase()<b.toLowerCase()?-1:1)}).map(function(n){return'<div class="grp">'+esc(n)+(n===SUPER?' <small>(admin)</small>':'')+'</div>'+'<div class="dbs">'+items(n,store.dbs)+'</div>'}).join("")}else side=items(cur,store.dbs);$("#root").innerHTML='<div class="app"><div class="top"><div class="logo" style="margin:0;font-size:17px"><i>▤</i>PersonBase</div><div class="sp"></div><div class="pill" id="st"></div>'+(isSuper()?'<button class="btn" data-a="users">Пользователи</button>':"")+'<button class="btn" data-a="theme" title="Тема">◐</button><div class="user"><div class="ava">'+esc(ini(cur))+'</div><span>'+esc(cur)+'</span></div><button class="btn" data-a="logout">Выход</button></div>'+'<aside class="side"><h4>Базы данных'+(can("createDb")?'<button data-a="newdb" title="Новая база">+</button>':'')+'</h4>'+side+'</aside>'+'<main class="main"><div class="head"><h2>'+esc(d.name)+(isSuper()&&owner!==cur?' <small style="color:var(--mut);font-weight:400">· '+esc(owner)+'</small>':"")+'</h2><input class="srch" id="q" value="'+esc(q)+'" type="search" placeholder="Поиск по ФИО, личному номеру, телефону..."><button class="btn" data-a="add"'+(canDb("add",d.id)?'':' disabled')+'>Добавить человека</button>'+(canDb("renameDb",d.id)?'<button class="btn" data-a="rendb">Переименовать</button>':'')+(canDb("delDb",d.id)?'<button class="btn dng" data-a="deldb">Удалить базу</button>':'')+'</div><div class="tw" id="tw"></div></main></div>';setStatus(stState,stText);renderTable();}
+function renderTable(){var d=db(),s=q.toLowerCase();if(!canDb("read",d.id)){ $("#tw").innerHTML='<div class="empty"><b>Нет доступа</b>У вас нет прав на чтение этой базы.</div>';return;}var rows=d.recs.filter(function(r){r=normaliseRecord(r);if(!s)return true;var hay=[r.fio,r.notes,r.personalNumber,r.phone,r.email,r.address,r.position,r.militaryCommissariat,r.relativeContact,r.deathDate].concat((r.custom||[]).map(function(c){return c.k+" "+c.v})).concat((r.family||[]).map(function(f){return (f.name||"")+" "+(f.relation||"")+" "+(f.phone||"")+" "+(f.notes||"") })).join(" ").toLowerCase();return hay.indexOf(s)>-1;});rows.sort(function(a,b){var x=String(a[sortK]||"").toLowerCase(),y=String(b[sortK]||"").toLowerCase();return x<y?-sortD:x>y?sortD:0});var tw=$("#tw");if(!d.recs.length){tw.innerHTML='<div class="empty"><b>В этой базе пока пусто</b>Нажмите «Добавить человека», введите ФИО и заполните карточку.</div>';return}if(!rows.length){tw.innerHTML='<div class="empty"><b>Ничего не найдено</b>Измените запрос поиска.</div>';return}var cols=[["fio","ФИО"],["personalNumber","Личный номер"],["birth","Дата рождения"],["phone","Телефон"],["position","Должность / звание"],["paymentStatus","Выплата"],["upd","Обновлено"]];var th=cols.map(function(c){return'<th data-a="sort" data-k="'+c[0]+'">'+c[1]+(sortK===c[0]?(sortD>0?" ▲":" ▼"):"")+'</th>'}).join("");var tb=rows.map(function(r){r=normaliseRecord(r);var tag = r.paymentStatus || "Не выплачено";return '<tr data-a="open" data-id="'+r.id+'"><td><div class="nm"><span class="ava">'+esc(ini(r.fio))+'</span>'+esc(r.fio)+'</div></td><td>'+esc(r.personalNumber||"")+'</td><td>'+esc(fmtD(r.birth))+'</td><td>'+esc(r.phone||"")+'</td><td>'+esc(r.position||"")+'</td><td>'+esc(tag)+'</td><td>'+esc(fmtD(r.upd))+'</td></tr>'}).join("");tw.innerHTML='<table><thead><tr>'+th+'</tr></thead><tbody>'+tb+'</tbody></table>'}
 function modal(html,cls){$("#modal").innerHTML='<div class="ov" data-a="ovclose"><div class="md '+(cls||"")+'" role="dialog" aria-modal="true">'+html+'</div></div>'}
 function closeM(){ $("#modal").innerHTML="" }
 function crow(c,ro){c=c||{};var d=ro?" disabled":"";return '<div class="cr"><input placeholder="Название поля" class="ck" value="'+esc(c.k)+'"'+d+'><input placeholder="Значение" class="cv" value="'+esc(c.v)+'"'+d+'><button type="button" class="btn" data-a="rmc"'+(ro?' disabled':'')+'>×</button></div>'}
-function familyRow(member,ro){
-  member=member||{};
-  return '<div class="family-item"><div class="inline"><div><label>ФИО</label><input value="'+esc(member.name||"")+'"'+(ro?" disabled":"")+'></div><div><label>Родство</label><input value="'+esc(member.relation||"")+'"'+(ro?" disabled":"")+'></div></div><div class="inline mt8"><div><label>Телефон</label><input value="'+esc(member.phone||"")+'"'+(ro?" disabled":"")+'></div><div><label>Связь</label><input value="'+esc(member.contact||"")+'"'+(ro?" disabled":"")+'></div></div><div class="mt8"><label>Примечание</label><textarea rows="2"'+(ro?" disabled":"")+'>'+esc(member.notes||"")+'</textarea></div><div class="mt8"><button type="button" class="btn dng" data-a="rmFamily"'+(ro?' disabled':'')+'>Удалить члена семьи</button></div></div>';
-}
-function docRow(doc,ro){
-  doc=doc||{};
-  return '<div class="doc-item"><div class="meta"><div><strong>'+esc(doc.name||"PDF документ")+'</strong></div><div class="hint">'+esc(doc.size||"")+'</div></div><div style="display:flex;gap:8px">'+(doc.dataUrl?'<a class="btn" href="'+esc(doc.dataUrl)+'" target="_blank" rel="noopener">Открыть</a>':'')+'<button type="button" class="btn dng" data-a="rmDoc" data-doc="'+esc(doc.id||"")+'"'+(ro?' disabled':'')+'>Удалить</button></div></div>';
-}
-function card(id){
-  if(!can("read"))return;
-  var r=id?db().recs.filter(function(x){return x.id===id})[0]:null;r=normaliseRecord(r||{custom:[],family:[],documents:[],photo:""});
-  var ro=id?!can("edit"):!can("add"),dis=ro?" disabled":"";
-  var photoHtml = r.photo ? '<div class="photo-box"><img id="cardPhoto" src="'+esc(r.photo)+'" alt="Фото"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"'+dis+'><input type="hidden" id="photoData" value="'+esc(r.photo)+'"><button type="button" class="btn" data-a="clearPhoto"'+(ro?' disabled':'')+'>Убрать фото</button></div></div>' : '<div class="photo-box"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"'+dis+'><input type="hidden" id="photoData" value=""><div class="hint">Фото не добавлено</div></div></div>';
-  var f=FIELDS.map(function(x){return '<div class="fld"><label for="f_'+x[0]+'">'+x[1]+'</label><input id="f_'+x[0]+'" type="'+x[2]+'" value="'+esc(r[x[0]])+'"'+dis+'></div>'}).join("");
-  var tags=TAG_FIELDS.map(function(x){
-    var val = r[x[0]] || x[2][0];
-    var opts = x[2].map(function(v){return '<option value="'+esc(v)+'"'+(val===v?' selected':'')+'>'+esc(v)+'</option>'}).join("");
-    return '<div class="tag-box"><label for="tag_'+x[0]+'">'+x[1]+'</label><select id="tag_'+x[0]+'"'+dis+'>'+opts+'</select></div>';
-  }).join("");
-  var familyHtml = (r.family||[]).map(function(m){return familyRow(m,ro)}).join("")||'<div class="hint">Членов семьи пока нет</div>';
-  var docHtml = (r.documents||[]).map(function(d){return docRow(d,ro)}).join("")||'<div class="hint">PDF документы не добавлены</div>';
-  modal('<div class="mh">'+(id?(ro?"Карточка человека (только чтение)":"Карточка человека"):"Новый человек")+'</div><div class="mb" data-id="'+esc(id||"")+'">'+photoHtml+'<div class="g2">'+f+'</div><div class="sec">Теги</div><div class="tag-grid">'+tags+'</div><div class="sec">Члены семьи</div><div class="family-list" id="familyList">'+familyHtml+'</div>'+(ro?"":'<button type="button" class="btn mt8" data-a="addFamily">+ Добавить члена семьи</button>')+'<div class="sec">Документы PDF</div><div class="doc-list" id="docList">'+docHtml+'</div>'+(ro?"":'<input type="file" accept="application/pdf" data-a="pdfFiles" multiple><div class="hint">Для одного человека можно добавить несколько PDF-файлов.</div>')+'<div class="sec">Дополнительные поля</div><div id="cust">'+(r.custom||[]).map(function(c){return crow(c,ro)}).join("")+'</div>'+(ro?"":'<button type="button" class="btn" data-a="addc">+ Добавить поле</button>')+'<div class="sec">Заметки</div><textarea id="f_notes" rows="4" placeholder="Любая информация по человеку"'+dis+'>'+esc(r.notes||"")+'</textarea><div class="err" id="cerr"></div></div><div class="mf">'+(id&&can("delRec")?'<button class="btn dng l" data-a="delrec">Удалить</button>':'')+'<button class="btn" data-a="close">'+(ro?"Закрыть":"Отмена")+'</button>'+(ro?"":'<button class="btn pri" data-a="saverec" id="cardb" data-id="'+esc(id||"")+'">Сохранить</button>')+'</div>'," ");
-  if(!id&&!ro)$("#f_fio").focus();
-}
-function usersModal(){
-  var names=Object.keys(store.users).filter(function(n){return n!==SUPER}).sort();
-  var body=names.length?names.map(function(n){
-    var u=store.users[n],o=perms(n),cnt=u.dbs.reduce(function(a,d){return a+d.recs.length},0);
-    return'<div class="ucard"><div class="uh"><b>'+esc(n)+'</b><span>баз: '+u.dbs.length+', записей: '+cnt+'</span><button class="btn" data-a="pw" data-u="'+esc(n)+'" style="padding:4px 10px;font-size:12px">Сменить пароль</button></div>'+'<div class="pg">'+PL.map(function(p){return '<label class="ck2"><input type="checkbox" data-a="perm" data-u="'+esc(n)+'" data-p="'+p[0]+'"'+(o[p[0]]?" checked":"")+'>'+p[1]+'</label>'}).join("")+'</div></div>';
-  }).join(""):'<div class="empty"><b>Пока нет других пользователей</b>Они появятся после регистрации.</div>';
-  modal('<div class="mh">Пользователи и права</div><div class="mb">'+body+'</div><div class="mf"><button class="btn pri" data-a="close">Готово</button></div>');
-}
-function getFamilyData(){
-  var out=[];
-  var items=document.querySelectorAll('#familyList .family-item');
-  items.forEach(function(item){
-    var inputs=item.querySelectorAll('input,textarea');
-    var obj={name:(inputs[0]||{}).value||"",relation:(inputs[1]||{}).value||"",phone:(inputs[2]||{}).value||"",contact:(inputs[3]||{}).value||"",notes:(inputs[4]||{}).value||""};
-    if(obj.name||obj.relation||obj.phone||obj.contact||obj.notes)out.push(obj);
-  });
-  return out;
-}
-function getDocumentData(){
-  var out=[];
-  var items=document.querySelectorAll('#docList .doc-item');
-  items.forEach(function(item){
-    var name=item.getAttribute('data-name')||item.querySelector('strong')&&item.querySelector('strong').textContent||"PDF";
-    var dataUrl=item.getAttribute('data-url')||"";
-    var size=item.getAttribute('data-size')||"";
-    var id=item.getAttribute('data-id')||uid();
-    if(dataUrl){out.push({id:id,name:name,dataUrl:dataUrl,size:size})}
-  });
-  return out;
-}
-function saveRec(){
-  if($("#cardb").getAttribute("data-id")?!can("edit"):!can("add"))return;
-  var fio=$("#f_fio").value.trim();
-  if(!fio){$("#cerr").textContent="Введите ФИО";$("#f_fio").focus();return}
-  var id=$("#cardb").getAttribute("data-id"),d=db(),r=id?d.recs.filter(function(x){return x.id===id})[0]:null;
-  if(!r){r={id:uid()};d.recs.push(r)}
-  r=normaliseRecord(r);
-  r.fio=fio;
-  FIELDS.forEach(function(x){r[x[0]]=$("#f_"+x[0]).value.trim()});
-  TAG_FIELDS.forEach(function(x){r[x[0]]=$("#tag_"+x[0]).value||x[2][0]});
-  r.notes=$("#f_notes").value.trim();
-  r.photo=$("#photoData").value||"";
-  r.custom=Array.prototype.map.call(document.querySelectorAll("#cust .cr"),function(row){return{k:row.querySelector(".ck").value.trim(),v:row.querySelector(".cv").value.trim()}}).filter(function(x){return x.k||x.v});
-  r.family=getFamilyData();
-  r.documents=getDocumentData();
-  r.upd=now();
-  persist();
-  closeM();
-  renderApp();
-}
-function ask(title,val,okLabel,cb){
-  modal('<div class="mh">'+title+'</div><div class="mb"><input id="ask" value="'+esc(val)+'" maxlength="60"><div class="err" id="aserr" style="margin:8px 0 0"></div></div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn pri" data-a="askok">'+okLabel+'</button></div>');
-  window.__ask=cb;var i=$("#ask");i.focus();i.select();
-}
-function confirmM(title,text,cb){
-  modal('<div class="mh">'+title+'</div><div class="mb">'+text+'</div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn dng" data-a="cfok">Удалить</button></div>');
-  window.__cf=cb;
-}
+function familyRow(member,ro){member=member||{};return '<div class="family-item"><div class="inline"><div><label>ФИО</label><input value="'+esc(member.name||"")+'"'+(ro?" disabled":"")+'></div><div><label>Родство</label><input value="'+esc(member.relation||"")+'"'+(ro?" disabled":"")+'></div></div><div class="inline mt8"><div><label>Телефон</label><input value="'+esc(member.phone||"")+'"'+(ro?" disabled":"")+'></div><div><label>Связь</label><input value="'+esc(member.contact||"")+'"'+(ro?" disabled":"")+'></div></div><div class="mt8"><label>Примечание</label><textarea rows="2"'+(ro?" disabled":"")+'>'+esc(member.notes||"")+'</textarea></div><div class="mt8"><button type="button" class="btn dng" data-a="rmFamily"'+(ro?' disabled':'')+'>Удалить члена семьи</button></div></div>'}
+function docRow(doc,ro){doc=doc||{};return '<div class="doc-item"><div class="meta"><div><strong>'+esc(doc.name||"PDF документ")+'</strong></div><div class="hint">'+esc(doc.size||"")+'</div></div><div style="display:flex;gap:8px">'+(doc.dataUrl?'<a class="btn" href="'+esc(doc.dataUrl)+'" target="_blank" rel="noopener">Открыть</a>':'')+'<button type="button" class="btn dng" data-a="rmDoc" data-doc="'+esc(doc.id||"")+'"'+(ro?' disabled':'')+'>Удалить</button></div></div>'}
+function card(id){if(!canDb("read",dbId))return;var r=id?db().recs.filter(function(x){return x.id===id})[0]:null;r=normaliseRecord(r||{custom:[],family:[],documents:[],photo:""});var ro=id?!canDb("edit",dbId):!canDb("add",dbId),dis=ro?" disabled":"";var photoHtml=r.photo?'<div class="photo-box"><img id="cardPhoto" src="'+esc(r.photo)+'" alt="Фото"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"'+dis+'><input type="hidden" id="photoData" value="'+esc(r.photo)+'"><button type="button" class="btn" data-a="clearPhoto"'+(ro?' disabled':'')+'>Убрать фото</button></div></div>':'<div class="photo-box"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"'+dis+'><input type="hidden" id="photoData" value=""><div class="hint">Фото не добавлено</div></div></div>';var f=FIELDS.map(function(x){return '<div class="fld"><label for="f_'+x[0]+'">'+x[1]+'</label><input id="f_'+x[0]+'" type="'+x[2]+'" value="'+esc(r[x[0]])+'"'+dis+'></div>'}).join("");var tags=TAG_FIELDS.map(function(x){var val=r[x[0]]||x[2][0];var opts=x[2].map(function(v){return '<option value="'+esc(v)+'"'+(val===v?' selected':'')+'>'+esc(v)+'</option>'}).join("");return '<div class="tag-box"><label for="tag_'+x[0]+'">'+x[1]+'</label><select id="tag_'+x[0]+'"'+dis+'>'+opts+'</select></div>'}).join("");var familyHtml=(r.family||[]).map(function(m){return familyRow(m,ro)}).join("")||'<div class="hint">Членов семьи пока нет</div>';var docHtml=(r.documents||[]).map(function(d){return docRow(d,ro)}).join("")||'<div class="hint">PDF документы не добавлены</div>';modal('<div class="mh">'+(id?(ro?"Карточка человека (только чтение)":"Карточка человека"):"Новый человек")+'</div><div class="mb" data-id="'+esc(id||"")+'">'+photoHtml+'<div class="g2">'+f+'</div><div class="sec">Теги</div><div class="tag-grid">'+tags+'</div><div class="sec">Члены семьи</div><div class="family-list" id="familyList">'+familyHtml+'</div>'+(ro?"":'<button type="button" class="btn mt8" data-a="addFamily">+ Добавить члена семьи</button>')+'<div class="sec">Документы PDF</div><div class="doc-list" id="docList">'+docHtml+'</div>'+(ro?"":'<input type="file" accept="application/pdf" data-a="pdfFiles" multiple><div class="hint">Для одного человека можно добавить несколько PDF-файлов.</div>')+'<div class="sec">Дополнительные поля</div><div id="cust">'+(r.custom||[]).map(function(c){return crow(c,ro)}).join("")+'</div>'+(ro?"":'<button type="button" class="btn" data-a="addc">+ Добавить поле</button>')+'<div class="sec">Заметки</div><textarea id="f_notes" rows="4" placeholder="Любая информация по человеку"'+dis+'>'+esc(r.notes||"")+'</textarea><div class="err" id="cerr"></div></div><div class="mf">'+(id&&canDb("delRec",dbId)?'<button class="btn dng l" data-a="delrec">Удалить</button>':'')+'<button class="btn" data-a="close">'+(ro?"Закрыть":"Отмена")+'</button>'+(ro?"":'<button class="btn pri" data-a="saverec" id="cardb" data-id="'+esc(id||"")+'">Сохранить</button>')+'</div>'," ");if(!id&&!ro)$("#f_fio").focus();}
+function usersModal(){var names=Object.keys(store.users).filter(function(n){return n!==SUPER}).sort();var body=names.length?names.map(function(n){var u=store.users[n],o=perms(n),cnt=(u.dbs||[]).reduce(function(a,d){return a+d.recs.length},0);var dbRows=store.dbs.map(function(db){var p=getDbPerms(n,db.id);return '<div class="ucard"><div class="uh"><b>'+esc(db.name)+'</b><span>доступ</span></div><div class="pg">'+["read","add","edit","delRec","createDb","renameDb","delDb"].map(function(key){return '<label class="ck2"><input type="checkbox" data-a="dbperm" data-u="'+esc(n)+'" data-db="'+db.id+'" data-p="'+key+'"'+(p[key]?" checked":"")+'>'+key+'</label>'}).join("")+'</div></div>'}).join("");return '<div class="ucard"><div class="uh"><b>'+esc(n)+'</b><span>баз: '+(store.dbs.length)+', записей: '+cnt+'</span><button class="btn" data-a="pw" data-u="'+esc(n)+'" style="padding:4px 10px;font-size:12px">Сменить пароль</button></div>'+'<div class="pg">'+PL.map(function(p){return '<label class="ck2"><input type="checkbox" data-a="perm" data-u="'+esc(n)+'" data-p="'+p[0]+'"'+(o[p[0]]?" checked":"")+'>'+p[1]+'</label>'}).join("")+'</div>'+dbRows+'</div>'}).join(""):'<div class="empty"><b>Пока нет других пользователей</b>Они появятся после регистрации.</div>';modal('<div class="mh">Пользователи и права</div><div class="mb">'+body+'</div><div class="mf"><button class="btn pri" data-a="close">Готово</button></div>')}
+function getFamilyData(){var out=[];var items=document.querySelectorAll('#familyList .family-item');items.forEach(function(item){var inputs=item.querySelectorAll('input,textarea');var obj={name:(inputs[0]||{}).value||"",relation:(inputs[1]||{}).value||"",phone:(inputs[2]||{}).value||"",contact:(inputs[3]||{}).value||"",notes:(inputs[4]||{}).value||""};if(obj.name||obj.relation||obj.phone||obj.contact||obj.notes)out.push(obj)});return out}
+function getDocumentData(){var out=[];var items=document.querySelectorAll('#docList .doc-item');items.forEach(function(item){var name=item.getAttribute('data-name')||item.querySelector('strong')&&item.querySelector('strong').textContent||"PDF";var dataUrl=item.getAttribute('data-url')||"";var size=item.getAttribute('data-size')||"";var id=item.getAttribute('data-id')||uid();if(dataUrl){out.push({id:id,name:name,dataUrl:dataUrl,size:size})}});return out}
+function saveRec(){if(!canDb("add",dbId)&&$("#cardb").getAttribute("data-id")!==""||$("#cardb").getAttribute("data-id")&&!canDb("edit",dbId))return;var fio=$("#f_fio").value.trim();if(!fio){$("#cerr").textContent="Введите ФИО";$("#f_fio").focus();return}var id=$("#cardb").getAttribute("data-id"),d=db(),r=id?d.recs.filter(function(x){return x.id===id})[0]:null;if(!r){r={id:uid()};d.recs.push(r)}r=normaliseRecord(r);r.fio=fio;FIELDS.forEach(function(x){r[x[0]]=$("#f_"+x[0]).value.trim()});TAG_FIELDS.forEach(function(x){r[x[0]]=$("#tag_"+x[0]).value||x[2][0]});r.notes=$("#f_notes").value.trim();r.photo=$("#photoData").value||"";r.custom=Array.prototype.map.call(document.querySelectorAll("#cust .cr"),function(row){return{k:row.querySelector(".ck").value.trim(),v:row.querySelector(".cv").value.trim()}}).filter(function(x){return x.k||x.v});r.family=getFamilyData();r.documents=getDocumentData();r.upd=now();persist();closeM();renderApp();}
+function ask(title,val,okLabel,cb){modal('<div class="mh">'+title+'</div><div class="mb"><input id="ask" value="'+esc(val)+'" maxlength="60"><div class="err" id="aserr" style="margin:8px 0 0"></div></div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn pri" data-a="askok">'+okLabel+'</button></div>');window.__ask=cb;var i=$("#ask");i.focus();i.select();}
+function confirmM(title,text,cb){modal('<div class="mh">'+title+'</div><div class="mb">'+text+'</div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn dng" data-a="cfok">Удалить</button></div>');window.__cf=cb;}
 function readAsDataURL(file){return new Promise(function(res,rej){var reader=new FileReader();reader.onload=function(){res(reader.result)};reader.onerror=function(){rej(reader.error)};reader.readAsDataURL(file)})}
-function addPdfFiles(files){
-  if(!files||!files.length)return;
-  Array.from(files).forEach(async function(file){
-    if(!/\.pdf$/i.test(file.name)&&file.type!="application/pdf")return;
-    var dataUrl=await readAsDataURL(file);
-    var id=uid();
-    var html='<div class="doc-item" data-id="'+esc(id)+'" data-name="'+esc(file.name)+'" data-url="'+esc(dataUrl)+'" data-size="'+esc(String(Math.round(file.size/1024))+' KB')+'"><div class="meta"><div><strong>'+esc(file.name)+'</strong></div><div class="hint">'+esc(String(Math.round(file.size/1024))+' KB')+'</div></div><div style="display:flex;gap:8px"><a class="btn" href="'+esc(dataUrl)+'" target="_blank" rel="noopener">Открыть</a><button type="button" class="btn dng" data-a="rmDoc" data-doc="'+esc(id)+'">Удалить</button></div></div>';
-    var list=$("#docList");
-    if(list){list.insertAdjacentHTML("beforeend",html)}
-  });
-}
-function addFamilyRow(){
-  var box=$("#familyList");
-  if(!box)return;
-  box.insertAdjacentHTML('beforeend',familyRow({},false));
-}
-document.addEventListener("click",function(e){
-  var t=e.target.closest("[data-a]");if(!t)return;
-  var a=t.getAttribute("data-a");
-  if(a==="ovclose"){if(e.target===t)closeM();return}
-  if(a==="mode"){mode=t.getAttribute("data-m");renderAuth();return}
-  if(a==="openf")openFile();
-  else if(a==="newf")createFile();
-  else if(a==="resume")resume(saved);
-  else if(a==="chfile"){fh=null;cur=null;renderConnect()}
-  else if(a==="auth")doAuth();
-  else if(a==="logout"){cur=null;dbId=null;mode="login";try{sessionStorage.removeItem("pb_user")}catch(x){}renderAuth()}
-  else if(a==="theme"){var r=document.documentElement,dark=r.getAttribute("data-theme")==="dark";r.setAttribute("data-theme",dark?"light":"dark")}
-  else if(a==="pick"){owner=isSuper()?(t.getAttribute("data-o")||cur):cur;dbId=t.getAttribute("data-id");q="";refreshLatestFromFile();renderApp()}
-  else if(a==="sort"){var k=t.getAttribute("data-k");if(sortK===k)sortD=-sortD;else{sortK=k;sortD=1}renderTable()}
-  else if(a==="add"&&can("add"))card(null);
-  else if(a==="open")card(t.getAttribute("data-id"));
-  else if(a==="close")closeM();
-  else if(a==="addc"){$("#cust").insertAdjacentHTML("beforeend",crow());var ks=document.querySelectorAll("#cust .ck");ks[ks.length-1].focus()}
-  else if(a==="rmc"){t.closest(".cr").remove()}
-  else if(a==="saverec"){refreshLatestFromFile();saveRec();}
-  else if(a==="delrec"&&can("delRec")){var rid=$("#cardb").getAttribute("data-id");refreshLatestFromFile();confirmM("Удалить запись?","Карточка будет удалена у всех без возможности восстановления.",function(){var d=db();d.recs=d.recs.filter(function(r){return r.id!==rid});persist();closeM();renderApp()})}
-  else if(a==="newdb"&&can("createDb"))ask("Новая база данных","","Создать",function(n){refreshLatestFromFile();var b={id:uid(),name:n||"Новая база",nts:now(),recs:[]};user().dbs.push(b);dbId=b.id;persist();closeM();renderApp()});
-  else if(a==="rendb"&&can("renameDb"))ask("Переименовать базу",db().name,"Сохранить",function(n){refreshLatestFromFile();var d=db();d.name=n||d.name;d.nts=now();persist();closeM();renderApp()});
-  else if(a==="deldb"&&can("delDb")){if(user().dbs.length<2){modal('<div class="mh">Нельзя удалить</div><div class="mb">В аккаунте должна остаться хотя бы одна база. Создайте другую базу и повторите попытку.</div><div class="mf"><button class="btn pri" data-a="close">Закрыть</button></div>');return}var d0=db();refreshLatestFromFile();confirmM("Удалить базу «"+esc(d0.name)+"»?","Вместе с базой удалятся все записи ("+d0.recs.length+"). Это нельзя отменить.",function(){var u=user();u.dbs=u.dbs.filter(function(d){return d.id!==d0.id});dbId=u.dbs[0].id;persist();closeM();renderApp()})}
-  else if(a==="users"&&isSuper())usersModal();
-  else if(a==="pw"&&isSuper()){var pn=t.getAttribute("data-u");ask("Новый пароль для "+pn,"","Сменить",async function(pw){if(pw.length<4){$("#aserr").textContent="Мин. 4 символа";return}var u=store.users[pn];if(!u)return;u.hash=await hash(pw);u.pts=now();persist();closeM();});}
-  else if(a==="askok"){var v=$("#ask").value.trim();if(!v){$("#aserr").textContent="Поле не может быть пустым";return}window.__ask(v)}
-  else if(a==="cfok")window.__cf();
-  else if(a==="addFamily")addFamilyRow();
-  else if(a==="rmFamily")t.closest(".family-item").remove();
-  else if(a==="rmDoc"){var docId=t.getAttribute("data-doc");var item=document.querySelector('[data-doc="'+docId+'"]');if(item)item.closest('.doc-item').remove();}
-  else if(a==="clearPhoto"){$('#photoData').value='';var img=$('#cardPhoto'); if(img){img.src=''; img.style.display='none';} }
-});
-document.addEventListener("change",function(e){
-  var t=e.target;if(!t)return;
-  if(t.getAttribute("data-a")==="perm"&&isSuper()){var n=t.getAttribute("data-u"),k=t.getAttribute("data-p"),u=store.users[n];if(!u)return;var o=perms(n);o[k]=t.checked;u.perms=o;u.pts=now();persist();}
-  if(t.getAttribute("data-a")==="photoFile"){
-    var file=t.files&&t.files[0];
-    if(!file)return;
-    readAsDataURL(file).then(function(data){
-      $("#photoData").value=data;
-      var img=$("#cardPhoto");
-      if(img){img.src=data;img.style.display='block';}
-      else{
-        var wrap=t.closest('.photo-box');
-        if(wrap){wrap.innerHTML='<img id="cardPhoto" src="'+esc(data)+'" alt="Фото"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"><input type="hidden" id="photoData" value="'+esc(data)+'"><button type="button" class="btn" data-a="clearPhoto">Убрать фото</button></div>';
-        }
-      }
-    }).catch(function(){})
-  }
-  if(t.getAttribute("data-a")==="pdfFiles"){
-    addPdfFiles(t.files);
-    t.value='';
-  }
-});
+function addPdfFiles(files){if(!files||!files.length)return;Array.from(files).forEach(async function(file){if(!/\.pdf$/i.test(file.name)&&file.type!="application/pdf")return;var dataUrl=await readAsDataURL(file);var id=uid();var html='<div class="doc-item" data-id="'+esc(id)+'" data-name="'+esc(file.name)+'" data-url="'+esc(dataUrl)+'" data-size="'+esc(String(Math.round(file.size/1024))+' KB')+'"><div class="meta"><div><strong>'+esc(file.name)+'</strong></div><div class="hint">'+esc(String(Math.round(file.size/1024))+' KB')+'</div></div><div style="display:flex;gap:8px"><a class="btn" href="'+esc(dataUrl)+'" target="_blank" rel="noopener">Открыть</a><button type="button" class="btn dng" data-a="rmDoc" data-doc="'+esc(id)+'">Удалить</button></div></div>';var list=$("#docList");if(list){list.insertAdjacentHTML("beforeend",html)}})}
+function addFamilyRow(){var box=$("#familyList");if(!box)return;box.insertAdjacentHTML('beforeend',familyRow({},false));}
+document.addEventListener("click",function(e){var t=e.target.closest("[data-a]");if(!t)return;var a=t.getAttribute("data-a");if(a==="ovclose"){if(e.target===t)closeM();return}if(a==="mode"){mode=t.getAttribute("data-m");renderAuth();return}if(a==="openf")openFile();else if(a==="newf")createFile();else if(a==="resume")resume(saved);else if(a==="chfile"){fh=null;cur=null;renderConnect()}else if(a==="auth")doAuth();else if(a==="logout"){cur=null;dbId=null;mode="login";try{sessionStorage.removeItem("pb_user")}catch(x){}renderAuth()}else if(a==="theme"){var r=document.documentElement,dark=r.getAttribute("data-theme")==="dark";r.setAttribute("data-theme",dark?"light":"dark")}else if(a==="pick"){refreshLatestFromFile();owner=isSuper()?(t.getAttribute("data-o")||cur):cur;dbId=t.getAttribute("data-id");q="";renderApp()}else if(a==="sort"){var k=t.getAttribute("data-k");if(sortK===k)sortD=-sortD;else{sortK=k;sortD=1}renderTable()}else if(a==="add"&&canDb("add",dbId))card(null);else if(a==="open")card(t.getAttribute("data-id"));else if(a==="close")closeM();else if(a==="addc"){$("#cust").insertAdjacentHTML("beforeend",crow());var ks=document.querySelectorAll("#cust .ck");ks[ks.length-1].focus()}else if(a==="rmc"){t.closest(".cr").remove()}else if(a==="saverec"){refreshLatestFromFile();saveRec()}else if(a==="delrec"&&canDb("delRec",dbId)){var rid=$("#cardb").getAttribute("data-id");refreshLatestFromFile();confirmM("Удалить запись?","Карточка будет удалена у всех без возможности восстановления.",function(){var d=db();d.recs=d.recs.filter(function(r){return r.id!==rid});persist();closeM();renderApp()})}else if(a==="newdb"&&can("createDb")){ask("Новая база данных","","Создать",function(n){refreshLatestFromFile();var b={id:uid(),name:n||"Новая база",nts:now(),recs:[]};store.dbs.push(b);store.dbs.forEach(function(db){Object.keys(store.users||{}).forEach(function(un){ensureDbAccess(un,db.id);if(un!==SUPER){var p=getDbPerms(un,db.id);if(!p.read){p.read=true;p.add=true;p.edit=true;p.delRec=true;}}})});dbId=b.id;persist();closeM();renderApp()})}else if(a==="rendb"&&canDb("renameDb",dbId)){ask("Переименовать базу",db().name,"Сохранить",function(n){refreshLatestFromFile();var d=db();d.name=n||d.name;d.nts=now();persist();closeM();renderApp()})}else if(a==="deldb"&&canDb("delDb",dbId)){if(store.dbs.length<2){modal('<div class="mh">Нельзя удалить</div><div class="mb">В аккаунте должна остаться хотя бы одна база. Создайте другую базу и повторите попытку.</div><div class="mf"><button class="btn pri" data-a="close">Закрыть</button></div>');return}var d0=db();refreshLatestFromFile();confirmM("Удалить базу «"+esc(d0.name)+"»?","Вместе с базой удалятся все записи ("+d0.recs.length+"). Это нельзя отменить.",function(){store.dbs=store.dbs.filter(function(d){return d.id!==d0.id});if(!store.dbs.length){store.dbs=[{id:uid(),name:"Основная база",nts:now(),recs:[]}];}dbId=store.dbs[0].id;persist();closeM();renderApp()})}else if(a==="users"&&isSuper())usersModal();else if(a==="pw"&&isSuper()){var pn=t.getAttribute("data-u");ask("Новый пароль для "+pn,"","Сменить",async function(pw){if(pw.length<4){$("#aserr").textContent="Мин. 4 символа";return}var u=store.users[pn];if(!u)return;u.hash=await hash(pw);u.pts=now();persist();closeM();})}else if(a==="askok"){var v=$("#ask").value.trim();if(!v){$("#aserr").textContent="Поле не может быть пустым";return}window.__ask(v)}else if(a==="cfok")window.__cf();else if(a==="addFamily")addFamilyRow();else if(a==="rmFamily")t.closest(".family-item").remove();else if(a==="rmDoc"){var docId=t.getAttribute("data-doc");var item=document.querySelector('[data-doc="'+docId+'"]');if(item)item.closest('.doc-item').remove();}else if(a==="clearPhoto"){$('#photoData').value='';var img=$('#cardPhoto'); if(img){img.src=''; img.style.display='none';}}});
+document.addEventListener("change",function(e){var t=e.target;if(!t)return;if(t.getAttribute("data-a")==="perm"&&isSuper()){var n=t.getAttribute("data-u"),k=t.getAttribute("data-p"),u=store.users[n];if(!u)return;var o=perms(n);o[k]=t.checked;u.perms=o;u.pts=now();persist();}if(t.getAttribute("data-a")==="dbperm"&&isSuper()){var n=t.getAttribute("data-u"),dbid=t.getAttribute("data-db"),k=t.getAttribute("data-p"),u=store.users[n];if(!u)return;ensureDbAccess(n,dbid);u.dbPerms[dbid][k]=t.checked;u.pts=now();persist();}if(t.getAttribute("data-a")==="photoFile"){var file=t.files&&t.files[0];if(!file)return;readAsDataURL(file).then(function(data){$("#photoData").value=data;var img=$("#cardPhoto");if(img){img.src=data;img.style.display='block';}else{var wrap=t.closest('.photo-box');if(wrap){wrap.innerHTML='<img id="cardPhoto" src="'+esc(data)+'" alt="Фото"><div class="photo-tools"><input type="file" accept="image/*" data-a="photoFile"><input type="hidden" id="photoData" value="'+esc(data)+'"><button type="button" class="btn" data-a="clearPhoto">Убрать фото</button></div>'}}}).catch(function(){})}if(t.getAttribute("data-a")==="pdfFiles"){addPdfFiles(t.files);t.value='';}});
 document.addEventListener("input",function(e){if(e.target.id==="q"){q=e.target.value;renderTable()}});
-document.addEventListener("keydown",function(e){
-  if(e.key==="Escape"&&modalOpen())closeM();
-  if(e.key==="Enter"){
-    if(e.target.id==="lu"||e.target.id==="lp"||e.target.id==="lp2")doAuth();
-    if(e.target.id==="ask")$("[data-a=askok]").click();
-  }
-});
-(async function(){
-  if(window.showOpenFilePicker){
-    saved=await idbGet("fh");
-    if(saved){
-      try{var p=await saved.queryPermission({mode:"readwrite"});if(p==="granted"){await attach(saved,false);return}}catch(e){}
-    }
-  }
-  renderConnect();
-})();
-})();
-</script>
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&modalOpen())closeM();if(e.key==="Enter"){if(e.target.id==="lu"||e.target.id==="lp"||e.target.id==="lp2")doAuth();if(e.target.id==="ask")$("[data-a=askok]").click();}});
+(async function(){if(window.showOpenFilePicker){saved=await idbGet("fh");if(saved){try{var p=await saved.queryPermission({mode:"readwrite"});if(p==="granted"){await attach(saved,false);return}}catch(e){}}}renderConnect();})();})();</script>
 </body>
 </html>
