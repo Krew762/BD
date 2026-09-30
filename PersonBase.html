@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PersonBase</title>
+<style>
+:root{--bg:#eef1f5;--panel:#fff;--side:#1c2433;--side2:#273247;--sidet:#c5cee0;--line:#dde3ec;--text:#1a2233;--mut:#6b778c;--acc:#2f6bff;--acc2:#e8efff;--danger:#e5484d;--ok:#22a06b;--hover:#f4f7fb;--sh:0 8px 30px rgba(20,30,60,.18)}
+:root[data-theme="dark"]{--bg:#0f141d;--panel:#171e2b;--side:#0b0f16;--side2:#1a2233;--line:#26304a;--text:#e6ebf5;--mut:#8b97ad;--acc:#5b8cff;--acc2:#1d2b4d;--hover:#1c2434;--sh:0 8px 30px rgba(0,0,0,.5)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 "Segoe UI",Tahoma,Arial,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:8px}
+.btn:hover{background:var(--hover)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.pri:hover{opacity:.9}
+.btn.dng{color:var(--danger);border-color:var(--danger);background:transparent}
+input,textarea{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+input:focus,textarea:focus{border-color:var(--acc);outline:none;box-shadow:0 0 0 3px var(--acc2)}
+label{display:block;font-size:12px;color:var(--mut);margin:0 0 4px}
+.auth{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+.acard{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px;box-shadow:var(--sh)}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:700;margin-bottom:4px}
+.logo i{width:32px;height:32px;border-radius:9px;background:var(--acc);display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:16px}
+.sub{color:var(--mut);margin:0 0 20px}
+.fld{margin-bottom:14px}
+.err{color:var(--danger);font-size:13px;min-height:18px;margin:-4px 0 10px}
+.stack .btn{width:100%;margin-bottom:10px}
+.tabs{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:none;padding:7px;border-radius:7px;color:var(--mut)}
+.tabs button.on{background:var(--panel);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.app{height:100vh;display:grid;grid-template-columns:260px 1fr;grid-template-rows:auto 1fr}
+.top{grid-column:1/3;display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.top .sp{flex:1}
+.pill{font-size:12px;color:var(--mut);display:flex;align-items:center;gap:6px;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.pill b{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+.pill.sv b{background:#e0a100}
+.pill.er b{background:var(--danger)}
+.user{display:flex;align-items:center;gap:8px;color:var(--mut)}
+.ava{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
+.side{background:var(--side);color:var(--sidet);padding:14px 10px;overflow:auto}
+.side h4{margin:4px 8px 10px;font-size:12px;font-weight:600;color:#7d8aa6;display:flex;justify-content:space-between;align-items:center}
+.side h4 button{background:none;border:0;color:#9db4ff;font-size:20px;line-height:1;padding:0 4px}
+.dbi{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;border:0;background:none;width:100%;text-align:left;color:inherit}
+.dbi:hover{background:var(--side2)}
+.dbi.on{background:var(--acc);color:#fff}
+.dbi .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dbi .c{font-size:12px;opacity:.7}
+.main{display:flex;flex-direction:column;min-width:0;min-height:0;padding:18px 22px}
+.head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.head h2{margin:0;font-size:20px;flex:1;min-width:140px}
+.head .srch{max-width:280px;flex:1 1 200px;width:auto}
+.tw{flex:1;min-height:0;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th{position:sticky;top:0;background:var(--panel);text-align:left;font-weight:600;color:var(--mut);font-size:12px;padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--hover)}
+.nm{display:flex;align-items:center;gap:10px;font-weight:600}
+.nm .ava{width:28px;height:28px;font-size:12px;flex:none}
+.empty{padding:60px 20px;text-align:center;color:var(--mut)}
+.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:6px}
+.ov{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(10,15,30,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.md{background:var(--panel);border-radius:14px;box-shadow:var(--sh);width:100%;max-width:640px;max-height:92vh;display:flex;flex-direction:column}
+.md.sm{max-width:380px}
+.mh{padding:16px 20px;border-bottom:1px solid var(--line);font-weight:700;font-size:16px}
+.mb{padding:18px 20px;overflow:auto}
+.mf{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+.mf .l{margin-right:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sec{font-size:12px;font-weight:600;color:var(--acc);margin:18px 0 10px}
+.cr{display:grid;grid-template-columns:1fr 1.4fr 36px;gap:8px;margin-bottom:8px}
+.cr button{border:1px solid var(--line);background:none;border-radius:8px;color:var(--danger)}
+.ucard{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.uh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.uh span{flex:1;color:var(--mut);font-size:12px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.ck2{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin:0;cursor:pointer}
+input[type=checkbox]{width:auto;margin:0}
+input:disabled,textarea:disabled{opacity:.75;cursor:default}
+.grp{margin:12px 8px 4px;font-size:11px;font-weight:600;color:#7d8aa6;white-space:nowrap}
+@media(max-width:760px){
+.app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;height:100vh}
+.top{grid-column:1}
+.side{display:flex;gap:6px;align-items:center;overflow-x:auto;padding:8px 10px}
+.side h4{margin:0 6px 0 0;flex:none}
+.dbi{width:auto;flex:none}
+.main{padding:12px}
+.g2{grid-template-columns:1fr}
+.user span,.pill span{display:none}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="modal"></div>
+<script>
+(function(){
+"use strict";
+var cur=null, owner=null, dbId=null, q="", sortK="fio", sortD=1, mode="login";
+var fh=null, lastMod=0, store={users:{},tomb:{}}, queue=Promise.resolve(), pending=false, stState="ok", stText="";
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function now(){return Date.now()}
+function ini(n){var p=String(n||"?").trim().split(/\s+/);return((p[0]||"?").charAt(0)+(p[1]?p[1].charAt(0):"")).toUpperCase()}
+function fmtD(t){if(!t)return"";var d=new Date(t);return isNaN(d.getTime())?"":d.toLocaleDateString("ru-RU")}
+var SUPER="Krew762",SH=["557c578170a45f676c9a99518d721ca7b2c318951fa21a202c155deacb5f67dc","s-118762667"];
+var DEF={read:true,add:true,edit:true,delRec:true,createDb:true,renameDb:true,delDb:false};
+var PL=[["read","Чтение"],["add","Добавление записей"],["edit","Изменение записей"],["delRec","Удаление записей"],["createDb","Создание баз"],["renameDb","Переименование баз"],["delDb","Удаление баз"]];
+function isSuper(){return cur===SUPER}
+function perms(n){var u=store.users[n],o={},k;for(k in DEF)o[k]=DEF[k];if(u&&u.perms)for(k in u.perms)o[k]=u.perms[k];return o}
+function can(p){return isSuper()||perms(cur)[p]===true}
+function user(){if(!store.users[owner])owner=cur;return store.users[owner]}
+function db(){var u=user();return u.dbs.filter(function(d){return d.id===dbId})[0]||u.dbs[0]}
+var FIELDS=[["birth","Дата рождения","date"],["phone","Телефон","tel"],["email","Почта","email"],["address","Адрес","text"],["position","Должность / звание","text"],["passport","Документ (серия, номер)","text"]];
+
+/* ---------- hash ---------- */
+function simple(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return"s"+h}
+function hash(s){
+  try{
+    if(window.crypto&&crypto.subtle&&window.TextEncoder){
+      return crypto.subtle.digest("SHA-256",new TextEncoder().encode("pb:"+s)).then(function(b){
+        return Array.prototype.map.call(new Uint8Array(b),function(x){return("0"+x.toString(16)).slice(-2)}).join("");
+      }).catch(function(){return simple(s)});
+    }
+  }catch(e){}
+  return Promise.resolve(simple(s));
+}
+
+/* ---------- merge (sync between PCs) ---------- */
+function mergeDbs(l1,l2){
+  var m={},order=[];
+  [l1,l2].forEach(function(l){(l||[]).forEach(function(d){
+    var e=m[d.id];
+    if(!e){e=m[d.id]={id:d.id,name:d.name,nts:d.nts||0,recs:{}};order.push(d.id)}
+    else if((d.nts||0)>e.nts){e.name=d.name;e.nts=d.nts||0}
+    (d.recs||[]).forEach(function(r){var o=e.recs[r.id];if(!o||(r.upd||0)>(o.upd||0))e.recs[r.id]=r});
+  })});
+  return order.map(function(id){var e=m[id];return{id:id,name:e.name,nts:e.nts,recs:Object.keys(e.recs).map(function(k){return e.recs[k]})}});
+}
+function merge(a,b){
+  var tomb={},k;
+  [a.tomb||{},b.tomb||{}].forEach(function(t){for(k in t){if(!tomb[k]||t[k]>tomb[k])tomb[k]=t[k]}});
+  var users={},names={};
+  Object.keys(a.users||{}).concat(Object.keys(b.users||{})).forEach(function(n){names[n]=1});
+  Object.keys(names).forEach(function(n){
+    var x=(a.users||{})[n],y=(b.users||{})[n];
+    var dbs=mergeDbs(x&&x.dbs,y&&y.dbs).filter(function(d){return !tomb[d.id]});
+    dbs.forEach(function(d){d.recs=d.recs.filter(function(r){return !(tomb[r.id]&&tomb[r.id]>=(r.upd||0))})});
+    var src=!y?x:!x?y:((x.pts||0)>=(y.pts||0)?x:y);users[n]={hash:src.hash,perms:src.perms,pts:src.pts||0,dbs:dbs};
+  });
+  return{users:users,tomb:tomb};
+}
+
+/* ---------- file io ---------- */
+function setStatus(s,t){
+  stState=s;stText=t||"";var el=$("#st");
+  if(el){el.className="pill "+s;el.innerHTML="<b></b><span>"+esc(stText)+"</span>"}
+}
+function fname(){return fh?fh.name:""}
+async function readRemote(){
+  var f=await fh.getFile();lastMod=f.lastModified;
+  var t=await f.text();if(!t.trim())return null;
+  return JSON.parse(t);
+}
+async function pull(){
+  var r=await readRemote();
+  if(r)store=merge(store,r);
+}
+function persist(){
+  queue=queue.then(async function(){
+    if(!fh)return;
+    try{
+      setStatus("sv","Сохранение…");
+      await pull();
+      var w=await fh.createWritable();
+      await w.write(JSON.stringify(store));
+      await w.close();
+      lastMod=(await fh.getFile()).lastModified;
+      setStatus("ok","Синхронизировано · "+fname());
+    }catch(e){setStatus("er","Ошибка записи в файл")}
+  });
+  return queue;
+}
+function modalOpen(){return !!$("#modal").innerHTML}
+async function poll(){
+  if(!fh)return;
+  try{
+    var f=await fh.getFile();
+    if(f.lastModified!==lastMod){await queue;await pull();pending=true;setStatus("ok","Обновлено · "+fname())}
+    if(pending&&cur&&!modalOpen()){
+      var a=document.activeElement;
+      if(!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))){pending=false;if(store.users[cur])renderApp();else{cur=null;renderAuth()}}
+    }else if(pending&&!cur){pending=false;renderAuth()}
+  }catch(e){setStatus("er","Нет доступа к файлу")}
+}
+
+/* ---------- handle storage ---------- */
+function idb(){
+  return new Promise(function(res,rej){
+    var r=indexedDB.open("personbase",1);
+    r.onupgradeneeded=function(){r.result.createObjectStore("kv")};
+    r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)};
+  });
+}
+async function idbGet(k){try{var d=await idb();return await new Promise(function(res){var r=d.transaction("kv").objectStore("kv").get(k);r.onsuccess=function(){res(r.result)};r.onerror=function(){res(null)}})}catch(e){return null}}
+async function idbSet(k,v){try{var d=await idb();await new Promise(function(res){var t=d.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=res;t.onerror=res})}catch(e){}}
+
+var PICK={types:[{description:"База PersonBase (JSON)",accept:{"application/json":[".json"]}}]};
+async function attach(handle,isNew){
+  fh=handle;
+  try{
+    store={users:{},tomb:{}};
+    var r=await readRemote();
+    if(r)store=merge(store,r);
+    await idbSet("fh",handle);
+    if(isNew||!r)await persist();
+    try{var s=sessionStorage.getItem("pb_user");if(s&&store.users[s]){cur=s;owner=s}}catch(e){}
+    setStatus("ok","Синхронизировано · "+fname());
+    setInterval(poll,3000);
+    render();
+  }catch(e){fh=null;renderConnect("Не удалось прочитать файл. Это точно файл базы PersonBase?")}
+}
+async function openFile(){try{var h=await window.showOpenFilePicker(PICK);await attach(h[0],false)}catch(e){}}
+async function createFile(){try{var h=await window.showSaveFilePicker({suggestedName:"personbase.json",types:PICK.types});await attach(h,true)}catch(e){}}
+async function resume(h){
+  try{var p=await h.requestPermission({mode:"readwrite"});if(p==="granted")await attach(h,false);else renderConnect("Нужно разрешение на доступ к файлу")}catch(e){renderConnect("Не удалось получить доступ к файлу")}
+}
+
+/* ---------- screens ---------- */
+var saved=null;
+function renderConnect(msg){
+  if(!window.showOpenFilePicker){
+    $("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Этот браузер не умеет работать с общим файлом.</p><p>Откройте страницу в Google Chrome или Microsoft Edge (Chromium). На Windows 7 подойдёт Chrome 109 или Edge 109.</p></div></div>';return;
+  }
+  $("#root").innerHTML='<div class="auth"><div class="acard stack"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">Подключите файл базы. Положите его в общую папку, чтобы все ПК в сети работали с одними данными.</p>'+
+  (saved?'<button class="btn pri" data-a="resume">Продолжить с файлом «'+esc(saved.name)+'»</button>':"")+
+  '<button class="btn'+(saved?"":" pri")+'" data-a="openf">Открыть существующий файл</button><button class="btn" data-a="newf">Создать новый файл базы</button><div class="err" id="cerr0">'+esc(msg||"")+'</div></div></div>';
+}
+function render(){if(!fh)renderConnect();else if(cur&&store.users[cur])renderApp();else renderAuth()}
+function renderAuth(){
+  var reg=mode==="reg";
+  $("#root").innerHTML='<div class="auth"><div class="acard"><div class="logo"><i>▤</i>PersonBase</div><p class="sub">У каждого аккаунта свои базы данных.</p>'+
+  '<div class="tabs"><button data-a="mode" data-m="login" class="'+(reg?"":"on")+'">Вход</button><button data-a="mode" data-m="reg" class="'+(reg?"on":"")+'">Регистрация</button></div>'+
+  '<div class="fld"><label for="lu">Логин</label><input id="lu" autocomplete="username" maxlength="30"></div>'+
+  '<div class="fld"><label for="lp">Пароль</label><input id="lp" type="password" autocomplete="'+(reg?"new-password":"current-password")+'"></div>'+
+  (reg?'<div class="fld"><label for="lp2">Повторите пароль</label><input id="lp2" type="password" autocomplete="new-password"></div>':"")+
+  '<div class="err" id="aerr"></div><button class="btn pri" style="width:100%" data-a="auth">'+(reg?"Создать аккаунт":"Войти")+'</button>'+
+  '<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center"><div class="pill" id="st"></div><button class="btn" data-a="chfile" style="padding:5px 10px;font-size:12px">Сменить файл</button></div></div></div>';
+  setStatus(stState,stText);
+}
+async function doAuth(){
+  var u=$("#lu").value.trim(),p=$("#lp").value,err=$("#aerr");
+  if(!u||!p){err.textContent="Введите логин и пароль";return}
+  try{await queue;await pull()}catch(e){err.textContent="Нет доступа к файлу базы";return}
+  var h=await hash(p);
+  if(mode==="reg"){
+    if(u.length<3){err.textContent="Логин — минимум 3 символа";return}
+    if(u.toLowerCase()===SUPER.toLowerCase()){err.textContent="Этот логин зарезервирован";return}
+    if(p.length<4){err.textContent="Пароль — минимум 4 символа";return}
+    if(p!==$("#lp2").value){err.textContent="Пароли не совпадают";return}
+    if(store.users[u]){err.textContent="Такой логин уже занят";return}
+    store.users[u]={hash:h,dbs:[{id:uid(),name:"Основная база",nts:now(),recs:[]}]};
+    persist();
+  }else{
+    if(u===SUPER){
+      if(SH.indexOf(h)<0){err.textContent="Неверный пароль";return}
+      if(!store.users[SUPER]){store.users[SUPER]={hash:"-",dbs:[{id:uid(),name:"Основная база",nts:now(),recs:[]}]};persist()}
+    }else{
+      var us=store.users[u];
+      if(!us){err.textContent="Аккаунт не найден";return}
+      if(us.hash!==h){err.textContent="Неверный пароль";return}
+      if(perms(u).blocked){err.textContent="Аккаунт заблокирован администратором";return}
+    }
+  }
+  cur=u;owner=u;dbId=null;q="";try{sessionStorage.setItem("pb_user",u)}catch(e){}
+  renderApp();
+}
+function renderApp(){
+  if(!isSuper()&&perms(cur).blocked){cur=null;renderAuth();return}
+  var u=user(),d=db();dbId=d.id;
+  function items(n,dbs){return dbs.map(function(x){return'<button class="dbi'+(n===owner&&x.id===d.id?" on":"")+'" data-a="pick" data-o="'+esc(n)+'" data-id="'+x.id+'"><span>🗄</span><span class="n">'+esc(x.name)+'</span><span class="c">'+(can("read")?x.recs.length:"")+'</span></button>'}).join("")}
+  var side;
+  if(isSuper()){side=Object.keys(store.users).sort(function(a,b){return a===SUPER?-1:b===SUPER?1:(a.toLowerCase()<b.toLowerCase()?-1:1)}).map(function(n){return'<div class="grp">'+esc(n)+(n===SUPER?" (админ)":"")+(perms(n).blocked?" · заблокирован":"")+'</div>'+items(n,store.users[n].dbs)}).join("")}
+  else side=items(cur,u.dbs);
+  $("#root").innerHTML='<div class="app"><div class="top"><div class="logo" style="margin:0;font-size:17px"><i>▤</i>PersonBase</div><div class="sp"></div><div class="pill" id="st"></div>'+
+  (isSuper()?'<button class="btn" data-a="users">Пользователи</button>':"")+'<button class="btn" data-a="theme" title="Тема">◐</button><div class="user"><div class="ava">'+esc(cur.charAt(0).toUpperCase())+'</div><span>'+esc(cur)+'</span></div><button class="btn" data-a="logout">Выйти</button></div>'+
+  '<aside class="side"><h4>Базы данных'+(can("createDb")?'<button data-a="newdb" title="Новая база">+</button>':"")+'</h4>'+side+'</aside>'+
+  '<main class="main"><div class="head"><h2>'+esc(d.name)+(isSuper()&&owner!==cur?' <small style="color:var(--mut);font-weight:400">· '+esc(owner)+'</small>':"")+'</h2><input class="srch" id="q" placeholder="Поиск по ФИО и данным" value="'+esc(q)+'">'+
+  (can("renameDb")?'<button class="btn" data-a="rendb">Переименовать</button>':"")+(can("delDb")?'<button class="btn dng" data-a="deldb">Удалить базу</button>':"")+(can("add")?'<button class="btn pri" data-a="add">+ Добавить человека</button>':"")+'</div>'+
+  '<div class="tw" id="tw"></div></main></div>';
+  setStatus(stState,stText);renderTable();
+}
+function renderTable(){
+  var d=db(),s=q.toLowerCase();
+  var rows=d.recs.filter(function(r){
+    if(!s)return true;
+    var hay=[r.fio,r.notes].concat(FIELDS.map(function(f){return r[f[0]]})).concat((r.custom||[]).map(function(c){return c.k+" "+c.v})).join(" ").toLowerCase();
+    return hay.indexOf(s)>-1;
+  });
+  rows.sort(function(a,b){var x=String(a[sortK]||"").toLowerCase(),y=String(b[sortK]||"").toLowerCase();return x<y?-sortD:x>y?sortD:0});
+  var tw=$("#tw");
+  if(!can("read")){tw.innerHTML='<div class="empty"><b>Нет доступа</b>Администратор не выдал вам право чтения.</div>';return}
+  if(!d.recs.length){tw.innerHTML='<div class="empty"><b>В этой базе пока пусто</b>Нажмите «Добавить человека», введите ФИО и заполните карточку.</div>';return}
+  if(!rows.length){tw.innerHTML='<div class="empty"><b>Ничего не найдено</b>Измените запрос поиска.</div>';return}
+  var cols=[["fio","ФИО"],["birth","Дата рождения"],["phone","Телефон"],["position","Должность / звание"],["upd","Обновлено"]];
+  var th=cols.map(function(c){return'<th data-a="sort" data-k="'+c[0]+'">'+c[1]+(sortK===c[0]?(sortD>0?" ▲":" ▼"):"")+'</th>'}).join("");
+  var tb=rows.map(function(r){return'<tr data-a="open" data-id="'+r.id+'"><td><div class="nm"><span class="ava">'+esc(ini(r.fio))+'</span>'+esc(r.fio)+'</div></td><td>'+esc(fmtD(r.birth))+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.position)+'</td><td>'+esc(fmtD(r.upd))+'</td></tr>'}).join("");
+  tw.innerHTML='<table><thead><tr>'+th+'</tr></thead><tbody>'+tb+'</tbody></table>';
+}
+
+/* ---------- modals ---------- */
+function modal(html,cls){$("#modal").innerHTML='<div class="ov" data-a="ovclose"><div class="md '+(cls||"")+'" role="dialog" aria-modal="true">'+html+'</div></div>'}
+function closeM(){$("#modal").innerHTML=""}
+function crow(c,ro){c=c||{};var d=ro?" disabled":"";return'<div class="cr"><input placeholder="Название поля" class="ck" value="'+esc(c.k)+'"'+d+'><input placeholder="Значение" class="cv" value="'+esc(c.v)+'"'+d+'>'+(ro?"<span></span>":'<button type="button" data-a="rmc" title="Убрать">×</button>')+'</div>'}
+function card(id){
+  if(!can("read"))return;
+  var r=id?db().recs.filter(function(x){return x.id===id})[0]:null;r=r||{custom:[]};
+  var ro=id?!can("edit"):!can("add"),dis=ro?" disabled":"";
+  var f=FIELDS.map(function(x){return'<div class="fld"><label for="f_'+x[0]+'">'+x[1]+'</label><input id="f_'+x[0]+'" type="'+x[2]+'" value="'+esc(r[x[0]])+'"'+dis+'></div>'}).join("");
+  modal('<div class="mh">'+(id?(ro?"Карточка человека (только чтение)":"Карточка человека"):"Новый человек")+'</div><div class="mb" data-id="'+(id||"")+'" id="cardb">'+
+  '<div class="fld"><label for="f_fio">ФИО *</label><input id="f_fio" value="'+esc(r.fio)+'" placeholder="Иванов Иван Иванович"'+dis+'></div>'+
+  '<div class="g2">'+f+'</div><div class="sec">Дополнительные поля</div><div id="cust">'+(r.custom||[]).map(function(c){return crow(c,ro)}).join("")+'</div>'+
+  (ro?"":'<button type="button" class="btn" data-a="addc">+ Добавить поле</button>')+
+  '<div class="sec">Заметки</div><textarea id="f_notes" rows="4" placeholder="Любая информация по человеку"'+dis+'>'+esc(r.notes)+'</textarea><div class="err" id="cerr" style="margin-top:8px"></div></div>'+
+  '<div class="mf">'+(id&&can("delRec")?'<button class="btn dng l" data-a="delrec">Удалить</button>':"")+'<button class="btn" data-a="close">'+(ro?"Закрыть":"Отмена")+'</button>'+(ro?"":'<button class="btn pri" data-a="saverec">Сохранить</button>')+'</div>');
+  if(!id&&!ro)$("#f_fio").focus();
+}
+function usersModal(){
+  var names=Object.keys(store.users).filter(function(n){return n!==SUPER}).sort();
+  var body=names.length?names.map(function(n){
+    var u=store.users[n],o=perms(n),cnt=u.dbs.reduce(function(a,d){return a+d.recs.length},0);
+    return'<div class="ucard"><div class="uh"><b>'+esc(n)+'</b><span>баз: '+u.dbs.length+', записей: '+cnt+'</span><button class="btn" data-a="pw" data-u="'+esc(n)+'" style="padding:4px 10px;font-size:12px">Новый пароль</button></div><div class="pg">'+
+    PL.concat([["blocked","Заблокирован"]]).map(function(p){return'<label class="ck2"><input type="checkbox" data-a="perm" data-u="'+esc(n)+'" data-p="'+p[0]+'"'+(o[p[0]]?" checked":"")+'>'+p[1]+'</label>'}).join("")+'</div></div>';
+  }).join(""):'<div class="empty"><b>Пока нет других пользователей</b>Они появятся после регистрации.</div>';
+  modal('<div class="mh">Пользователи и права</div><div class="mb">'+body+'</div><div class="mf"><button class="btn pri" data-a="close">Готово</button></div>');
+}
+function saveRec(){
+  if($("#cardb").getAttribute("data-id")?!can("edit"):!can("add"))return;
+  var fio=$("#f_fio").value.trim();
+  if(!fio){$("#cerr").textContent="Введите ФИО";$("#f_fio").focus();return}
+  var id=$("#cardb").getAttribute("data-id"),d=db(),r=id?d.recs.filter(function(x){return x.id===id})[0]:null;
+  if(!r){r={id:uid()};d.recs.push(r)}
+  r.fio=fio;FIELDS.forEach(function(x){r[x[0]]=$("#f_"+x[0]).value.trim()});
+  r.notes=$("#f_notes").value.trim();
+  r.custom=Array.prototype.map.call(document.querySelectorAll("#cust .cr"),function(row){return{k:row.querySelector(".ck").value.trim(),v:row.querySelector(".cv").value.trim()}}).filter(function(c){return c.k||c.v});
+  r.upd=now();persist();closeM();renderApp();
+}
+function ask(title,val,okLabel,cb){
+  modal('<div class="mh">'+title+'</div><div class="mb"><input id="ask" value="'+esc(val)+'" maxlength="60"><div class="err" id="aserr" style="margin:8px 0 0"></div></div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn pri" data-a="askok">'+okLabel+'</button></div>','sm');
+  window.__ask=cb;var i=$("#ask");i.focus();i.select();
+}
+function confirmM(title,text,cb){
+  modal('<div class="mh">'+title+'</div><div class="mb">'+text+'</div><div class="mf"><button class="btn" data-a="close">Отмена</button><button class="btn dng" data-a="cfok">Удалить</button></div>','sm');
+  window.__cf=cb;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-a]");if(!t)return;
+  var a=t.getAttribute("data-a");
+  if(a==="ovclose"){if(e.target===t)closeM();return}
+  if(a==="mode"){mode=t.getAttribute("data-m");renderAuth();return}
+  if(a==="openf")openFile();
+  else if(a==="newf")createFile();
+  else if(a==="resume")resume(saved);
+  else if(a==="chfile"){fh=null;cur=null;renderConnect()}
+  else if(a==="auth")doAuth();
+  else if(a==="logout"){cur=null;dbId=null;mode="login";try{sessionStorage.removeItem("pb_user")}catch(x){}renderAuth()}
+  else if(a==="theme"){var r=document.documentElement,dark=r.getAttribute("data-theme")==="dark";r.setAttribute("data-theme",dark?"light":"dark")}
+  else if(a==="pick"){owner=isSuper()?(t.getAttribute("data-o")||cur):cur;dbId=t.getAttribute("data-id");q="";renderApp()}
+  else if(a==="sort"){var k=t.getAttribute("data-k");if(sortK===k)sortD=-sortD;else{sortK=k;sortD=1}renderTable()}
+  else if(a==="add"&&can("add"))card(null);
+  else if(a==="open")card(t.getAttribute("data-id"));
+  else if(a==="close")closeM();
+  else if(a==="addc"){$("#cust").insertAdjacentHTML("beforeend",crow());var ks=document.querySelectorAll("#cust .ck");ks[ks.length-1].focus()}
+  else if(a==="rmc"){t.closest(".cr").remove()}
+  else if(a==="saverec")saveRec();
+  else if(a==="delrec"&&can("delRec")){var rid=$("#cardb").getAttribute("data-id");confirmM("Удалить запись?","Карточка будет удалена у всех без возможности восстановления.",function(){var d=db();d.recs=d.recs.filter(function(x){return x.id!==rid});store.tomb[rid]=now();persist();closeM();renderApp()})}
+  else if(a==="newdb"&&can("createDb"))ask("Новая база данных","","Создать",function(n){var b={id:uid(),name:n,nts:now(),recs:[]};user().dbs.push(b);dbId=b.id;persist();closeM();renderApp()});
+  else if(a==="rendb"&&can("renameDb"))ask("Переименовать базу",db().name,"Сохранить",function(n){var d=db();d.name=n;d.nts=now();persist();closeM();renderApp()});
+  else if(a==="deldb"&&can("delDb")){
+    if(user().dbs.length<2){modal('<div class="mh">Нельзя удалить</div><div class="mb">В аккаунте должна остаться хотя бы одна база. Создайте новую и удалите эту.</div><div class="mf"><button class="btn pri" data-a="close">Понятно</button></div>','sm');return}
+    var d0=db();confirmM("Удалить базу «"+esc(d0.name)+"»?","Вместе с базой удалятся все записи ("+d0.recs.length+"). Это нельзя отменить.",function(){var u=user();u.dbs=u.dbs.filter(function(x){return x.id!==d0.id});store.tomb[d0.id]=now();dbId=null;persist();closeM();renderApp()});
+  }
+  else if(a==="users"&&isSuper())usersModal();
+  else if(a==="pw"&&isSuper()){var pn=t.getAttribute("data-u");ask("Новый пароль для "+esc(pn),"","Сменить",async function(pw){if(pw.length<4){$("#aserr").textContent="Минимум 4 символа";return}var hh=await hash(pw),uu=store.users[pn];if(uu){uu.hash=hh;uu.pts=now();persist()}closeM();usersModal()})}
+  else if(a==="askok"){var v=$("#ask").value.trim();if(!v){$("#aserr").textContent="Поле не может быть пустым";return}window.__ask(v)}
+  else if(a==="cfok")window.__cf();
+});
+document.addEventListener("change",function(e){
+  var t=e.target;if(!t.getAttribute||t.getAttribute("data-a")!=="perm"||!isSuper())return;
+  var n=t.getAttribute("data-u"),k=t.getAttribute("data-p"),u=store.users[n];if(!u)return;
+  var o=perms(n);o[k]=t.checked;u.perms=o;u.pts=now();persist();
+});
+document.addEventListener("input",function(e){if(e.target.id==="q"){q=e.target.value;renderTable()}});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&modalOpen())closeM();
+  if(e.key==="Enter"){
+    if(e.target.id==="lu"||e.target.id==="lp"||e.target.id==="lp2")doAuth();
+    if(e.target.id==="ask")$("[data-a=askok]").click();
+  }
+});
+
+/* ---------- start ---------- */
+(async function(){
+  if(window.showOpenFilePicker){
+    saved=await idbGet("fh");
+    if(saved){
+      try{var p=await saved.queryPermission({mode:"readwrite"});if(p==="granted"){await attach(saved,false);return}}catch(e){}
+    }
+  }
+  renderConnect();
+})();
+})();
+</script>
+</body>
+</html>
