@@ -11,7 +11,6 @@
       --panel: #ffffff;
       --panel-soft: #f7faff;
       --line: #dfe7f6;
-      --line-strong: #cfe0ff;
       --text: #19273d;
       --muted: #5a7089;
       --primary: #2b5be7;
@@ -20,6 +19,28 @@
       --danger: #d84e68;
       --warning: #c9830d;
       --shadow: 0 16px 36px rgba(17, 24, 39, 0.12);
+      --sidebar-start: #182534;
+      --sidebar-end: #1f2d3d;
+      --dark-toggle: rgba(255,255,255,0.08);
+    }
+
+    body[data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-strong: #111827;
+      --panel: #111827;
+      --panel-soft: #1f2937;
+      --line: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --primary: #60a5fa;
+      --primary-2: #3b82f6;
+      --success: #34d399;
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --shadow: 0 16px 36px rgba(2, 6, 23, 0.7);
+      --sidebar-start: #020817;
+      --sidebar-end: #111827;
+      --dark-toggle: rgba(255,255,255,0.06);
     }
 
     * { box-sizing: border-box; }
@@ -27,11 +48,12 @@
       margin: 0;
       min-height: 100%;
       font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-      background: linear-gradient(180deg, var(--bg) 0%, #f7faff 100%);
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
       color: var(--text);
     }
     body {
       min-height: 100vh;
+      transition: background 0.2s ease, color 0.2s ease;
     }
     button, input, textarea, select {
       font: inherit;
@@ -43,18 +65,17 @@
       color: var(--text);
       border-radius: 10px;
       padding: 9px 12px;
-      transition: 0.18s ease;
+      transition: 0.16s ease;
     }
     button:hover { background: var(--panel-soft); }
     button.primary {
       background: linear-gradient(135deg, var(--primary), #4a7ef9);
       border-color: var(--primary);
       color: white;
-      box-shadow: 0 10px 18px rgba(43, 91, 231, 0.2);
     }
-    button.primary:hover { background: linear-gradient(135deg, var(--primary-2), #3a73f5); }
+    button.primary:hover { filter: brightness(1.04); }
     button.danger {
-      background: #fff1f4;
+      background: rgba(216, 78, 104, 0.08);
       color: var(--danger);
       border-color: rgba(216, 78, 104, 0.2);
     }
@@ -65,7 +86,7 @@
     input, textarea, select {
       width: 100%;
       border: 1px solid var(--line);
-      background: #fff;
+      background: var(--panel);
       color: var(--text);
       border-radius: 10px;
       padding: 10px 12px;
@@ -76,33 +97,26 @@
       border-color: rgba(43, 91, 231, 0.7);
       box-shadow: 0 0 0 3px rgba(43, 91, 231, 0.12);
     }
-    a {
-      color: var(--primary);
-      text-decoration: none;
-    }
+    a { color: var(--primary); text-decoration: none; }
     .hidden { display: none !important; }
-
-    #root {
-      min-height: 100vh;
-    }
-
     .root-wrap {
       min-height: 100vh;
       display: grid;
       place-items: center;
       padding: 28px;
     }
-
     .auth-card {
-      width: min(440px, 100%);
-      background: rgba(255,255,255,0.85);
+      width: min(430px, 100%);
+      background: rgba(255,255,255,0.75);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(223, 231, 246, 0.9);
+      border: 1px solid var(--line);
       border-radius: 26px;
       box-shadow: var(--shadow);
       padding: 28px 24px 22px;
     }
-
+    body[data-theme="dark"] .auth-card {
+      background: rgba(15, 23, 42, 0.82);
+    }
     .brand {
       display: flex;
       align-items: center;
@@ -123,7 +137,6 @@
       font-size: 20px;
       box-shadow: 0 10px 20px rgba(43, 91, 231, 0.25);
     }
-
     .tab-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -143,11 +156,10 @@
       padding: 10px 12px;
     }
     .tab-btn.active {
-      background: white;
+      background: var(--panel);
       color: var(--text);
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
     }
-
     .field { margin-bottom: 14px; }
     label {
       display: block;
@@ -164,14 +176,6 @@
       font-size: 12px;
       margin: 4px 0 10px;
     }
-    .auth-footer {
-      margin-top: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
     .status {
       display: inline-flex;
       align-items: center;
@@ -187,6 +191,14 @@
     .status.ok { color: var(--success); }
     .status.error { color: var(--danger); }
     .status.wait { color: var(--warning); }
+    .auth-footer {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
     .app-shell {
       display: grid;
@@ -194,9 +206,8 @@
       min-height: 100vh;
       background: var(--bg);
     }
-
     .sidebar {
-      background: linear-gradient(180deg, #182534, #1f2d3d);
+      background: linear-gradient(180deg, var(--sidebar-start), var(--sidebar-end));
       color: #edf4ff;
       padding: 18px 12px 14px;
       min-height: 100vh;
@@ -231,7 +242,6 @@
     .db-item.active {
       background: linear-gradient(135deg, var(--primary), #4e80ff);
       color: white;
-      box-shadow: 0 10px 18px rgba(43, 91, 231, 0.24);
     }
     .db-name {
       flex: 1;
@@ -259,10 +269,6 @@
       flex-wrap: wrap;
       margin-bottom: 18px;
     }
-    .topbar .brand {
-      margin: 0;
-      font-size: 22px;
-    }
     .toolbar {
       display: flex;
       align-items: center;
@@ -277,35 +283,26 @@
       flex-wrap: wrap;
       margin-bottom: 16px;
     }
-    .head h2 {
-      margin: 0;
-      font-size: 20px;
-      flex: 1;
-      min-width: 180px;
-    }
-    .search {
-      width: min(370px, 100%);
-    }
+    .head h2 { margin: 0; font-size: 20px; flex: 1; min-width: 180px; }
+    .search { width: min(370px, 100%); }
     .mini-btns {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
     }
-
     .table-wrap {
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.85);
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: var(--shadow);
       overflow: auto;
       min-height: 200px;
     }
-    table {
-      width: 100%;
-      min-width: 760px;
-      border-collapse: collapse;
+    body[data-theme="dark"] .table-wrap {
+      background: rgba(17,24,39,0.8);
     }
+    table { width: 100%; min-width: 760px; border-collapse: collapse; }
     th, td {
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
@@ -323,12 +320,7 @@
       top: 0;
       z-index: 1;
     }
-    tbody tr:hover {
-      background: rgba(43, 91, 231, 0.025);
-    }
-    tbody tr {
-      cursor: pointer;
-    }
+    tbody tr:hover { background: rgba(43, 91, 231, 0.04); }
     .cell-name {
       display: flex;
       align-items: center;
@@ -345,17 +337,13 @@
       color: var(--primary);
       background: #edf2ff;
     }
+    body[data-theme="dark"] .avatar { background: rgba(96,165,250,0.12); }
     .empty-row {
       text-align: center;
       color: var(--muted);
       padding: 36px 20px;
     }
-    .empty-row strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 18px;
-      color: var(--text);
-    }
+    .empty-row strong { display: block; margin-bottom: 8px; font-size: 18px; color: var(--text); }
 
     .modal-backdrop {
       position: fixed;
@@ -388,9 +376,7 @@
       border-bottom: 0;
       justify-content: flex-end;
     }
-    .modal-body {
-      padding: 18px 20px 12px;
-    }
+    .modal-body { padding: 18px 20px 12px; }
     .section {
       margin-top: 16px;
       margin-bottom: 8px;
@@ -453,13 +439,19 @@
       margin-top: 4px;
       color: var(--muted);
     }
-
+    .theme-toggle {
+      border: 1px solid var(--line);
+      background: var(--dark-toggle);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
     @media (max-width: 900px) {
       .app-shell { grid-template-columns: 1fr; }
       .sidebar { min-height: auto; }
-      .form-grid, .tag-grid { grid-template-columns: 1fr; }
       .head { align-items: stretch; }
       .search { width: 100%; }
+      .form-grid, .tag-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -468,7 +460,7 @@
 
   <script>
     (() => {
-      const STORAGE_KEY = 'personbase_store_v1';
+      const STORAGE_KEY = 'personbase_store_v2';
       const ADMIN_USER = 'Krew762';
       const ADMIN_PASSWORD = 'A8G95S87';
       const DEFAULT_DB_NAME = 'Основная база';
@@ -479,6 +471,7 @@
         activeDbId: null,
         search: '',
         mode: 'login',
+        theme: 'light',
         statusClass: 'ok',
         statusText: 'Готово'
       };
@@ -486,9 +479,8 @@
       function uid() {
         return 'id_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
       }
-      function nowTs() { return Date.now(); }
       function escapeHtml(str) {
-        return String(str ?? '').replace(/[&<>"']/g, ch => ({
+        return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -510,10 +502,10 @@
         return d.toLocaleDateString('ru-RU');
       }
       function defaultPerms() {
-        return { read: true, add: true, edit: true, delRec: true, createDb: true, renameDb: true, delDb: true, blocked: false };
+        return { read: true, add: true, edit: true, delRec: true, createDb: false, renameDb: false, delDb: false, blocked: false };
       }
       function defaultDbPerms() {
-        return { read: true, add: true, edit: true, delRec: true, createDb: true, renameDb: true, delDb: true };
+        return { read: true, add: true, edit: true, delRec: true, renameDb: false, delDb: false };
       }
       function ensureUser(username) {
         if (!state.store.users[username]) {
@@ -541,7 +533,7 @@
         const text = String(value ?? '');
         if (window.crypto && crypto.subtle && window.TextEncoder) {
           const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('personbase:' + text));
-          return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+          return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, '0')).join('');
         }
         let hash = 2166136261 >>> 0;
         for (let i = 0; i < text.length; i++) {
@@ -558,6 +550,13 @@
             dbPerms: {}
           };
         }
+        state.store.users[ADMIN_USER].perms = {
+          ...defaultPerms(),
+          createDb: true,
+          renameDb: true,
+          delDb: true,
+          blocked: false
+        };
         for (const db of state.store.dbs) ensureDbAccess(ADMIN_USER, db.id);
       }
       function loadLocal() {
@@ -571,13 +570,20 @@
           if (parsed && Array.isArray(parsed.dbs)) {
             state.store = parsed;
           }
+          if (parsed && parsed.theme) {
+            state.theme = parsed.theme === 'dark' ? 'dark' : 'light';
+          }
         } catch (error) {
           console.error('Load local error:', error);
           state.store = { users: {}, dbs: [] };
         }
       }
       function saveLocal() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store));
+        const payload = JSON.stringify({ ...state.store, theme: state.theme });
+        localStorage.setItem(STORAGE_KEY, payload);
+      }
+      function applyTheme() {
+        document.body.setAttribute('data-theme', state.theme);
       }
       function setStatus(cls, text) {
         state.statusClass = cls;
@@ -589,24 +595,60 @@
         }
       }
       function isAdmin() { return state.currentUser === ADMIN_USER; }
-      function getUserPerms(username) { ensureUser(username); return state.store.users[username].perms; }
-      function getDbPerms(username, dbId) { ensureUser(username); ensureDbAccess(username, dbId); return state.store.users[username].dbPerms[dbId]; }
+      function getUserPerms(username) {
+        ensureUser(username);
+        return state.store.users[username].perms;
+      }
+      function getDbPerms(username, dbId) {
+        ensureUser(username);
+        ensureDbAccess(username, dbId);
+        return state.store.users[username].dbPerms[dbId];
+      }
       function canGlobal(action) {
         if (!state.currentUser) return false;
         if (isAdmin()) return true;
-        return !!(getUserPerms(state.currentUser)[action]);
+        const perms = getUserPerms(state.currentUser);
+        return !perms.blocked && !!perms[action];
       }
       function canDb(action, dbId) {
         if (!state.currentUser) return false;
         if (isAdmin()) return true;
         if (!dbId) return true;
+        const user = getUserPerms(state.currentUser);
+        if (user.blocked) return false;
         const perms = getDbPerms(state.currentUser, dbId);
         return !!perms[action];
       }
       function currentDb() {
-        if (!state.store.dbs.length) state.store.dbs = [{ id: uid(), name: DEFAULT_DB_NAME, recs: [] }];
+        if (!state.store.dbs.length) {
+          state.store.dbs = [{ id: uid(), name: DEFAULT_DB_NAME, recs: [] }];
+        }
         if (!state.activeDbId) state.activeDbId = state.store.dbs[0].id;
-        return state.store.dbs.find(db => db.id === state.activeDbId) || state.store.dbs[0];
+        return state.store.dbs.find((db) => db.id === state.activeDbId) || state.store.dbs[0];
+      }
+
+      function renderRows(recs) {
+        const term = state.search.trim().toLowerCase();
+        const rows = (recs || []).filter((rec) => {
+          if (!term) return true;
+          const hay = [rec.fio, rec.personalNumber, rec.phone, rec.position, rec.address, rec.notes].join(' ').toLowerCase();
+          return hay.includes(term);
+        });
+
+        if (!rows.length) {
+          return '<tr><td colspan="6"><div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>';
+        }
+
+        return rows.map((rec) => `
+          <tr data-action="open-person" data-person-id="${rec.id}">
+            <td><div class="cell-name"><span class="avatar">${escapeHtml(initials(rec.fio))}</span>${escapeHtml(rec.fio || '—')}</div></td>
+            <td>${escapeHtml(rec.personalNumber || '—')}</td>
+            <td>${escapeHtml(fmtDate(rec.birth))}</td>
+            <td>${escapeHtml(rec.phone || '—')}</td>
+            <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
+            <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
+          </tr>
+        `).join('');
       }
 
       function renderAuth() {
@@ -653,39 +695,10 @@
         `;
       }
 
-      function renderRows(recs) {
-        const term = state.search.trim().toLowerCase();
-        const rows = (recs || []).filter(rec => {
-          if (!term) return true;
-          const hay = [rec.fio || '', rec.personalNumber || '', rec.phone || '', rec.position || '', rec.address || '', rec.notes || ''].join(' ').toLowerCase();
-          return hay.includes(term);
-        });
-
-        if (!rows.length) {
-          return `<tr><td colspan="6"><div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>`;
-        }
-
-        return rows.map(rec => `
-          <tr data-action="open-person" data-person-id="${rec.id}">
-            <td>
-              <div class="cell-name">
-                <span class="avatar">${escapeHtml(initials(rec.fio))}</span>
-                ${escapeHtml(rec.fio || '—')}
-              </div>
-            </td>
-            <td>${escapeHtml(rec.personalNumber || '—')}</td>
-            <td>${escapeHtml(fmtDate(rec.birth))}</td>
-            <td>${escapeHtml(rec.phone || '—')}</td>
-            <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
-            <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
-          </tr>
-        `).join('');
-      }
-
       function renderApp() {
         const db = currentDb();
         const dbs = state.store.dbs || [];
-        const sidebarHtml = dbs.map(d => {
+        const sidebarHtml = dbs.map((d) => {
           const access = canDb('read', d.id);
           return `
             <button class="db-item ${d.id === db.id ? 'active' : ''} ${access ? '' : 'hidden'}" data-action="select-db" data-db-id="${d.id}">
@@ -715,6 +728,7 @@
                 </div>
                 <div class="toolbar">
                   <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
+                  <button class="theme-toggle" data-action="toggle-theme">${state.theme === 'dark' ? '☀️ Свет' : '🌙 Тёмн.'}</button>
                   ${isAdmin() ? '<button data-action="open-admin">Пользователи</button>' : ''}
                   <button data-action="logout">Выход</button>
                 </div>
@@ -754,19 +768,20 @@
 
       function openAdminPanel() {
         const users = Object.keys(state.store.users).sort();
-        const html = users.map(username => {
-          const perms = (state.store.users[username].perms || defaultPerms());
+        const html = users.map((username) => {
+          const perms = state.store.users[username].perms || defaultPerms();
+          const isProtected = username === ADMIN_USER;
           return `
             <div class="admin-row">
               <div>
                 <strong>${escapeHtml(username)}</strong>
-                <small>${username === ADMIN_USER ? 'Администратор' : 'Пользователь'}</small>
+                <small>${isProtected ? 'Администратор' : 'Пользователь'}</small>
               </div>
               <label style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" data-user="${escapeHtml(username)}" data-role="toggle-block" ${perms.blocked ? 'checked' : ''} />
+                <input type="checkbox" data-user="${escapeHtml(username)}" data-role="toggle-block" ${perms.blocked ? 'checked' : ''} ${isProtected ? 'disabled' : ''} />
                 <span>Блок.</span>
               </label>
-              <button class="danger" data-action="delete-user" data-user="${escapeHtml(username)}">Удалить</button>
+              <button class="danger" data-action="delete-user" data-user="${escapeHtml(username)}" ${isProtected ? 'disabled' : ''}>Удалить</button>
             </div>
           `;
         }).join('');
@@ -790,6 +805,7 @@
           </div>
         `);
       }
+
       function closeModal() {
         const modal = document.querySelector('.modal-backdrop');
         if (modal) modal.remove();
@@ -797,14 +813,23 @@
 
       function openPersonModal(personId = null) {
         const db = currentDb();
-        const rec = personId ? (db.recs || []).find(r => r.id === personId) : null;
+        const rec = personId ? (db.recs || []).find((r) => r.id === personId) : null;
         const item = rec || {
           id: uid(),
           fio: '',
           personalNumber: '',
+          birth: '',
+          phone: '',
+          email: '',
+          address: '',
+          position: '',
+          deathDate: '',
+          militaryCommissariat: '',
+          relativeContact: '',
           paymentStatus: 'Не выплачено',
           exclusionStatus: 'Не исключен',
           ninetyEightStatus: 'Нет',
+          familyContact: '',
           family: [],
           documents: [],
           custom: [],
@@ -817,7 +842,7 @@
 
         const photoHtml = item.photo
           ? `<div class="avatar-box"><img src="${escapeHtml(item.photo)}" alt="Фото" /><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><button class="danger" data-action="remove-photo" ${isReadOnly ? 'disabled' : ''}>Удалить фото</button></div></div>`
-          : `<div class="avatar-box"><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><span class="muted">Фото не добавлено</span></div></div>`;
+          : `<div class="avatar-box"><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><span class="muted">Нет фото</span></div></div>`;
 
         const familyRows = (item.family || []).map((member, idx) => `
           <div class="family-box">
@@ -828,7 +853,7 @@
               <div><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" value="${escapeHtml(member.contact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
               <div class="field-full"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(member.notes || '')}</textarea></div>
             </div>
-            ${!isReadOnly ? '<div style="margin-top:10px;"><button class="danger" data-action="remove-family" data-index="' + idx + '">Удалить члена семьи</button></div>' : ''}
+            ${!isReadOnly ? `<div style="margin-top:10px;"><button class="danger" data-action="remove-family" data-index="${idx}">Удалить члена семьи</button></div>` : ''}
           </div>
         `).join('');
 
@@ -838,11 +863,11 @@
               <div><label>Название</label><input data-custom-key="${idx}" data-custom-type="key" value="${escapeHtml(field.key || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
               <div><label>Значение</label><input data-custom-key="${idx}" data-custom-type="value" value="${escapeHtml(field.value || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
             </div>
-            ${!isReadOnly ? '<div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="' + idx + '">Удалить</button></div>' : ''}
+            ${!isReadOnly ? `<div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="${idx}">Удалить</button></div>` : ''}
           </div>
         `).join('');
 
-        const documentRows = (item.documents || []).map(doc => `
+        const documentRows = (item.documents || []).map((doc) => `
           <div class="doc-box" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
             <div>
               <div style="font-weight:700;">${escapeHtml(doc.name || 'Документ')}</div>
@@ -850,7 +875,7 @@
             </div>
             <div class="mini-btns">
               ${doc.dataUrl ? `<a href="${escapeHtml(doc.dataUrl)}" target="_blank" rel="noopener">Открыть</a>` : ''}
-              ${!isReadOnly ? '<button class="danger" data-action="remove-document" data-doc-id="' + (doc.id || '') + '">Удалить</button>' : ''}
+              ${!isReadOnly ? `<button class="danger" data-action="remove-document" data-doc-id="${doc.id || ''}">Удалить</button>` : ''}
             </div>
           </div>
         `).join('');
@@ -905,9 +930,9 @@
               </div>
 
               <div class="modal-footer">
-                ${personId && canDb('delRec', db.id) && !isReadOnly ? '<button class="danger" data-action="delete-person" data-person-id="' + item.id + '">Удалить</button>' : ''}
+                ${personId && canDb('delRec', db.id) && !isReadOnly ? `<button class="danger" data-action="delete-person" data-person-id="${item.id}">Удалить</button>` : ''}
                 <button data-action="close-modal">Отмена</button>
-                ${!isReadOnly ? '<button class="primary" data-action="save-person" data-person-id="' + item.id + '">Сохранить</button>' : ''}
+                ${!isReadOnly ? `<button class="primary" data-action="save-person" data-person-id="${item.id}">Сохранить</button>` : ''}
               </div>
             </div>
           </div>
@@ -932,10 +957,11 @@
         `;
         const placeholder = container.querySelector('.muted');
         if (placeholder && placeholder.textContent.includes('Членов')) placeholder.remove();
-        const section = Array.from(container.querySelectorAll('.section')).find(el => el.textContent.includes('Члены семьи'));
+        const section = Array.from(container.querySelectorAll('.section')).find((el) => el.textContent.includes('Члены семьи'));
         if (section) section.insertAdjacentHTML('afterend', html);
         else container.insertAdjacentHTML('beforeend', html);
       }
+
       function addCustomRow() {
         const container = document.querySelector('.modal-body');
         if (!container) return;
@@ -949,34 +975,35 @@
             <div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="${idx}">Удалить</button></div>
           </div>
         `;
-        const section = Array.from(container.querySelectorAll('.section')).find(el => el.textContent.includes('Дополнительные поля'));
-        if (section) section.insertAdjacentHTML('afterend', html);
-        else container.insertAdjacentHTML('beforeend', html);
+        const section = Array.from(container.querySelectorAll('.section')).find((el) => el.textContent.includes('Дополнительные поля'));
+        if (section) section.insertAdjacentHTML('afterend', html); else container.insertAdjacentHTML('beforeend', html);
       }
+
       function collectCustomFields() {
         const map = new Map();
-        document.querySelectorAll('[data-custom-type]').forEach(el => {
+        document.querySelectorAll('[data-custom-type]').forEach((el) => {
           const idx = el.getAttribute('data-custom-key');
           if (!map.has(idx)) map.set(idx, {});
           const item = map.get(idx);
           item[el.getAttribute('data-custom-type')] = el.value.trim();
         });
         const result = [];
-        map.forEach(item => {
+        map.forEach((item) => {
           if (item.key || item.value) result.push({ key: item.key || '', value: item.value || '' });
         });
         return result;
       }
+
       function collectFamilyFields() {
         const map = new Map();
-        document.querySelectorAll('[data-family-field]').forEach(el => {
+        document.querySelectorAll('[data-family-field]').forEach((el) => {
           const idx = el.getAttribute('data-family-index');
           if (!map.has(idx)) map.set(idx, {});
           const item = map.get(idx);
           item[el.getAttribute('data-family-field')] = el.value.trim();
         });
         const result = [];
-        map.forEach(item => {
+        map.forEach((item) => {
           if (item.name || item.relation || item.phone || item.contact || item.notes) {
             result.push({ name: item.name || '', relation: item.relation || '', phone: item.phone || '', contact: item.contact || '', notes: item.notes || '' });
           }
@@ -987,7 +1014,7 @@
       function savePerson() {
         const db = currentDb();
         const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-        let rec = (db.recs || []).find(r => r.id === personId);
+        let rec = (db.recs || []).find((r) => r.id === personId);
         if (!rec) {
           rec = { id: uid() };
           db.recs.push(rec);
@@ -1000,129 +1027,138 @@
         }
 
         rec.fio = fio;
-        rec.personalNumber = document.getElementById('person-personalNumber')?.value || '';
+        rec.personalNumber = document.getElementById('person-personalNumber')?.value?.trim() || '';
         rec.birth = document.getElementById('person-birth')?.value || '';
-        rec.phone = document.getElementById('person-phone')?.value || '';
-        rec.email = document.getElementById('person-email')?.value || '';
-        rec.address = document.getElementById('person-address')?.value || '';
-        rec.position = document.getElementById('person-position')?.value || '';
+        rec.phone = document.getElementById('person-phone')?.value?.trim() || '';
+        rec.email = document.getElementById('person-email')?.value?.trim() || '';
+        rec.address = document.getElementById('person-address')?.value?.trim() || '';
+        rec.position = document.getElementById('person-position')?.value?.trim() || '';
         rec.deathDate = document.getElementById('person-deathDate')?.value || '';
-        rec.militaryCommissariat = document.getElementById('person-militaryCommissariat')?.value || '';
-        rec.relativeContact = document.getElementById('person-relativeContact')?.value || '';
+        rec.militaryCommissariat = document.getElementById('person-militaryCommissariat')?.value?.trim() || '';
+        rec.relativeContact = document.getElementById('person-relativeContact')?.value?.trim() || '';
         rec.paymentStatus = document.getElementById('person-paymentStatus')?.value || 'Не выплачено';
         rec.exclusionStatus = document.getElementById('person-exclusionStatus')?.value || 'Не исключен';
         rec.ninetyEightStatus = document.getElementById('person-ninetyEightStatus')?.value || 'Нет';
-        rec.familyContact = document.getElementById('person-familyContact')?.value || '';
-        rec.notes = document.getElementById('person-notes')?.value || '';
+        rec.familyContact = document.getElementById('person-familyContact')?.value?.trim() || '';
         rec.custom = collectCustomFields();
         rec.family = collectFamilyFields();
-        rec.documents = rec.documents || [];
-        rec.photo = rec.photo || '';
-        rec.upd = nowTs();
+        rec.notes = document.getElementById('person-notes')?.value || '';
 
         saveLocal();
         closeModal();
         renderApp();
-        setStatus('ok', 'Данные сохранены');
+        setStatus('ok', 'Сохранено');
       }
+
       function deletePerson(personId) {
         const db = currentDb();
-        db.recs = (db.recs || []).filter(r => r.id !== personId);
+        if (!personId) return;
+        db.recs = (db.recs || []).filter((rec) => rec.id !== personId);
         saveLocal();
         closeModal();
         renderApp();
-        setStatus('ok', 'Запись удалена');
+        setStatus('ok', 'Карточка удалена');
       }
+
       function addDb() {
-        const name = prompt('Название новой базы:', 'Новая база');
+        if (!canGlobal('createDb')) return;
+        const name = prompt('Название новой базы:');
         if (!name || !name.trim()) return;
         const db = { id: uid(), name: name.trim(), recs: [] };
         state.store.dbs.push(db);
-        for (const user of Object.keys(state.store.users)) ensureDbAccess(user, db.id);
         state.activeDbId = db.id;
         saveLocal();
         renderApp();
       }
       function renameDb() {
         const db = currentDb();
-        const name = prompt('Новое имя базы:', db.name || '');
-        if (name === null) return;
-        if (!name.trim()) return;
-        db.name = name.trim();
+        if (!canDb('renameDb', db.id)) return;
+        const next = prompt('Новое название базы:', db.name);
+        if (next === null) return;
+        const trimmed = next.trim();
+        if (!trimmed) return;
+        db.name = trimmed;
         saveLocal();
         renderApp();
       }
       function deleteDb() {
         const db = currentDb();
+        if (!canDb('delDb', db.id)) return;
         if (state.store.dbs.length <= 1) {
           setStatus('error', 'Нельзя удалить последнюю базу');
           return;
         }
-        if (!confirm(`Удалить базу "${db.name}"?`)) return;
-        state.store.dbs = state.store.dbs.filter(item => item.id !== db.id);
+        if (!window.confirm(`Удалить базу "${db.name}"?`)) return;
+        state.store.dbs = state.store.dbs.filter((item) => item.id !== db.id);
         state.activeDbId = state.store.dbs[0]?.id || null;
         saveLocal();
         renderApp();
+        setStatus('ok', 'База удалена');
       }
 
       async function doAuth() {
         const username = document.getElementById('login-user')?.value.trim();
         const password = document.getElementById('login-pass')?.value || '';
-        const errorEl = document.getElementById('auth-error');
+        const errEl = document.getElementById('auth-error');
         const reg = state.mode === 'register';
 
         if (!username || !password) {
-          errorEl.textContent = 'Введите логин и пароль';
+          errEl.textContent = 'Заполните логин и пароль';
           return;
         }
 
         if (reg) {
           const pass2 = document.getElementById('login-pass2')?.value || '';
           if (password !== pass2) {
-            errorEl.textContent = 'Пароли не совпадают';
+            errEl.textContent = 'Пароли не совпадают';
             return;
           }
           if (state.store.users[username]) {
-            errorEl.textContent = 'Такой пользователь уже существует';
+            errEl.textContent = 'Пользователь уже существует';
             return;
           }
-          state.store.users[username] = { hash: await sha256(password), perms: defaultPerms(), dbPerms: {} };
+          state.store.users[username] = {
+            hash: await sha256(password),
+            perms: defaultPerms(),
+            dbPerms: {}
+          };
           for (const db of state.store.dbs) ensureDbAccess(username, db.id);
           state.currentUser = username;
-          state.activeDbId = state.store.dbs[0]?.id || null;
           saveLocal();
           renderApp();
-          setStatus('ok', 'Регистрация успешна');
+          setStatus('ok', `Добро пожаловать, ${username}`);
           return;
         }
 
         const user = state.store.users[username];
         if (!user) {
-          errorEl.textContent = 'Пользователь не найден';
+          errEl.textContent = 'Пользователь не найден';
           return;
         }
         const hash = await sha256(password);
         if (user.hash !== hash) {
-          errorEl.textContent = 'Неверный логин или пароль';
+          errEl.textContent = 'Неверный пароль';
           return;
         }
         if (user.perms.blocked) {
-          errorEl.textContent = 'Пользователь заблокирован';
+          errEl.textContent = 'Пользователь заблокирован';
           return;
         }
 
         state.currentUser = username;
-        errorEl.textContent = '';
+        errEl.textContent = '';
         renderApp();
         setStatus('ok', `Добро пожаловать, ${username}`);
       }
+
       function logout() {
         state.currentUser = null;
         renderAuth();
         setStatus('ok', 'Вы вышли из системы');
       }
+
       function resetStore() {
-        if (!confirm('Сбросить локальные данные и вернуть форму входа?')) return;
+        if (!window.confirm('Сбросить данные приложения?')) return;
         localStorage.removeItem(STORAGE_KEY);
         state.store = { users: {}, dbs: [] };
         state.currentUser = null;
@@ -1130,18 +1166,72 @@
         state.mode = 'login';
         state.search = '';
         renderAuth();
-        setStatus('ok', 'Хранилище сброшено');
+        setStatus('ok', 'Данные сброшены');
+      }
+
+      function handleFileRead(file, onLoad) {
+        const reader = new FileReader();
+        reader.onload = (event) => onLoad(event.target.result, file);
+        reader.readAsDataURL(file);
+      }
+
+      function handleUploadChange(event) {
+        const pdfInput = event.target.closest('[data-role="pdf-upload"]');
+        if (!pdfInput || !pdfInput.files || !pdfInput.files.length) return;
+        const db = currentDb();
+        const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+        let rec = (db.recs || []).find((r) => r.id === personId);
+        if (!rec) {
+          rec = { id: uid() };
+          db.recs.push(rec);
+        }
+
+        rec.documents = rec.documents || [];
+        Array.from(pdfInput.files).forEach((file) => {
+          handleFileRead(file, (dataUrl, originalFile) => {
+            rec.documents.push({
+              id: uid(),
+              name: originalFile.name,
+              size: `${Math.round((originalFile.size || 0) / 1024)} KB`,
+              dataUrl: dataUrl
+            });
+            saveLocal();
+            closeModal();
+            openPersonModal(rec.id);
+          });
+        });
+      }
+
+      function handleImageUpload(event) {
+        const input = event.target.closest('[data-role="photo-upload"]');
+        if (!input || !input.files || !input.files.length) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          const db = currentDb();
+          const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+          let rec = (db.recs || []).find((r) => r.id === personId);
+          if (!rec) {
+            rec = { id: uid() };
+            db.recs.push(rec);
+          }
+          rec.photo = reader.result;
+          saveLocal();
+          closeModal();
+          openPersonModal(rec.id);
+        };
+        reader.readAsDataURL(file);
       }
 
       function bindRootEvents() {
         document.addEventListener('click', async (event) => {
-          const target = event.target.closest('[data-action]');
-          if (!target) return;
-          const action = target.dataset.action;
+          const el = event.target.closest('[data-action]');
+          if (!el) return;
+          const action = el.dataset.action;
 
           switch (action) {
             case 'switch-mode':
-              state.mode = target.dataset.mode || 'login';
+              state.mode = el.dataset.mode || 'login';
               renderAuth();
               break;
             case 'do-auth':
@@ -1157,23 +1247,20 @@
               addDb();
               break;
             case 'select-db':
-              state.activeDbId = target.dataset.dbId;
+              state.activeDbId = el.dataset.dbId;
               renderApp();
               break;
             case 'new-person':
-              openPersonModal(null);
+              openPersonModal();
               break;
             case 'open-person':
-              openPersonModal(target.dataset.personId);
-              break;
-            case 'close-modal':
-              closeModal();
+              openPersonModal(el.dataset.personId);
               break;
             case 'save-person':
               savePerson();
               break;
             case 'delete-person':
-              deletePerson(target.dataset.personId);
+              deletePerson(el.dataset.personId);
               break;
             case 'rename-db':
               renameDb();
@@ -1184,63 +1271,89 @@
             case 'open-admin':
               openAdminPanel();
               break;
-            case 'delete-user':
-              {
-                const user = target.dataset.user;
-                if (user === ADMIN_USER) {
-                  setStatus('error', 'Нельзя удалить администратора');
-                  return;
-                }
-                if (confirm(`Удалить пользователя ${user}?`)) {
-                  delete state.store.users[user];
-                  saveLocal();
-                  closeModal();
-                  renderApp();
-                }
-              }
+            case 'toggle-theme':
+              state.theme = state.theme === 'dark' ? 'light' : 'dark';
+              applyTheme();
+              saveLocal();
+              renderApp();
+              break;
+            case 'close-modal':
+              closeModal();
               break;
             case 'add-family-row':
               addFamilyRow();
               break;
             case 'remove-family':
-              {
-                const idx = Number(target.dataset.index);
-                const box = document.querySelector('[data-family-index="' + idx + '"]')?.closest('.family-box');
-                if (box) box.remove();
-              }
+              el.closest('.family-box')?.remove();
               break;
             case 'add-custom-row':
               addCustomRow();
               break;
             case 'remove-custom':
-              {
-                const idx = Number(target.dataset.index);
-                const box = document.querySelector('[data-custom-key="' + idx + '"]')?.closest('.custom-box');
-                if (box) box.remove();
-              }
+              el.closest('.custom-box')?.remove();
               break;
             case 'remove-photo':
-              {
-                const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-                const db = currentDb();
-                const rec = (db.recs || []).find(r => r.id === personId);
-                if (rec) rec.photo = '';
-                closeModal();
-                openPersonModal(personId || rec?.id);
-              }
+              const db2 = currentDb();
+              const personId2 = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+              const rec2 = (db2.recs || []).find((r) => r.id === personId2);
+              if (rec2) rec2.photo = '';
+              closeModal();
+              openPersonModal(personId2 || rec2?.id || null);
               break;
             case 'remove-document':
-              {
-                const docId = target.dataset.docId;
-                const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-                const db = currentDb();
-                const rec = (db.recs || []).find(r => r.id === personId);
-                if (rec) rec.documents = (rec.documents || []).filter(doc => String(doc.id || '') !== String(docId));
+              const db3 = currentDb();
+              const personId3 = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+              const rec3 = (db3.recs || []).find((r) => r.id === personId3);
+              if (rec3 && rec3.documents) {
+                rec3.documents = rec3.documents.filter((doc) => String(doc.id || '') !== String(el.dataset.docId));
                 saveLocal();
                 closeModal();
-                openPersonModal(personId);
+                openPersonModal(personId3);
               }
               break;
+            case 'delete-user':
+              {
+                const user = el.dataset.user;
+                if (!user || user === ADMIN_USER) {
+                  setStatus('error', 'Нельзя удалить администратора');
+                  return;
+                }
+                if (window.confirm(`Удалить пользователя ${user}?`)) {
+                  delete state.store.users[user];
+                  saveLocal();
+                  closeModal();
+                  renderApp();
+                  setStatus('ok', 'Пользователь удалён');
+                }
+                break;
+              }
+          }
+        });
+
+        document.addEventListener('change', (event) => {
+          const block = event.target.closest('[data-role="toggle-block"]');
+          if (block) {
+            const user = block.dataset.user;
+            if (!user || user === ADMIN_USER) {
+              block.checked = false;
+              setStatus('error', 'Администратор не может быть заблокирован');
+              return;
+            }
+            state.store.users[user].perms.blocked = block.checked;
+            saveLocal();
+            setStatus('ok', 'Статус блокировки обновлён');
+            return;
+          }
+
+          const input = event.target.closest('[data-role="photo-upload"]');
+          if (input) {
+            handleImageUpload(event);
+            return;
+          }
+
+          const pdfInput = event.target.closest('[data-role="pdf-upload"]');
+          if (pdfInput) {
+            handleUploadChange(event);
           }
         });
 
@@ -1248,65 +1361,9 @@
           const searchInput = event.target.closest('#person-search');
           if (searchInput) {
             state.search = searchInput.value;
-            const tableBody = document.querySelector('tbody');
-            if (tableBody) tableBody.innerHTML = renderRows(currentDb().recs || []);
+            const tbody = document.querySelector('tbody');
+            if (tbody) tbody.innerHTML = renderRows(currentDb().recs || []);
           }
-        });
-
-        document.addEventListener('change', (event) => {
-          const userCheckbox = event.target.closest('[data-role="toggle-block"]');
-          if (!userCheckbox) return;
-          const user = userCheckbox.dataset.user;
-          if (!user || !state.store.users[user]) return;
-          state.store.users[user].perms = state.store.users[user].perms || defaultPerms();
-          state.store.users[user].perms.blocked = !!userCheckbox.checked;
-          saveLocal();
-        });
-
-        document.addEventListener('change', (event) => {
-          const imgInput = event.target.closest('[data-role="photo-upload"]');
-          if (!imgInput || !imgInput.files || !imgInput.files[0]) return;
-          const file = imgInput.files[0];
-          const reader = new FileReader();
-          reader.onload = () => {
-            const db = currentDb();
-            const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-            let rec = personId ? (db.recs || []).find(r => r.id === personId) : null;
-            if (!rec) {
-              rec = { id: uid() };
-              db.recs.push(rec);
-            }
-            rec.photo = reader.result;
-            saveLocal();
-            closeModal();
-            openPersonModal(personId || rec.id);
-          };
-          reader.readAsDataURL(file);
-        });
-
-        document.addEventListener('change', (event) => {
-          const pdfInput = event.target.closest('[data-role="pdf-upload"]');
-          if (!pdfInput || !pdfInput.files) return;
-          const files = Array.from(pdfInput.files);
-          if (!files.length) return;
-          const db = currentDb();
-          const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-          let rec = personId ? (db.recs || []).find(r => r.id === personId) : null;
-          if (!rec) {
-            rec = { id: uid() };
-            db.recs.push(rec);
-          }
-          rec.documents = rec.documents || [];
-          files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              rec.documents.push({ id: uid(), name: file.name, size: `${Math.round(file.size / 1024)} KB`, dataUrl: reader.result });
-              saveLocal();
-              closeModal();
-              openPersonModal(personId || rec.id);
-            };
-            reader.readAsDataURL(file);
-          });
         });
       }
 
@@ -1315,8 +1372,13 @@
         ensureDefaultData();
         await ensureAdminSeed();
         saveLocal();
+        applyTheme();
         bindRootEvents();
-        renderAuth();
+        if (state.currentUser) {
+          renderApp();
+        } else {
+          renderAuth();
+        }
       }
 
       init();
