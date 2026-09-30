@@ -6,20 +6,20 @@
   <title>PersonBase</title>
   <style>
     :root {
-      --bg: #eef4ff;
+      --bg: #edf3ff;
+      --bg-strong: #dfeaff;
       --panel: #ffffff;
-      --panel-2: #f6f9ff;
-      --line: #dfe7f5;
-      --text: #1d2a3a;
-      --muted: #5b6d85;
-      --primary: #2457d7;
-      --primary-strong: #1a46b3;
-      --primary-soft: #eaf0ff;
-      --danger: #d93d57;
-      --danger-soft: #fff1f3;
-      --success: #1b8f59;
-      --warning: #c57a09;
-      --shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+      --panel-soft: #f7faff;
+      --line: #dfe7f6;
+      --line-strong: #cfe0ff;
+      --text: #19273d;
+      --muted: #5a7089;
+      --primary: #2b5be7;
+      --primary-2: #1d47bf;
+      --success: #1d9c63;
+      --danger: #d84e68;
+      --warning: #c9830d;
+      --shadow: 0 16px 36px rgba(17, 24, 39, 0.12);
     }
 
     * { box-sizing: border-box; }
@@ -27,10 +27,12 @@
       margin: 0;
       min-height: 100%;
       font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-      background: var(--bg);
+      background: linear-gradient(180deg, var(--bg) 0%, #f7faff 100%);
       color: var(--text);
     }
-    body { min-height: 100vh; }
+    body {
+      min-height: 100vh;
+    }
     button, input, textarea, select {
       font: inherit;
     }
@@ -41,89 +43,111 @@
       color: var(--text);
       border-radius: 10px;
       padding: 9px 12px;
-      transition: 0.15s ease;
+      transition: 0.18s ease;
     }
-    button:hover { background: var(--panel-2); }
+    button:hover { background: var(--panel-soft); }
     button.primary {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), #4a7ef9);
       border-color: var(--primary);
       color: white;
+      box-shadow: 0 10px 18px rgba(43, 91, 231, 0.2);
     }
-    button.primary:hover { background: var(--primary-strong); }
+    button.primary:hover { background: linear-gradient(135deg, var(--primary-2), #3a73f5); }
     button.danger {
-      background: var(--danger-soft);
-      border-color: rgba(217, 61, 87, 0.25);
+      background: #fff1f4;
       color: var(--danger);
+      border-color: rgba(216, 78, 104, 0.2);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
     input, textarea, select {
       width: 100%;
       border: 1px solid var(--line);
-      background: white;
+      background: #fff;
       color: var(--text);
       border-radius: 10px;
       padding: 10px 12px;
       outline: none;
+      transition: 0.15s ease;
     }
     input:focus, textarea:focus, select:focus {
-      border-color: rgba(36, 87, 215, 0.75);
-      box-shadow: 0 0 0 3px rgba(36, 87, 215, 0.12);
+      border-color: rgba(43, 91, 231, 0.7);
+      box-shadow: 0 0 0 3px rgba(43, 91, 231, 0.12);
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
     }
     .hidden { display: none !important; }
+
+    #root {
+      min-height: 100vh;
+    }
+
     .root-wrap {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: 28px;
     }
+
     .auth-card {
       width: min(440px, 100%);
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 22px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(223, 231, 246, 0.9);
+      border-radius: 26px;
       box-shadow: var(--shadow);
       padding: 28px 24px 22px;
     }
+
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       font-weight: 800;
       font-size: 28px;
+      letter-spacing: -0.03em;
     }
     .brand-mark {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), #5d8cff);
+      background: linear-gradient(135deg, var(--primary), #5d8dff);
       color: white;
       display: grid;
       place-items: center;
-      box-shadow: 0 10px 20px rgba(36, 87, 215, 0.2);
+      font-size: 20px;
+      box-shadow: 0 10px 20px rgba(43, 91, 231, 0.25);
     }
+
     .tab-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       padding: 5px;
-      margin-bottom: 18px;
-      background: var(--panel-2);
       border: 1px solid var(--line);
       border-radius: 12px;
+      background: var(--panel-soft);
+      margin-bottom: 18px;
     }
     .tab-btn {
-      border: 0;
       background: transparent;
-      color: var(--muted);
+      border: 0;
       border-radius: 9px;
+      color: var(--muted);
       font-weight: 700;
       padding: 10px 12px;
     }
     .tab-btn.active {
-      background: var(--panel);
+      background: white;
       color: var(--text);
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
     }
+
     .field { margin-bottom: 14px; }
     label {
       display: block;
@@ -131,21 +155,21 @@
       font-size: 12px;
       color: var(--muted);
       font-weight: 700;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
     .error {
-      min-height: 18px;
+      min-height: 20px;
       color: var(--danger);
       font-size: 12px;
-      margin-top: 4px;
-      margin-bottom: 10px;
+      margin: 4px 0 10px;
     }
     .auth-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
       margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .status {
@@ -155,7 +179,7 @@
       padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid var(--line);
-      background: var(--panel-2);
+      background: var(--panel-soft);
       color: var(--muted);
       font-size: 12px;
       font-weight: 700;
@@ -165,16 +189,16 @@
     .status.wait { color: var(--warning); }
 
     .app-shell {
-      width: 100%;
-      min-height: 100vh;
       display: grid;
       grid-template-columns: 260px minmax(0, 1fr);
+      min-height: 100vh;
       background: var(--bg);
     }
+
     .sidebar {
-      background: #1b2435;
-      color: #e1ebfb;
-      padding: 18px 12px 12px;
+      background: linear-gradient(180deg, #182534, #1f2d3d);
+      color: #edf4ff;
+      padding: 18px 12px 14px;
       min-height: 100vh;
     }
     .sidebar-header {
@@ -182,19 +206,19 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 4px 8px 12px;
+      padding: 6px 8px 12px;
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
       font-weight: 800;
-      color: #adc2de;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #afc2df;
     }
-    .db-list { margin-top: 6px; }
+    .db-list { margin-top: 8px; }
     .db-item {
       width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
       padding: 10px 12px;
       border: 0;
@@ -205,9 +229,9 @@
       text-align: left;
     }
     .db-item.active {
-      background: linear-gradient(135deg, var(--primary), #4d7ef7);
+      background: linear-gradient(135deg, var(--primary), #4e80ff);
       color: white;
-      box-shadow: 0 8px 18px rgba(36, 87, 215, 0.22);
+      box-shadow: 0 10px 18px rgba(43, 91, 231, 0.24);
     }
     .db-name {
       flex: 1;
@@ -217,15 +241,15 @@
       text-overflow: ellipsis;
     }
     .db-count {
-      font-size: 12px;
-      opacity: 0.8;
       min-width: 22px;
       text-align: right;
+      opacity: 0.8;
+      font-size: 12px;
     }
 
     .main {
       min-width: 0;
-      padding: 22px 24px 28px;
+      padding: 24px;
     }
     .topbar {
       display: flex;
@@ -259,11 +283,20 @@
       flex: 1;
       min-width: 180px;
     }
-    .search { width: min(360px, 100%); }
+    .search {
+      width: min(370px, 100%);
+    }
+    .mini-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .table-wrap {
-      background: var(--panel);
+      background: rgba(255,255,255,0.9);
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 18px;
       box-shadow: var(--shadow);
       overflow: auto;
       min-height: 200px;
@@ -280,18 +313,22 @@
       white-space: nowrap;
     }
     th {
-      background: var(--panel-2);
+      background: var(--panel-soft);
       color: var(--muted);
       font-size: 12px;
+      font-weight: 800;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      font-weight: 800;
       position: sticky;
       top: 0;
       z-index: 1;
     }
-    tbody tr:hover { background: rgba(36, 87, 215, 0.02); }
-    tbody tr { cursor: pointer; }
+    tbody tr:hover {
+      background: rgba(43, 91, 231, 0.025);
+    }
+    tbody tr {
+      cursor: pointer;
+    }
     .cell-name {
       display: flex;
       align-items: center;
@@ -300,33 +337,34 @@
     .avatar {
       width: 30px;
       height: 30px;
+      border-radius: 50%;
       display: inline-grid;
       place-items: center;
-      border-radius: 50%;
-      background: var(--primary-soft);
-      color: var(--primary);
       font-size: 11px;
       font-weight: 800;
+      color: var(--primary);
+      background: #edf2ff;
     }
     .empty-row {
       text-align: center;
       color: var(--muted);
-      padding: 40px 20px;
+      padding: 36px 20px;
     }
     .empty-row strong {
       display: block;
       margin-bottom: 8px;
-      color: var(--text);
       font-size: 18px;
+      color: var(--text);
     }
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.42);
       display: grid;
       place-items: center;
       padding: 18px;
-      z-index: 20;
+      background: rgba(17, 24, 39, 0.42);
+      z-index: 30;
     }
     .modal {
       width: min(820px, 100%);
@@ -334,13 +372,13 @@
       overflow: auto;
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 20px;
       box-shadow: var(--shadow);
     }
     .modal-header, .modal-footer {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
       padding: 18px 20px;
       border-bottom: 1px solid var(--line);
@@ -356,31 +394,26 @@
     .section {
       margin-top: 16px;
       margin-bottom: 8px;
+      color: var(--muted);
       font-size: 12px;
+      font-weight: 800;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 800;
     }
-    .form-grid {
+    .form-grid, .tag-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
     .field-full { grid-column: 1 / -1; }
-    .tag-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
     .avatar-box {
       display: flex;
       align-items: center;
       gap: 12px;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 14px;
+      background: var(--panel-soft);
       padding: 12px;
-      background: var(--panel-2);
     }
     .avatar-box img {
       width: 86px;
@@ -388,14 +421,13 @@
       object-fit: cover;
       border-radius: 12px;
       border: 1px solid var(--line);
-      background: white;
+      background: #fff;
     }
     .muted { color: var(--muted); font-size: 12px; }
-    .mini-btns { display: flex; gap: 8px; flex-wrap: wrap; }
     .family-box, .doc-box, .custom-box {
       border: 1px solid var(--line);
       border-radius: 12px;
-      background: var(--panel-2);
+      background: var(--panel-soft);
       padding: 12px;
       margin-bottom: 10px;
     }
@@ -418,9 +450,10 @@
     .admin-row:last-child { border-bottom: 0; }
     .admin-row small {
       display: block;
-      color: var(--muted);
       margin-top: 4px;
+      color: var(--muted);
     }
+
     @media (max-width: 900px) {
       .app-shell { grid-template-columns: 1fr; }
       .sidebar { min-height: auto; }
@@ -453,11 +486,7 @@
       function uid() {
         return 'id_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
       }
-
-      function nowTs() {
-        return Date.now();
-      }
-
+      function nowTs() { return Date.now(); }
       function escapeHtml(str) {
         return String(str ?? '').replace(/[&<>"']/g, ch => ({
           '&': '&amp;',
@@ -467,7 +496,6 @@
           "'": '&#39;'
         }[ch]));
       }
-
       function initials(name) {
         const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
         if (!parts.length) return '?';
@@ -475,64 +503,40 @@
         const b = parts[1] ? parts[1][0] : '';
         return (a + b).toUpperCase();
       }
-
       function fmtDate(value) {
         if (!value) return '';
         const d = new Date(value);
         if (Number.isNaN(d.getTime())) return '';
         return d.toLocaleDateString('ru-RU');
       }
-
       function defaultPerms() {
-        return {
-          read: true,
-          add: true,
-          edit: true,
-          delRec: true,
-          createDb: true,
-          renameDb: true,
-          delDb: true,
-          blocked: false
-        };
+        return { read: true, add: true, edit: true, delRec: true, createDb: true, renameDb: true, delDb: true, blocked: false };
       }
-
       function defaultDbPerms() {
-        return {
-          read: true,
-          add: true,
-          edit: true,
-          delRec: true,
-          createDb: true,
-          renameDb: true,
-          delDb: true
-        };
+        return { read: true, add: true, edit: true, delRec: true, createDb: true, renameDb: true, delDb: true };
       }
-
       function ensureUser(username) {
         if (!state.store.users[username]) {
           state.store.users[username] = { hash: '', perms: defaultPerms(), dbPerms: {} };
         }
       }
-
       function ensureDbAccess(username, dbId) {
         ensureUser(username);
         if (!state.store.users[username].dbPerms[dbId]) {
           state.store.users[username].dbPerms[dbId] = defaultDbPerms();
         }
       }
-
       function ensureDefaultData() {
         if (!Array.isArray(state.store.dbs) || !state.store.dbs.length) {
           state.store.dbs.push({ id: uid(), name: DEFAULT_DB_NAME, recs: [] });
         }
-        for (const name of Object.keys(state.store.users)) {
-          for (const db of state.store.dbs) ensureDbAccess(name, db.id);
+        for (const user of Object.keys(state.store.users)) {
+          for (const db of state.store.dbs) ensureDbAccess(user, db.id);
         }
         if (state.currentUser) {
           ensureDbAccess(state.currentUser, state.activeDbId || state.store.dbs[0].id);
         }
       }
-
       async function sha256(value) {
         const text = String(value ?? '');
         if (window.crypto && crypto.subtle && window.TextEncoder) {
@@ -546,7 +550,6 @@
         }
         return (hash >>> 0).toString(16);
       }
-
       async function ensureAdminSeed() {
         if (!state.store.users[ADMIN_USER]) {
           state.store.users[ADMIN_USER] = {
@@ -557,7 +560,6 @@
         }
         for (const db of state.store.dbs) ensureDbAccess(ADMIN_USER, db.id);
       }
-
       function loadLocal() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
@@ -574,11 +576,9 @@
           state.store = { users: {}, dbs: [] };
         }
       }
-
       function saveLocal() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store));
       }
-
       function setStatus(cls, text) {
         state.statusClass = cls;
         state.statusText = text;
@@ -588,28 +588,14 @@
           statusEl.textContent = text;
         }
       }
-
-      function isAdmin() {
-        return state.currentUser === ADMIN_USER;
-      }
-
-      function getUserPerms(username) {
-        ensureUser(username);
-        return state.store.users[username].perms;
-      }
-
-      function getDbPerms(username, dbId) {
-        ensureUser(username);
-        ensureDbAccess(username, dbId);
-        return state.store.users[username].dbPerms[dbId];
-      }
-
+      function isAdmin() { return state.currentUser === ADMIN_USER; }
+      function getUserPerms(username) { ensureUser(username); return state.store.users[username].perms; }
+      function getDbPerms(username, dbId) { ensureUser(username); ensureDbAccess(username, dbId); return state.store.users[username].dbPerms[dbId]; }
       function canGlobal(action) {
         if (!state.currentUser) return false;
         if (isAdmin()) return true;
         return !!(getUserPerms(state.currentUser)[action]);
       }
-
       function canDb(action, dbId) {
         if (!state.currentUser) return false;
         if (isAdmin()) return true;
@@ -617,14 +603,9 @@
         const perms = getDbPerms(state.currentUser, dbId);
         return !!perms[action];
       }
-
       function currentDb() {
-        if (!state.store.dbs.length) {
-          state.store.dbs = [{ id: uid(), name: DEFAULT_DB_NAME, recs: [] }];
-        }
-        if (!state.activeDbId) {
-          state.activeDbId = state.store.dbs[0].id;
-        }
+        if (!state.store.dbs.length) state.store.dbs = [{ id: uid(), name: DEFAULT_DB_NAME, recs: [] }];
+        if (!state.activeDbId) state.activeDbId = state.store.dbs[0].id;
         return state.store.dbs.find(db => db.id === state.activeDbId) || state.store.dbs[0];
       }
 
@@ -661,9 +642,7 @@
               ` : ''}
 
               <div class="error" id="auth-error"></div>
-              <button class="primary" data-action="do-auth" style="width:100%;">
-                ${reg ? 'Создать аккаунт' : 'Войти'}
-              </button>
+              <button class="primary" data-action="do-auth" style="width:100%;">${reg ? 'Создать аккаунт' : 'Войти'}</button>
 
               <div class="auth-footer">
                 <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
@@ -672,6 +651,35 @@
             </div>
           </div>
         `;
+      }
+
+      function renderRows(recs) {
+        const term = state.search.trim().toLowerCase();
+        const rows = (recs || []).filter(rec => {
+          if (!term) return true;
+          const hay = [rec.fio || '', rec.personalNumber || '', rec.phone || '', rec.position || '', rec.address || '', rec.notes || ''].join(' ').toLowerCase();
+          return hay.includes(term);
+        });
+
+        if (!rows.length) {
+          return `<tr><td colspan="6"><div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>`;
+        }
+
+        return rows.map(rec => `
+          <tr data-action="open-person" data-person-id="${rec.id}">
+            <td>
+              <div class="cell-name">
+                <span class="avatar">${escapeHtml(initials(rec.fio))}</span>
+                ${escapeHtml(rec.fio || '—')}
+              </div>
+            </td>
+            <td>${escapeHtml(rec.personalNumber || '—')}</td>
+            <td>${escapeHtml(fmtDate(rec.birth))}</td>
+            <td>${escapeHtml(rec.phone || '—')}</td>
+            <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
+            <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
+          </tr>
+        `).join('');
       }
 
       function renderApp() {
@@ -744,47 +752,10 @@
         `;
       }
 
-      function renderRows(recs) {
-        const term = state.search.trim().toLowerCase();
-        const rows = (recs || []).filter(rec => {
-          if (!term) return true;
-          const hay = [
-            rec.fio || '',
-            rec.personalNumber || '',
-            rec.phone || '',
-            rec.position || '',
-            rec.address || '',
-            rec.notes || ''
-          ].join(' ').toLowerCase();
-          return hay.includes(term);
-        });
-
-        if (!rows.length) {
-          return `<tr><td colspan="6"><div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>`;
-        }
-
-        return rows.map(rec => `
-          <tr data-action="open-person" data-person-id="${rec.id}">
-            <td>
-              <div class="cell-name">
-                <span class="avatar">${escapeHtml(initials(rec.fio))}</span>
-                ${escapeHtml(rec.fio || '—')}
-              </div>
-            </td>
-            <td>${escapeHtml(rec.personalNumber || '—')}</td>
-            <td>${escapeHtml(fmtDate(rec.birth))}</td>
-            <td>${escapeHtml(rec.phone || '—')}</td>
-            <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
-            <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
-          </tr>
-        `).join('');
-      }
-
       function openAdminPanel() {
         const users = Object.keys(state.store.users).sort();
         const html = users.map(username => {
-          const user = state.store.users[username];
-          const perms = user.perms || defaultPerms();
+          const perms = (state.store.users[username].perms || defaultPerms());
           return `
             <div class="admin-row">
               <div>
@@ -819,7 +790,6 @@
           </div>
         `);
       }
-
       function closeModal() {
         const modal = document.querySelector('.modal-backdrop');
         if (modal) modal.remove();
@@ -947,8 +917,7 @@
       function addFamilyRow() {
         const container = document.querySelector('.modal-body');
         if (!container) return;
-        const existing = container.querySelectorAll('.family-box');
-        const idx = existing.length;
+        const idx = container.querySelectorAll('.family-box').length;
         const html = `
           <div class="family-box">
             <div class="form-grid">
@@ -964,13 +933,9 @@
         const placeholder = container.querySelector('.muted');
         if (placeholder && placeholder.textContent.includes('Членов')) placeholder.remove();
         const section = Array.from(container.querySelectorAll('.section')).find(el => el.textContent.includes('Члены семьи'));
-        if (section) {
-          section.insertAdjacentHTML('afterend', html);
-        } else {
-          container.insertAdjacentHTML('beforeend', html);
-        }
+        if (section) section.insertAdjacentHTML('afterend', html);
+        else container.insertAdjacentHTML('beforeend', html);
       }
-
       function addCustomRow() {
         const container = document.querySelector('.modal-body');
         if (!container) return;
@@ -985,13 +950,9 @@
           </div>
         `;
         const section = Array.from(container.querySelectorAll('.section')).find(el => el.textContent.includes('Дополнительные поля'));
-        if (section) {
-          section.insertAdjacentHTML('afterend', html);
-        } else {
-          container.insertAdjacentHTML('beforeend', html);
-        }
+        if (section) section.insertAdjacentHTML('afterend', html);
+        else container.insertAdjacentHTML('beforeend', html);
       }
-
       function collectCustomFields() {
         const map = new Map();
         document.querySelectorAll('[data-custom-type]').forEach(el => {
@@ -1006,7 +967,6 @@
         });
         return result;
       }
-
       function collectFamilyFields() {
         const map = new Map();
         document.querySelectorAll('[data-family-field]').forEach(el => {
@@ -1026,9 +986,6 @@
 
       function savePerson() {
         const db = currentDb();
-        const form = document.querySelector('.modal-body');
-        if (!form) return;
-
         const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
         let rec = (db.recs || []).find(r => r.id === personId);
         if (!rec) {
@@ -1068,7 +1025,6 @@
         renderApp();
         setStatus('ok', 'Данные сохранены');
       }
-
       function deletePerson(personId) {
         const db = currentDb();
         db.recs = (db.recs || []).filter(r => r.id !== personId);
@@ -1077,7 +1033,6 @@
         renderApp();
         setStatus('ok', 'Запись удалена');
       }
-
       function addDb() {
         const name = prompt('Название новой базы:', 'Новая база');
         if (!name || !name.trim()) return;
@@ -1088,7 +1043,6 @@
         saveLocal();
         renderApp();
       }
-
       function renameDb() {
         const db = currentDb();
         const name = prompt('Новое имя базы:', db.name || '');
@@ -1098,7 +1052,6 @@
         saveLocal();
         renderApp();
       }
-
       function deleteDb() {
         const db = currentDb();
         if (state.store.dbs.length <= 1) {
@@ -1133,11 +1086,7 @@
             errorEl.textContent = 'Такой пользователь уже существует';
             return;
           }
-          state.store.users[username] = {
-            hash: await sha256(password),
-            perms: defaultPerms(),
-            dbPerms: {}
-          };
+          state.store.users[username] = { hash: await sha256(password), perms: defaultPerms(), dbPerms: {} };
           for (const db of state.store.dbs) ensureDbAccess(username, db.id);
           state.currentUser = username;
           state.activeDbId = state.store.dbs[0]?.id || null;
@@ -1152,13 +1101,11 @@
           errorEl.textContent = 'Пользователь не найден';
           return;
         }
-
         const hash = await sha256(password);
         if (user.hash !== hash) {
           errorEl.textContent = 'Неверный логин или пароль';
           return;
         }
-
         if (user.perms.blocked) {
           errorEl.textContent = 'Пользователь заблокирован';
           return;
@@ -1169,13 +1116,11 @@
         renderApp();
         setStatus('ok', `Добро пожаловать, ${username}`);
       }
-
       function logout() {
         state.currentUser = null;
         renderAuth();
         setStatus('ok', 'Вы вышли из системы');
       }
-
       function resetStore() {
         if (!confirm('Сбросить локальные данные и вернуть форму входа?')) return;
         localStorage.removeItem(STORAGE_KEY);
@@ -1276,8 +1221,8 @@
               break;
             case 'remove-photo':
               {
-                const db = currentDb();
                 const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+                const db = currentDb();
                 const rec = (db.recs || []).find(r => r.id === personId);
                 if (rec) rec.photo = '';
                 closeModal();
@@ -1287,16 +1232,14 @@
             case 'remove-document':
               {
                 const docId = target.dataset.docId;
-                const db = currentDb();
                 const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
+                const db = currentDb();
                 const rec = (db.recs || []).find(r => r.id === personId);
                 if (rec) rec.documents = (rec.documents || []).filter(doc => String(doc.id || '') !== String(docId));
                 saveLocal();
                 closeModal();
                 openPersonModal(personId);
               }
-              break;
-            default:
               break;
           }
         });
@@ -1305,9 +1248,8 @@
           const searchInput = event.target.closest('#person-search');
           if (searchInput) {
             state.search = searchInput.value;
-            const db = currentDb();
             const tableBody = document.querySelector('tbody');
-            if (tableBody) tableBody.innerHTML = renderRows(db.recs || []);
+            if (tableBody) tableBody.innerHTML = renderRows(currentDb().recs || []);
           }
         });
 
@@ -1358,12 +1300,7 @@
           files.forEach(file => {
             const reader = new FileReader();
             reader.onload = () => {
-              rec.documents.push({
-                id: uid(),
-                name: file.name,
-                size: `${Math.round(file.size / 1024)} KB`,
-                dataUrl: reader.result
-              });
+              rec.documents.push({ id: uid(), name: file.name, size: `${Math.round(file.size / 1024)} KB`, dataUrl: reader.result });
               saveLocal();
               closeModal();
               openPersonModal(personId || rec.id);
