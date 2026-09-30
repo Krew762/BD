@@ -180,6 +180,16 @@ function merge(a,b){
   });
   return{users:users,tomb:tomb};
 }
+async function refreshLatestFromFile(){
+  if(!fh) return false;
+  try {
+    await pull();
+    return true;
+  } catch (e) {
+    setStatus("er","Не удалось обновить данные");
+    return false;
+  }
+}
 function setStatus(s,t){
   stState=s;stText=t||"";var el=$("#st");
   if(el){el.className="pill "+s;el.innerHTML="<b></b><span>"+esc(stText)+"</span>"}
@@ -199,7 +209,7 @@ function persist(){
     if(!fh)return;
     try{
       setStatus("sv","Сохранение…");
-      await pull();
+      await refreshLatestFromFile();
       var w=await fh.createWritable();
       await w.write(JSON.stringify(store));
       await w.close();
@@ -267,7 +277,7 @@ function renderAuth(){
 async function doAuth(){
   var u=$("#lu").value.trim(),p=$("#lp").value,err=$("#aerr");
   if(!u||!p){err.textContent="Введите логин и пароль";return}
-  try{await queue;await pull()}catch(e){err.textContent="Нет доступа к файлу базы";return}
+  try{await queue;await refreshLatestFromFile()}catch(e){err.textContent="Нет доступа к файлу базы";return}
   var h=await hash(p);
   if(mode==="reg"){
     if(u.length<3){err.textContent="Логин — минимум 3 символа";return}
@@ -437,18 +447,18 @@ document.addEventListener("click",function(e){
   else if(a==="auth")doAuth();
   else if(a==="logout"){cur=null;dbId=null;mode="login";try{sessionStorage.removeItem("pb_user")}catch(x){}renderAuth()}
   else if(a==="theme"){var r=document.documentElement,dark=r.getAttribute("data-theme")==="dark";r.setAttribute("data-theme",dark?"light":"dark")}
-  else if(a==="pick"){owner=isSuper()?(t.getAttribute("data-o")||cur):cur;dbId=t.getAttribute("data-id");q="";renderApp()}
+  else if(a==="pick"){owner=isSuper()?(t.getAttribute("data-o")||cur):cur;dbId=t.getAttribute("data-id");q="";refreshLatestFromFile();renderApp()}
   else if(a==="sort"){var k=t.getAttribute("data-k");if(sortK===k)sortD=-sortD;else{sortK=k;sortD=1}renderTable()}
   else if(a==="add"&&can("add"))card(null);
   else if(a==="open")card(t.getAttribute("data-id"));
   else if(a==="close")closeM();
   else if(a==="addc"){$("#cust").insertAdjacentHTML("beforeend",crow());var ks=document.querySelectorAll("#cust .ck");ks[ks.length-1].focus()}
   else if(a==="rmc"){t.closest(".cr").remove()}
-  else if(a==="saverec")saveRec();
-  else if(a==="delrec"&&can("delRec")){var rid=$("#cardb").getAttribute("data-id");confirmM("Удалить запись?","Карточка будет удалена у всех без возможности восстановления.",function(){var d=db();d.recs=d.recs.filter(function(r){return r.id!==rid});persist();closeM();renderApp()})}
-  else if(a==="newdb"&&can("createDb"))ask("Новая база данных","","Создать",function(n){var b={id:uid(),name:n||"Новая база",nts:now(),recs:[]};user().dbs.push(b);dbId=b.id;persist();closeM();renderApp()});
-  else if(a==="rendb"&&can("renameDb"))ask("Переименовать базу",db().name,"Сохранить",function(n){var d=db();d.name=n||d.name;d.nts=now();persist();closeM();renderApp()});
-  else if(a==="deldb"&&can("delDb")){if(user().dbs.length<2){modal('<div class="mh">Нельзя удалить</div><div class="mb">В аккаунте должна остаться хотя бы одна база. Создайте другую базу и повторите попытку.</div><div class="mf"><button class="btn pri" data-a="close">Закрыть</button></div>');return}var d0=db();confirmM("Удалить базу «"+esc(d0.name)+"»?","Вместе с базой удалятся все записи ("+d0.recs.length+"). Это нельзя отменить.",function(){var u=user();u.dbs=u.dbs.filter(function(d){return d.id!==d0.id});dbId=u.dbs[0].id;persist();closeM();renderApp()})}
+  else if(a==="saverec"){refreshLatestFromFile();saveRec();}
+  else if(a==="delrec"&&can("delRec")){var rid=$("#cardb").getAttribute("data-id");refreshLatestFromFile();confirmM("Удалить запись?","Карточка будет удалена у всех без возможности восстановления.",function(){var d=db();d.recs=d.recs.filter(function(r){return r.id!==rid});persist();closeM();renderApp()})}
+  else if(a==="newdb"&&can("createDb"))ask("Новая база данных","","Создать",function(n){refreshLatestFromFile();var b={id:uid(),name:n||"Новая база",nts:now(),recs:[]};user().dbs.push(b);dbId=b.id;persist();closeM();renderApp()});
+  else if(a==="rendb"&&can("renameDb"))ask("Переименовать базу",db().name,"Сохранить",function(n){refreshLatestFromFile();var d=db();d.name=n||d.name;d.nts=now();persist();closeM();renderApp()});
+  else if(a==="deldb"&&can("delDb")){if(user().dbs.length<2){modal('<div class="mh">Нельзя удалить</div><div class="mb">В аккаунте должна остаться хотя бы одна база. Создайте другую базу и повторите попытку.</div><div class="mf"><button class="btn pri" data-a="close">Закрыть</button></div>');return}var d0=db();refreshLatestFromFile();confirmM("Удалить базу «"+esc(d0.name)+"»?","Вместе с базой удалятся все записи ("+d0.recs.length+"). Это нельзя отменить.",function(){var u=user();u.dbs=u.dbs.filter(function(d){return d.id!==d0.id});dbId=u.dbs[0].id;persist();closeM();renderApp()})}
   else if(a==="users"&&isSuper())usersModal();
   else if(a==="pw"&&isSuper()){var pn=t.getAttribute("data-u");ask("Новый пароль для "+pn,"","Сменить",async function(pw){if(pw.length<4){$("#aserr").textContent="Мин. 4 символа";return}var u=store.users[pn];if(!u)return;u.hash=await hash(pw);u.pts=now();persist();closeM();});}
   else if(a==="askok"){var v=$("#ask").value.trim();if(!v){$("#aserr").textContent="Поле не может быть пустым";return}window.__ask(v)}
