@@ -28,524 +28,93 @@
       --shadow-strong: 0 20px 50px rgba(15, 23, 42, 0.18);
       --font: "SF Pro Display", "SF Pro Text", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
-
-    body[data-theme="dark"] {
-      --bg: #0b1120;
-      --bg-strong: #0f172a;
-      --panel: rgba(15, 23, 42, 0.72);
-      --panel-solid: #111827;
-      --panel-soft: #121d2f;
-      --line: rgba(148, 163, 184, 0.18);
-      --line-strong: rgba(96, 165, 250, 0.36);
-      --text: #e5eefc;
-      --muted: #a7b4c8;
-      --primary: #60a5fa;
-      --primary-2: #3b82f6;
-      --success: #34d399;
-      --danger: #f87171;
-      --warning: #fbbf24;
-      --shadow: 0 18px 36px rgba(2, 6, 23, 0.42), 0 6px 18px rgba(15, 23, 42, 0.35);
-      --sidebar-start: #020817;
-      --sidebar-end: #0f172a;
-      --glass: rgba(15, 23, 42, 0.62);
-      --chip: rgba(96,165,250,0.12);
-      --shadow-strong: 0 20px 60px rgba(2,6,23,0.6);
-    }
-
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      font-family: var(--font);
-      background:
-        radial-gradient(circle at top left, rgba(96,165,250,0.12), transparent 30%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    body {
-      min-height: 100vh;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-    button, input, textarea, select {
-      font: inherit;
-    }
-    button {
-      cursor: pointer;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 9px 14px;
-      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset;
-    }
-    button:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.12);
-      border-color: var(--line-strong);
-    }
-    button.primary {
-      background: linear-gradient(135deg, var(--primary), #4f8bff);
-      border-color: rgba(37,99,235,0.5);
-      color: white;
-      box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
-    }
-    button.primary:hover {
-      filter: brightness(1.04);
-      box-shadow: 0 14px 24px rgba(37, 99, 235, 0.24);
-    }
-    button.danger {
-      background: rgba(225, 29, 72, 0.08);
-      color: var(--danger);
-      border-color: rgba(225, 29, 72, 0.18);
-    }
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.24);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 11px 12px;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-    body[data-theme="dark"] input,
-    body[data-theme="dark"] textarea,
-    body[data-theme="dark"] select {
-      background: rgba(15, 23, 42, 0.85);
-    }
-    input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
-    input:focus, textarea:focus, select:focus {
-      border-color: rgba(59, 130, 246, 0.7);
-      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14);
-      background: rgba(255,255,255,0.7);
-    }
-    body[data-theme="dark"] input:focus,
-    body[data-theme="dark"] textarea:focus,
-    body[data-theme="dark"] select:focus {
-      background: rgba(15, 23, 42, 0.95);
-    }
-    a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-    .hidden { display: none !important; }
-
-    #root {
-      min-height: 100vh;
-    }
-
-    .root-wrap {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-    }
-
-    .auth-card {
-      width: min(440px, 100%);
-      background: var(--glass);
-      backdrop-filter: blur(18px);
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      box-shadow: var(--shadow-strong);
-      padding: 28px 24px 22px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-      font-weight: 800;
-      font-size: 28px;
-      letter-spacing: -0.04em;
-    }
-    .brand-mark {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--primary), #7aa6ff);
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 20px;
-      box-shadow: 0 10px 18px rgba(37, 99, 235, 0.2);
-    }
-
-    .tab-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 5px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--panel-soft);
-      margin-bottom: 20px;
-    }
-    .tab-btn {
-      background: transparent;
-      border: 0;
-      border-radius: 10px;
-      color: var(--muted);
-      font-weight: 700;
-      padding: 10px 12px;
-    }
-    .tab-btn.active {
-      background: var(--panel-solid);
-      color: var(--text);
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
-    }
-
-    .field { margin-bottom: 14px; }
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-    }
-    .error {
-      min-height: 22px;
-      color: var(--danger);
-      font-size: 12px;
-      margin: 4px 0 10px;
-    }
-    .auth-footer {
-      margin-top: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .status {
-      display: inline-flex;
-      align-items: center;
-      min-height: 36px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--panel-soft);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .status.ok { color: var(--success); }
-    .status.error { color: var(--danger); }
-    .status.wait { color: var(--warning); }
-
-    .app-shell {
-      display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
-      min-height: 100vh;
-      background: transparent;
-    }
-
-    .sidebar {
-      background: linear-gradient(180deg, var(--sidebar-start), var(--sidebar-end));
-      color: #edf4ff;
-      padding: 18px 12px 14px;
-      min-height: 100vh;
-      border-right: 1px solid rgba(255,255,255,0.06);
-    }
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px 10px 14px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(191, 219, 254, 0.85);
-    }
-    .db-list { margin-top: 8px; }
-    .db-item {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 12px;
-      border: 0;
-      background: transparent;
-      color: inherit;
-      border-radius: 14px;
-      margin-bottom: 6px;
-      text-align: left;
-      transition: background 0.18s ease, transform 0.18s ease;
-    }
-    .db-item:hover {
-      background: rgba(255,255,255,0.04);
-      transform: translateX(1px);
-    }
-    .db-item.active {
-      background: linear-gradient(135deg, var(--primary), #60a5fa);
-      color: white;
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
-    }
-    .db-name {
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .db-count {
-      min-width: 22px;
-      text-align: right;
-      opacity: 0.8;
-      font-size: 12px;
-    }
-
-    .main {
-      min-width: 0;
-      padding: 24px;
-    }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-      padding: 6px 0;
-    }
-    .topbar .brand {
-      margin: 0;
-      font-size: 22px;
-    }
-    .toolbar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .theme-toggle {
-      border: 1px solid var(--line);
-      background: var(--chip);
-      color: var(--text);
-      padding: 8px 10px;
-      border-radius: 10px;
-    }
-    .head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-      padding: 2px 2px 8px;
-    }
-    .head h2 {
-      margin: 0;
-      font-size: 22px;
-      line-height: 1.2;
-      flex: 1;
-      min-width: 180px;
-      letter-spacing: -0.04em;
-    }
-    .search {
-      width: min(370px, 100%);
-      background: var(--panel);
-    }
-    .mini-btns {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .table-wrap {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      overflow: auto;
-      min-height: 200px;
-      backdrop-filter: blur(16px);
-    }
-    table {
-      width: 100%;
-      min-width: 760px;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 13px 14px;
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      white-space: nowrap;
-    }
-    th {
-      background: var(--panel-soft);
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    tbody tr {
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-    tbody tr:hover { background: rgba(96,165,250,0.04); }
-    .cell-name {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-    }
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: inline-grid;
-      place-items: center;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--primary);
-      background: rgba(96,165,250,0.15);
-      border: 1px solid rgba(96,165,250,0.15);
-    }
-    .empty-row {
-      text-align: center;
-      color: var(--muted);
-      padding: 34px 20px;
-    }
-    .empty-row strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 18px;
-      color: var(--text);
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 18px;
-      background: rgba(15, 23, 42, 0.46);
-      z-index: 50;
-      backdrop-filter: blur(12px);
-    }
-    .modal {
-      width: min(820px, 100%);
-      max-height: 90vh;
-      overflow: auto;
-      background: var(--panel-solid);
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      box-shadow: var(--shadow-strong);
-    }
-    .modal-header, .modal-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--line);
-    }
-    .modal-footer {
-      border-top: 1px solid var(--line);
-      border-bottom: 0;
-      justify-content: flex-end;
-    }
-    .modal-body {
-      padding: 18px 20px 12px;
-    }
-    .section {
-      margin-top: 18px;
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    .form-grid, .tag-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .field-full { grid-column: 1 / -1; }
-    .avatar-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--panel-soft);
-      padding: 12px;
-      margin-bottom: 16px;
-    }
-    .avatar-box img {
-      width: 86px;
-      height: 86px;
-      object-fit: cover;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: #fff;
-    }
-    .muted { color: var(--muted); font-size: 12px; }
-    .family-box, .doc-box, .custom-box {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: var(--panel-soft);
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-    .admin-panel {
-      background: var(--panel-soft);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .admin-row {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--line);
-    }
-    .admin-row:last-child { border-bottom: 0; }
-    .admin-row small {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-    }
-
-    @media (max-width: 900px) {
-      .app-shell { grid-template-columns: 1fr; }
-      .sidebar { min-height: auto; }
-      .head { align-items: stretch; }
-      .search { width: 100%; }
-      .form-grid, .tag-grid { grid-template-columns: 1fr; }
-      .main { padding: 16px; }
-    }
+    body[data-theme="dark"] { --bg:#0b1120; --bg-strong:#0f172a; --panel:rgba(15,23,42,.72); --panel-solid:#111827; --panel-soft:#121d2f; --line:rgba(148,163,184,.18); --line-strong:rgba(96,165,250,.36); --text:#e5eefc; --muted:#a7b4c8; --primary:#60a5fa; --primary-2:#3b82f6; --success:#34d399; --danger:#f87171; --warning:#fbbf24; --shadow:0 18px 36px rgba(2,6,23,.42),0 6px 18px rgba(15,23,42,.35); --sidebar-start:#020817; --sidebar-end:#0f172a; --glass:rgba(15,23,42,.62); --chip:rgba(96,165,250,.12); --shadow-strong:0 20px 60px rgba(2,6,23,.6); }
+    * { box-sizing:border-box; }
+    html, body { margin:0; min-height:100%; font-family:var(--font); background:radial-gradient(circle at top left, rgba(96,165,250,0.12), transparent 30%), linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    body { min-height:100vh; transition:background .2s ease, color .2s ease; }
+    button, input, textarea, select { font:inherit; }
+    button { cursor:pointer; border:1px solid var(--line); background:var(--panel); color:var(--text); border-radius:12px; padding:9px 14px; transition:transform .18s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease; box-shadow:0 1px 0 rgba(255,255,255,.15) inset; }
+    button:hover { transform:translateY(-1px); background:rgba(255,255,255,.12); border-color:var(--line-strong); }
+    button.primary { background:linear-gradient(135deg, var(--primary), #4f8bff); border-color:rgba(37,99,235,.5); color:white; box-shadow:0 10px 18px rgba(37, 99, 235, 0.18); }
+    button.primary:hover { filter:brightness(1.04); box-shadow:0 14px 24px rgba(37,99,235,.24); }
+    button.danger { background:rgba(225,29,72,.08); color:var(--danger); border-color:rgba(225,29,72,.18); }
+    button:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+    input, textarea, select { width:100%; border:1px solid var(--line); background:rgba(255,255,255,.24); color:var(--text); border-radius:12px; padding:11px 12px; outline:none; transition:border-color .15s ease, box-shadow .15s ease, background .15s ease; }
+    body[data-theme="dark"] input, body[data-theme="dark"] textarea, body[data-theme="dark"] select { background:rgba(15,23,42,.85); }
+    input::placeholder, textarea::placeholder { color:var(--muted); opacity:.8; }
+    input:focus, textarea:focus, select:focus { border-color:rgba(59,130,246,.7); box-shadow:0 0 0 4px rgba(96,165,250,.14); background:rgba(255,255,255,.7); }
+    body[data-theme="dark"] input:focus, body[data-theme="dark"] textarea:focus, body[data-theme="dark"] select:focus { background:rgba(15,23,42,.95); }
+    a { color:var(--primary); text-decoration:none; }
+    .hidden { display:none !important; }
+    #root { min-height:100vh; }
+    .root-wrap { min-height:100vh; display:grid; place-items:center; padding:28px; }
+    .auth-card { width:min(440px,100%); background:var(--glass); backdrop-filter:blur(18px); border:1px solid var(--line); border-radius:30px; box-shadow:var(--shadow-strong); padding:28px 24px 22px; }
+    .brand { display:flex; align-items:center; gap:12px; margin-bottom:18px; font-weight:800; font-size:28px; letter-spacing:-0.04em; }
+    .brand-mark { width:40px; height:40px; border-radius:14px; background:linear-gradient(135deg, var(--primary), #7aa6ff); color:white; display:grid; place-items:center; font-size:20px; box-shadow:0 10px 18px rgba(37,99,235,.2); }
+    .tab-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:5px; border:1px solid var(--line); border-radius:14px; background:var(--panel-soft); margin-bottom:20px; }
+    .tab-btn { background:transparent; border:0; border-radius:10px; color:var(--muted); font-weight:700; padding:10px 12px; }
+    .tab-btn.active { background:var(--panel-solid); color:var(--text); box-shadow:0 4px 10px rgba(15,23,42,.08); }
+    .field { margin-bottom:14px; }
+    label { display:block; margin-bottom:7px; font-size:11px; color:var(--muted); font-weight:700; letter-spacing:0.09em; text-transform:uppercase; }
+    .error { min-height:22px; color:var(--danger); font-size:12px; margin:4px 0 10px; }
+    .auth-footer { margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+    .status { display:inline-flex; align-items:center; min-height:36px; padding:8px 12px; border-radius:999px; border:1px solid var(--line); background:var(--panel-soft); color:var(--muted); font-size:12px; font-weight:700; }
+    .status.ok { color:var(--success); }
+    .status.error { color:var(--danger); }
+    .status.wait { color:var(--warning); }
+    .app-shell { display:grid; grid-template-columns:260px minmax(0,1fr); min-height:100vh; }
+    .sidebar { background:linear-gradient(180deg, var(--sidebar-start), var(--sidebar-end)); color:#edf4ff; padding:18px 12px 14px; min-height:100vh; border-right:1px solid rgba(255,255,255,.06); }
+    .sidebar-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px 14px; font-size:11px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:rgba(191,219,254,.85); }
+    .db-list { margin-top:8px; }
+    .db-item { width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; border:0; background:transparent; color:inherit; border-radius:14px; margin-bottom:6px; text-align:left; transition:background .18s ease, transform .18s ease; }
+    .db-item:hover { background:rgba(255,255,255,.04); transform:translateX(1px); }
+    .db-item.active { background:linear-gradient(135deg, var(--primary), #60a5fa); color:white; box-shadow:0 12px 24px rgba(37,99,235,.24); }
+    .db-name { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .db-count { min-width:22px; text-align:right; opacity:.8; font-size:12px; }
+    .main { min-width:0; padding:24px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; padding:6px 0; }
+    .topbar .brand { margin:0; font-size:22px; }
+    .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .theme-toggle { border:1px solid var(--line); background:var(--chip); color:var(--text); padding:8px 10px; border-radius:10px; }
+    .head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; padding:2px 2px 8px; }
+    .head h2 { margin:0; font-size:22px; line-height:1.2; flex:1; min-width:180px; letter-spacing:-0.04em; }
+    .search { width:min(370px,100%); background:var(--panel); }
+    .mini-btns { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .person-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px; }
+    .person-card { background:var(--panel); border:1px solid var(--line); border-radius:22px; overflow:hidden; box-shadow:var(--shadow); cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
+    .person-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-strong); }
+    .person-card-image { height:220px; width:100%; background-size:cover; background-position:center; background-color:#dfeafe; position:relative; }
+    .person-card-image.empty { display:grid; place-items:center; font-weight:700; color:var(--muted); background:linear-gradient(135deg, rgba(96,165,250,.12), rgba(255,255,255,.18)); }
+    .person-card-body { padding:16px; }
+    .person-card-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+    .person-card-name { font-size:18px; font-weight:700; letter-spacing:-0.03em; }
+    .person-chip { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:5px 8px; font-size:11px; font-weight:700; border:1px solid var(--line); background:var(--chip); color:var(--muted); }
+    .person-card-meta { display:grid; gap:8px; color:var(--muted); font-size:13px; }
+    .person-card-meta strong { color:var(--text); }
+    .empty-row { text-align:center; color:var(--muted); padding:34px 20px; }
+    .empty-row strong { display:block; margin-bottom:8px; font-size:18px; color:var(--text); }
+    .modal-backdrop { position:fixed; inset:0; display:grid; place-items:center; padding:22px; background:rgba(15,23,42,.46); z-index:50; backdrop-filter:blur(12px); }
+    .person-modal { width:min(1100px,100%); max-height:90vh; overflow:auto; background:var(--panel-solid); border:1px solid var(--line); border-radius:26px; box-shadow:var(--shadow-strong); }
+    .modal-header, .modal-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 20px; border-bottom:1px solid var(--line); }
+    .modal-footer { border-top:1px solid var(--line); border-bottom:0; justify-content:flex-end; }
+    .modal-header-actions { display:flex; align-items:center; gap:8px; }
+    .person-modal-body { display:grid; grid-template-columns:280px minmax(0,1.3fr) 260px; gap:20px; padding:20px; }
+    .person-photo-box { border:1px solid var(--line); border-radius:18px; background:var(--panel-soft); padding:12px; }
+    .person-photo { width:100%; height:310px; object-fit:cover; border-radius:16px; border:1px solid var(--line); display:block; background:#fff; }
+    .person-photo.empty { display:grid; place-items:center; height:310px; border:1px dashed var(--line-strong); color:var(--muted); font-weight:700; background:rgba(96,165,250,.04); }
+    .field-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .field-row { margin-bottom:12px; }
+    .field-row label { font-size:11px; margin-bottom:7px; }
+    .person-main-info, .person-side-info { display:flex; flex-direction:column; }
+    .person-section-title { margin:0 0 12px; color:var(--muted); font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .side-block { border:1px solid var(--line); border-radius:14px; background:var(--panel-soft); padding:12px; margin-bottom:10px; }
+    .side-block h4 { margin:0 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+    .side-block p { margin:0; line-height:1.5; }
+    @media (max-width:900px) { .app-shell{grid-template-columns:1fr;} .sidebar{min-height:auto;} .head{align-items:stretch;} .search{width:100%;} .person-modal-body{grid-template-columns:1fr;} .main{padding:16px;} .field-grid{grid-template-columns:1fr;} }
   </style>
 </head>
 <body>
   <div id="root"></div>
-
   <script>
     (() => {
       const STORAGE_KEY = 'personbase_store_v2';
@@ -553,286 +122,76 @@
       const ADMIN_PASSWORD = 'A8G95S87';
       const DEFAULT_DB_NAME = 'Основная база';
 
-      const state = {
-        store: { users: {}, dbs: [] },
-        currentUser: null,
-        activeDbId: null,
-        search: '',
-        mode: 'login',
-        theme: 'light',
-        statusClass: 'ok',
-        statusText: 'Готово'
-      };
+      const state = { store:{users:{}, dbs:[]}, currentUser:null, activeDbId:null, search:'', mode:'login', theme:'light', statusClass:'ok', statusText:'Готово' };
 
-      function uid() {
-        return 'id_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-      }
-
-      function escapeHtml(str) {
-        return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        }[ch]));
-      }
-
-      function initials(name) {
-        const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-        if (!parts.length) return '?';
-        const a = parts[0][0] || '';
-        const b = parts[1] ? parts[1][0] : '';
-        return (a + b).toUpperCase();
-      }
-
-      function fmtDate(value) {
-        if (!value) return '';
-        const d = new Date(value);
-        if (Number.isNaN(d.getTime())) return '';
-        return d.toLocaleDateString('ru-RU');
-      }
-
-      function defaultPerms() {
-        return { read: true, add: true, edit: true, delRec: true, createDb: false, renameDb: false, delDb: false, blocked: false };
-      }
-
-      function defaultDbPerms() {
-        return { read: true, add: true, edit: true, delRec: true, renameDb: false, delDb: false };
-      }
-
-      function ensureUser(username) {
-        if (!state.store.users[username]) {
-          state.store.users[username] = { hash: '', perms: defaultPerms(), dbPerms: {} };
-        }
-      }
-
-      function ensureDbAccess(username, dbId) {
-        ensureUser(username);
-        if (!state.store.users[username].dbPerms[dbId]) {
-          state.store.users[username].dbPerms[dbId] = defaultDbPerms();
-        }
-      }
-
-      function ensureDefaultData() {
-        if (!Array.isArray(state.store.dbs) || !state.store.dbs.length) {
-          state.store.dbs.push({ id: uid(), name: DEFAULT_DB_NAME, recs: [] });
-        }
-        for (const user of Object.keys(state.store.users)) {
-          for (const db of state.store.dbs) ensureDbAccess(user, db.id);
-        }
-        if (state.currentUser) {
-          ensureDbAccess(state.currentUser, state.activeDbId || state.store.dbs[0].id);
-        }
-      }
-
-      async function sha256(value) {
-        const text = String(value ?? '');
-        if (window.crypto && crypto.subtle && window.TextEncoder) {
-          const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('personbase:' + text));
-          return Array.from(new Uint8Array(buffer)).map((b) => b.toString(16).padStart(2, '0')).join('');
-        }
-        let hash = 2166136261 >>> 0;
-        for (let i = 0; i < text.length; i++) {
-          hash ^= text.charCodeAt(i);
-          hash = Math.imul(hash, 16777619);
-        }
-        return (hash >>> 0).toString(16);
-      }
-
-      async function ensureAdminSeed() {
-        if (!state.store.users[ADMIN_USER]) {
-          state.store.users[ADMIN_USER] = {
-            hash: await sha256(ADMIN_PASSWORD),
-            perms: defaultPerms(),
-            dbPerms: {}
-          };
-        }
-        state.store.users[ADMIN_USER].perms = {
-          ...defaultPerms(),
-          createDb: true,
-          renameDb: true,
-          delDb: true,
-          blocked: false
-        };
-        for (const db of state.store.dbs) ensureDbAccess(ADMIN_USER, db.id);
-      }
-
-      function loadLocal() {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) {
-            state.store = { users: {}, dbs: [] };
-            return;
-          }
-          const parsed = JSON.parse(raw);
-          if (parsed && Array.isArray(parsed.dbs)) {
-            state.store = parsed;
-          }
-          if (parsed && parsed.theme) {
-            state.theme = parsed.theme === 'dark' ? 'dark' : 'light';
-          }
-        } catch (error) {
-          console.error('Load local error:', error);
-          state.store = { users: {}, dbs: [] };
-        }
-      }
-
-      function saveLocal() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state.store, theme: state.theme }));
-      }
-
-      function applyTheme() {
-        document.body.setAttribute('data-theme', state.theme);
-      }
-
-      function setStatus(cls, text) {
-        state.statusClass = cls;
-        state.statusText = text;
-        const statusEl = document.getElementById('status');
-        if (statusEl) {
-          statusEl.className = `status ${cls}`;
-          statusEl.textContent = text;
-        }
-      }
-
-      function isAdmin() { return state.currentUser === ADMIN_USER; }
-
-      function getUserPerms(username) {
-        ensureUser(username);
-        return state.store.users[username].perms;
-      }
-
-      function getDbPerms(username, dbId) {
-        ensureUser(username);
-        ensureDbAccess(username, dbId);
-        return state.store.users[username].dbPerms[dbId];
-      }
-
-      function canGlobal(action) {
-        if (!state.currentUser) return false;
-        if (isAdmin()) return true;
-        const perms = getUserPerms(state.currentUser);
-        return !perms.blocked && !!perms[action];
-      }
-
-      function canDb(action, dbId) {
-        if (!state.currentUser) return false;
-        if (isAdmin()) return true;
-        if (!dbId) return true;
-        const user = getUserPerms(state.currentUser);
-        if (user.blocked) return false;
-        const perms = getDbPerms(state.currentUser, dbId);
-        return !!perms[action];
-      }
-
-      function currentDb() {
-        if (!state.store.dbs.length) {
-          state.store.dbs = [{ id: uid(), name: DEFAULT_DB_NAME, recs: [] }];
-        }
-        if (!state.activeDbId) state.activeDbId = state.store.dbs[0].id;
-        return state.store.dbs.find((db) => db.id === state.activeDbId) || state.store.dbs[0];
-      }
-
-      function renderRows(recs) {
-        const term = state.search.trim().toLowerCase();
-        const rows = (recs || []).filter((rec) => {
-          if (!term) return true;
-          const hay = [rec.fio, rec.personalNumber, rec.phone, rec.position, rec.address, rec.notes].join(' ').toLowerCase();
-          return hay.includes(term);
-        });
-
-        if (!rows.length) {
-          return '<tr><td colspan="6"><div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div></td></tr>';
-        }
-
-        return rows.map((rec) => `
-          <tr data-action="open-person" data-person-id="${rec.id}">
-            <td><div class="cell-name"><span class="avatar">${escapeHtml(initials(rec.fio))}</span>${escapeHtml(rec.fio || '—')}</div></td>
-            <td>${escapeHtml(rec.personalNumber || '—')}</td>
-            <td>${escapeHtml(fmtDate(rec.birth))}</td>
-            <td>${escapeHtml(rec.phone || '—')}</td>
-            <td>${escapeHtml(rec.paymentStatus || 'Не выплачено')}</td>
-            <td>${escapeHtml(rec.exclusionStatus || 'Не исключен')}</td>
-          </tr>
-        `).join('');
-      }
-
-      function renderAuth() {
-        const reg = state.mode === 'register';
-        document.getElementById('root').innerHTML = `
-          <div class="root-wrap">
-            <div class="auth-card">
-              <div class="brand">
-                <div class="brand-mark">▤</div>
-                <div>PersonBase</div>
+      function uid(){ return 'id_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+      function escapeHtml(str){ return String(str ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch])); }
+      function initials(name){ const parts=String(name||'').trim().split(/\s+/).filter(Boolean); if(!parts.length) return '?'; return (parts[0][0]||'') + (parts[1]?parts[1][0]:'').toUpperCase(); }
+      function fmtDate(value){ if(!value) return ''; const d=new Date(value); if(Number.isNaN(d.getTime())) return ''; return d.toLocaleDateString('ru-RU'); }
+      function defaultPerms(){ return { read:true, add:true, edit:true, delRec:true, createDb:false, renameDb:false, delDb:false, blocked:false }; }
+      function defaultDbPerms(){ return { read:true, add:true, edit:true, delRec:true, renameDb:false, delDb:false }; }
+      function ensureUser(username){ if(!state.store.users[username]) state.store.users[username]={ hash:'', perms:defaultPerms(), dbPerms:{} }; }
+      function ensureDbAccess(username, dbId){ ensureUser(username); if(!state.store.users[username].dbPerms[dbId]) state.store.users[username].dbPerms[dbId]=defaultDbPerms(); }
+      function ensureDefaultData(){ if(!Array.isArray(state.store.dbs) || !state.store.dbs.length) state.store.dbs.push({ id:uid(), name:DEFAULT_DB_NAME, recs:[] }); for(const user of Object.keys(state.store.users)) for(const db of state.store.dbs) ensureDbAccess(user, db.id); if(state.currentUser) ensureDbAccess(state.currentUser, state.activeDbId || state.store.dbs[0].id); }
+      async function sha256(value){ const text=String(value ?? ''); if(window.crypto && crypto.subtle && window.TextEncoder){ const buffer=await crypto.subtle.digest('SHA-256', new TextEncoder().encode('personbase:' + text)); return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2,'0')).join(''); } let hash=2166136261 >>> 0; for(let i=0;i<text.length;i++){ hash ^= text.charCodeAt(i); hash = Math.imul(hash, 16777619); } return (hash >>> 0).toString(16); }
+      async function ensureAdminSeed(){ if(!state.store.users[ADMIN_USER]) state.store.users[ADMIN_USER]={ hash: await sha256(ADMIN_PASSWORD), perms:defaultPerms(), dbPerms:{} }; state.store.users[ADMIN_USER].perms = { ...defaultPerms(), createDb:true, renameDb:true, delDb:true, blocked:false }; for(const db of state.store.dbs) ensureDbAccess(ADMIN_USER, db.id); }
+      function loadLocal(){ try { const raw=localStorage.getItem(STORAGE_KEY); if(!raw){ state.store={ users:{}, dbs:[] }; return; } const parsed=JSON.parse(raw); if(parsed && Array.isArray(parsed.dbs)) state.store=parsed; if(parsed && parsed.theme) state.theme = parsed.theme === 'dark' ? 'dark' : 'light'; } catch (error) { console.error('Load local error:', error); state.store={ users:{}, dbs:[] }; } }
+      function saveLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state.store, theme:state.theme })); }
+      function applyTheme(){ document.body.setAttribute('data-theme', state.theme); }
+      function setStatus(cls, text){ state.statusClass=cls; state.statusText=text; const statusEl=document.getElementById('status'); if(statusEl){ statusEl.className=`status ${cls}`; statusEl.textContent=text; } }
+      function isAdmin(){ return state.currentUser === ADMIN_USER; }
+      function getUserPerms(username){ ensureUser(username); return state.store.users[username].perms; }
+      function getDbPerms(username, dbId){ ensureUser(username); ensureDbAccess(username, dbId); return state.store.users[username].dbPerms[dbId]; }
+      function canGlobal(action){ if(!state.currentUser) return false; if(isAdmin()) return true; const perms=getUserPerms(state.currentUser); return !perms.blocked && !!perms[action]; }
+      function canDb(action, dbId){ if(!state.currentUser) return false; if(isAdmin()) return true; if(!dbId) return true; const user=getUserPerms(state.currentUser); if(user.blocked) return false; const perms=getDbPerms(state.currentUser, dbId); return !!perms[action]; }
+      function currentDb(){ if(!state.store.dbs.length) state.store.dbs=[{ id:uid(), name:DEFAULT_DB_NAME, recs:[] }]; if(!state.activeDbId) state.activeDbId = state.store.dbs[0].id; return state.store.dbs.find(db => db.id === state.activeDbId) || state.store.dbs[0]; }
+      function renderRows(recs){ const term=state.search.trim().toLowerCase(); const rows=(recs || []).filter(rec => { if(!term) return true; const hay=[rec.fio, rec.personalNumber, rec.phone, rec.position, rec.address, rec.notes].join(' ').toLowerCase(); return hay.includes(term); }); if(!rows.length) return '<div class="empty-row"><strong>Нет данных</strong>Добавьте первого человека.</div>'; return `<div class="person-grid">${rows.map(rec => {
+        const bg = rec.photo ? `background-image:url(${JSON.stringify(rec.photo)})` : '';
+        return `
+          <article class="person-card" data-action="open-person" data-person-id="${rec.id}">
+            <div class="person-card-image ${rec.photo ? '' : 'empty'}" style="${bg}">${rec.photo ? '' : 'Фото'}</div>
+            <div class="person-card-body">
+              <div class="person-card-header">
+                <div class="person-card-name">${escapeHtml(rec.fio || '—')}</div>
+                <span class="person-chip">${escapeHtml(rec.paymentStatus || 'Не выплачено')}</span>
               </div>
-
-              <div class="tab-list">
-                <button class="tab-btn ${reg ? '' : 'active'}" data-action="switch-mode" data-mode="login">Вход</button>
-                <button class="tab-btn ${reg ? 'active' : ''}" data-action="switch-mode" data-mode="register">Регистрация</button>
-              </div>
-
-              <div class="field">
-                <label for="login-user">Логин</label>
-                <input id="login-user" placeholder="Введите логин" value="${escapeHtml(ADMIN_USER)}" />
-              </div>
-
-              <div class="field">
-                <label for="login-pass">Пароль</label>
-                <input id="login-pass" type="password" placeholder="Введите пароль" />
-              </div>
-
-              ${reg ? `
-                <div class="field">
-                  <label for="login-pass2">Повторите пароль</label>
-                  <input id="login-pass2" type="password" placeholder="Повторите пароль" />
-                </div>
-              ` : ''}
-
-              <div class="error" id="auth-error"></div>
-              <button class="primary" data-action="do-auth" style="width:100%;">${reg ? 'Создать аккаунт' : 'Войти'}</button>
-
-              <div class="auth-footer">
-                <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
-                <button data-action="reset-store">Сброс</button>
+              <div class="person-card-meta">
+                <div><strong>Л/н:</strong> ${escapeHtml(rec.personalNumber || '—')}</div>
+                <div><strong>Дата рожд.:</strong> ${escapeHtml(fmtDate(rec.birth)) || '—'}</div>
+                <div><strong>Телефон:</strong> ${escapeHtml(rec.phone || '—')}</div>
+                <div><strong>Статус:</strong> ${escapeHtml(rec.exclusionStatus || 'Не исключен')}</div>
               </div>
             </div>
-          </div>
+          </article>
         `;
-      }
-
-      function renderApp() {
-        const db = currentDb();
-        const dbs = state.store.dbs || [];
-        const sidebarHtml = dbs.map((d) => {
-          const access = canDb('read', d.id);
-          return `
-            <button class="db-item ${d.id === db.id ? 'active' : ''} ${access ? '' : 'hidden'}" data-action="select-db" data-db-id="${d.id}">
-              <span class="db-name">${escapeHtml(d.name)}</span>
-              <span class="db-count">${(d.recs || []).length}</span>
-            </button>
-          `;
-        }).join('');
-
+      }).join('')}</div>`; }
+      function renderAuth(){ const reg = state.mode === 'register'; document.getElementById('root').innerHTML = `
+        <div class="root-wrap">
+          <div class="auth-card">
+            <div class="brand"><div class="brand-mark">▤</div><div>PersonBase</div></div>
+            <div class="tab-list">
+              <button class="tab-btn ${reg ? '' : 'active'}" data-action="switch-mode" data-mode="login">Вход</button>
+              <button class="tab-btn ${reg ? 'active' : ''}" data-action="switch-mode" data-mode="register">Регистрация</button>
+            </div>
+            <div class="field"><label for="login-user">Логин</label><input id="login-user" placeholder="Введите логин" value="${escapeHtml(ADMIN_USER)}" /></div>
+            <div class="field"><label for="login-pass">Пароль</label><input id="login-pass" type="password" placeholder="Введите пароль" /></div>
+            ${reg ? `<div class="field"><label for="login-pass2">Повторите пароль</label><input id="login-pass2" type="password" placeholder="Повторите пароль" /></div>` : ''}
+            <div class="error" id="auth-error"></div>
+            <button class="primary" data-action="do-auth" style="width:100%;">${reg ? 'Создать аккаунт' : 'Войти'}</button>
+            <div class="auth-footer"><div id="status" class="status ${state.statusClass}">${state.statusText}</div><button data-action="reset-store">Сброс</button></div>
+          </div>
+        </div>
+      `; }
+      function renderApp(){ const db=currentDb(); const dbs=state.store.dbs || []; const sidebarHtml = dbs.map(d => { const access = canDb('read', d.id); return `<button class="db-item ${d.id === db.id ? 'active' : ''} ${access ? '' : 'hidden'}" data-action="select-db" data-db-id="${d.id}"><span class="db-name">${escapeHtml(d.name)}</span><span class="db-count">${(d.recs || []).length}</span></button>`; }).join('');
         document.getElementById('root').innerHTML = `
           <div class="app-shell">
             <aside class="sidebar">
-              <div class="sidebar-header">
-                <span>Базы</span>
-                ${canGlobal('createDb') ? '<button data-action="new-db" style="padding:5px 10px;">+</button>' : ''}
-              </div>
-              <div class="db-list">
-                ${sidebarHtml || '<div class="empty-row"><strong>Нет баз</strong>Создайте первую базу.</div>'}
-              </div>
+              <div class="sidebar-header"><span>Базы</span>${canGlobal('createDb') ? '<button data-action="new-db" style="padding:5px 10px;">+</button>' : ''}</div>
+              <div class="db-list">${sidebarHtml || '<div class="empty-row"><strong>Нет баз</strong>Создайте первую базу.</div>'}</div>
             </aside>
-
             <main class="main">
               <div class="topbar">
-                <div class="brand" style="display:flex;align-items:center;gap:12px;">
-                  <div class="brand-mark">▤</div>
-                  <div>${escapeHtml(db.name)}</div>
-                </div>
+                <div class="brand" style="display:flex;align-items:center;gap:12px;"><div class="brand-mark">▤</div><div>${escapeHtml(db.name)}</div></div>
                 <div class="toolbar">
                   <div id="status" class="status ${state.statusClass}">${state.statusText}</div>
                   <button class="theme-toggle" data-action="toggle-theme">${state.theme === 'dark' ? '☀️ Свет' : '🌙 Тёмн.'}</button>
@@ -840,7 +199,6 @@
                   <button data-action="logout">Выход</button>
                 </div>
               </div>
-
               <div class="head">
                 <h2>Список людей</h2>
                 <input class="search" type="search" id="person-search" placeholder="Поиск по ФИО, телефону, номеру" value="${escapeHtml(state.search)}" />
@@ -850,646 +208,26 @@
                   ${canDb('delDb', db.id) ? '<button class="danger" data-action="delete-db">Удалить</button>' : ''}
                 </div>
               </div>
-
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>ФИО</th>
-                      <th>Личный номер</th>
-                      <th>Дата рождения</th>
-                      <th>Телефон</th>
-                      <th>Выплата</th>
-                      <th>Статус</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${renderRows(db.recs || [])}
-                  </tbody>
-                </table>
-              </div>
+              <div class="person-grid-wrap">${renderRows(db.recs || [])}</div>
             </main>
           </div>
         `;
       }
-
-      function openAdminPanel() {
-        const users = Object.keys(state.store.users).sort();
-        const html = users.map((username) => {
-          const perms = state.store.users[username].perms || defaultPerms();
-          const isProtected = username === ADMIN_USER;
-          return `
-            <div class="admin-row">
-              <div>
-                <strong>${escapeHtml(username)}</strong>
-                <small>${isProtected ? 'Администратор' : 'Пользователь'}</small>
-              </div>
-              <label style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" data-user="${escapeHtml(username)}" data-role="toggle-block" ${perms.blocked ? 'checked' : ''} ${isProtected ? 'disabled' : ''} />
-                <span>Блок.</span>
-              </label>
-              <button class="danger" data-action="delete-user" data-user="${escapeHtml(username)}" ${isProtected ? 'disabled' : ''}>Удалить</button>
-            </div>
-          `;
-        }).join('');
-
-        document.getElementById('root').insertAdjacentHTML('beforeend', `
-          <div class="modal-backdrop">
-            <div class="modal">
-              <div class="modal-header">
-                <h3 style="margin:0;">Пользователи</h3>
-                <button data-action="close-modal">Закрыть</button>
-              </div>
-              <div class="modal-body">
-                <div class="admin-panel">
-                  ${html || '<div class="muted">Пользователей нет</div>'}
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button class="primary" data-action="close-modal">Готово</button>
-              </div>
-            </div>
-          </div>
-        `);
-      }
-
-      function closeModal() {
-        const modal = document.querySelector('.modal-backdrop');
-        if (modal) modal.remove();
-      }
-
-      function openPersonModal(personId = null) {
-        const db = currentDb();
-        const rec = personId ? (db.recs || []).find((r) => r.id === personId) : null;
-        const item = rec || {
-          id: uid(),
-          fio: '',
-          personalNumber: '',
-          birth: '',
-          phone: '',
-          email: '',
-          address: '',
-          position: '',
-          deathDate: '',
-          militaryCommissariat: '',
-          relativeContact: '',
-          paymentStatus: 'Не выплачено',
-          exclusionStatus: 'Не исключен',
-          ninetyEightStatus: 'Нет',
-          familyContact: '',
-          family: [],
-          documents: [],
-          custom: [],
-          photo: '',
-          notes: ''
-        };
-
-        const isReadOnly = !!personId && !canDb('edit', db.id);
-        const isCreate = !personId;
-
-        const photoHtml = item.photo
-          ? `<div class="avatar-box"><img src="${escapeHtml(item.photo)}" alt="Фото" /><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><button class="danger" data-action="remove-photo" ${isReadOnly ? 'disabled' : ''}>Удалить фото</button></div></div>`
-          : `<div class="avatar-box"><div style="flex:1;display:flex;flex-direction:column;gap:8px;"><input type="file" accept="image/*" data-role="photo-upload" ${isReadOnly ? 'disabled' : ''} /><span class="muted">Нет фото</span></div></div>`;
-
-        const familyRows = (item.family || []).map((member, idx) => `
-          <div class="family-box">
-            <div class="form-grid">
-              <div><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" value="${escapeHtml(member.name || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" value="${escapeHtml(member.relation || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" value="${escapeHtml(member.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" value="${escapeHtml(member.contact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div class="field-full"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(member.notes || '')}</textarea></div>
-            </div>
-            ${!isReadOnly ? `<div style="margin-top:10px;"><button class="danger" data-action="remove-family" data-index="${idx}">Удалить члена семьи</button></div>` : ''}
-          </div>
-        `).join('');
-
-        const customRows = (item.custom || []).map((field, idx) => `
-          <div class="custom-box">
-            <div class="form-grid">
-              <div><label>Название</label><input data-custom-key="${idx}" data-custom-type="key" value="${escapeHtml(field.key || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-              <div><label>Значение</label><input data-custom-key="${idx}" data-custom-type="value" value="${escapeHtml(field.value || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-            </div>
-            ${!isReadOnly ? `<div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="${idx}">Удалить</button></div>` : ''}
-          </div>
-        `).join('');
-
-        const documentRows = (item.documents || []).map((doc) => `
-          <div class="doc-box" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-            <div>
-              <div style="font-weight:700;">${escapeHtml(doc.name || 'Документ')}</div>
-              <div class="muted">${escapeHtml(doc.size || '')}</div>
-            </div>
-            <div class="mini-btns">
-              ${doc.dataUrl ? `<a href="${escapeHtml(doc.dataUrl)}" target="_blank" rel="noopener">Открыть</a>` : ''}
-              ${!isReadOnly ? `<button class="danger" data-action="remove-document" data-doc-id="${doc.id || ''}">Удалить</button>` : ''}
-            </div>
-          </div>
-        `).join('');
-
-        document.getElementById('root').insertAdjacentHTML('beforeend', `
-          <div class="modal-backdrop">
-            <div class="modal">
-              <div class="modal-header">
-                <h3 style="margin:0;">${isCreate ? 'Новый человек' : 'Карточка человека'}</h3>
-                <button data-action="close-modal">Закрыть</button>
-              </div>
-
-              <div class="modal-body">
-                ${photoHtml}
-
-                <div class="section">Основная информация</div>
-                <div class="form-grid">
-                  <div><label>ФИО</label><input id="person-fio" value="${escapeHtml(item.fio || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Личный номер</label><input id="person-personalNumber" value="${escapeHtml(item.personalNumber || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Дата рождения</label><input type="date" id="person-birth" value="${escapeHtml(item.birth || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Телефон</label><input id="person-phone" value="${escapeHtml(item.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Почта</label><input id="person-email" value="${escapeHtml(item.email || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Адрес</label><input id="person-address" value="${escapeHtml(item.address || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Должность / звание</label><input id="person-position" value="${escapeHtml(item.position || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Дата смерти</label><input type="date" id="person-deathDate" value="${escapeHtml(item.deathDate || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Военкомат</label><input id="person-militaryCommissariat" value="${escapeHtml(item.militaryCommissariat || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                  <div><label>Связь с родственниками</label><input id="person-relativeContact" value="${escapeHtml(item.relativeContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                </div>
-
-                <div class="section">Теги</div>
-                <div class="tag-grid">
-                  <div><label>Выплата</label><select id="person-paymentStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.paymentStatus === 'Не выплачено' ? 'selected' : ''}>Не выплачено</option><option ${item.paymentStatus === 'Выплачено' ? 'selected' : ''}>Выплачено</option></select></div>
-                  <div><label>Исключение</label><select id="person-exclusionStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.exclusionStatus === 'Не исключен' ? 'selected' : ''}>Не исключен</option><option ${item.exclusionStatus === 'Исключен' ? 'selected' : ''}>Исключен</option></select></div>
-                  <div><label>98 указ</label><select id="person-ninetyEightStatus" ${isReadOnly ? 'disabled' : ''}><option ${item.ninetyEightStatus === 'Нет' ? 'selected' : ''}>Нет</option><option ${item.ninetyEightStatus === 'Да' ? 'selected' : ''}>Да</option></select></div>
-                  <div><label>Связь с родственниками</label><input id="person-familyContact" value="${escapeHtml(item.familyContact || '')}" ${isReadOnly ? 'disabled' : ''} /></div>
-                </div>
-
-                <div class="section">Члены семьи</div>
-                ${familyRows || '<div class="muted">Членов семьи пока нет</div>'}
-                ${!isReadOnly ? '<button data-action="add-family-row" style="margin-top:8px;">+ Добавить члена семьи</button>' : ''}
-
-                <div class="section">Документы PDF</div>
-                ${documentRows || '<div class="muted">PDF не добавлены</div>'}
-                ${!isReadOnly ? '<input type="file" accept="application/pdf" multiple data-role="pdf-upload" style="margin-top:10px;" />' : ''}
-
-                <div class="section">Дополнительные поля</div>
-                ${customRows || '<div class="muted">Дополнительных полей нет</div>'}
-                ${!isReadOnly ? '<button data-action="add-custom-row" style="margin-top:8px;">+ Добавить поле</button>' : ''}
-
-                <div class="section">Заметки</div>
-                <textarea id="person-notes" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(item.notes || '')}</textarea>
-              </div>
-
-              <div class="modal-footer">
-                ${personId && canDb('delRec', db.id) && !isReadOnly ? `<button class="danger" data-action="delete-person" data-person-id="${item.id}">Удалить</button>` : ''}
-                <button data-action="close-modal">Отмена</button>
-                ${!isReadOnly ? `<button class="primary" data-action="save-person" data-person-id="${item.id}">Сохранить</button>` : ''}
-              </div>
-            </div>
-          </div>
-        `);
-      }
-
-      function addFamilyRow() {
-        const container = document.querySelector('.modal-body');
-        if (!container) return;
-        const idx = container.querySelectorAll('.family-box').length;
-        const html = `
-          <div class="family-box">
-            <div class="form-grid">
-              <div><label>ФИО</label><input data-family-index="${idx}" data-family-field="name" /></div>
-              <div><label>Родство</label><input data-family-index="${idx}" data-family-field="relation" /></div>
-              <div><label>Телефон</label><input data-family-index="${idx}" data-family-field="phone" /></div>
-              <div><label>Связь</label><input data-family-index="${idx}" data-family-field="contact" /></div>
-              <div class="field-full"><label>Примечание</label><textarea data-family-index="${idx}" data-family-field="notes"></textarea></div>
-            </div>
-            <div style="margin-top:10px;"><button class="danger" data-action="remove-family" data-index="${idx}">Удалить члена семьи</button></div>
-          </div>
-        `;
-        const placeholder = container.querySelector('.muted');
-        if (placeholder && placeholder.textContent.includes('Членов')) placeholder.remove();
-        const section = Array.from(container.querySelectorAll('.section')).find((el) => el.textContent.includes('Члены семьи'));
-        if (section) section.insertAdjacentHTML('afterend', html);
-        else container.insertAdjacentHTML('beforeend', html);
-      }
-
-      function addCustomRow() {
-        const container = document.querySelector('.modal-body');
-        if (!container) return;
-        const idx = container.querySelectorAll('[data-custom-key]').length;
-        const html = `
-          <div class="custom-box">
-            <div class="form-grid">
-              <div><label>Название</label><input data-custom-key="${idx}" data-custom-type="key" placeholder="Название" /></div>
-              <div><label>Значение</label><input data-custom-key="${idx}" data-custom-type="value" placeholder="Значение" /></div>
-            </div>
-            <div style="margin-top:10px;"><button class="danger" data-action="remove-custom" data-index="${idx}">Удалить</button></div>
-          </div>
-        `;
-        const section = Array.from(container.querySelectorAll('.section')).find((el) => el.textContent.includes('Дополнительные поля'));
-        if (section) section.insertAdjacentHTML('afterend', html); else container.insertAdjacentHTML('beforeend', html);
-      }
-
-      function collectCustomFields() {
-        const map = new Map();
-        document.querySelectorAll('[data-custom-type]').forEach((el) => {
-          const idx = el.getAttribute('data-custom-key');
-          if (!map.has(idx)) map.set(idx, {});
-          const item = map.get(idx);
-          item[el.getAttribute('data-custom-type')] = el.value.trim();
-        });
-        const result = [];
-        map.forEach((item) => {
-          if (item.key || item.value) result.push({ key: item.key || '', value: item.value || '' });
-        });
-        return result;
-      }
-
-      function collectFamilyFields() {
-        const map = new Map();
-        document.querySelectorAll('[data-family-field]').forEach((el) => {
-          const idx = el.getAttribute('data-family-index');
-          if (!map.has(idx)) map.set(idx, {});
-          const item = map.get(idx);
-          item[el.getAttribute('data-family-field')] = el.value.trim();
-        });
-        const result = [];
-        map.forEach((item) => {
-          if (item.name || item.relation || item.phone || item.contact || item.notes) {
-            result.push({ name: item.name || '', relation: item.relation || '', phone: item.phone || '', contact: item.contact || '', notes: item.notes || '' });
-          }
-        });
-        return result;
-      }
-
-      function savePerson() {
-        const db = currentDb();
-        const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-        let rec = (db.recs || []).find((r) => r.id === personId);
-        if (!rec) {
-          rec = { id: uid() };
-          db.recs.push(rec);
-        }
-
-        const fio = document.getElementById('person-fio')?.value?.trim();
-        if (!fio) {
-          setStatus('error', 'ФИО обязательно');
-          return;
-        }
-
-        rec.fio = fio;
-        rec.personalNumber = document.getElementById('person-personalNumber')?.value?.trim() || '';
-        rec.birth = document.getElementById('person-birth')?.value || '';
-        rec.phone = document.getElementById('person-phone')?.value?.trim() || '';
-        rec.email = document.getElementById('person-email')?.value?.trim() || '';
-        rec.address = document.getElementById('person-address')?.value?.trim() || '';
-        rec.position = document.getElementById('person-position')?.value?.trim() || '';
-        rec.deathDate = document.getElementById('person-deathDate')?.value || '';
-        rec.militaryCommissariat = document.getElementById('person-militaryCommissariat')?.value?.trim() || '';
-        rec.relativeContact = document.getElementById('person-relativeContact')?.value?.trim() || '';
-        rec.paymentStatus = document.getElementById('person-paymentStatus')?.value || 'Не выплачено';
-        rec.exclusionStatus = document.getElementById('person-exclusionStatus')?.value || 'Не исключен';
-        rec.ninetyEightStatus = document.getElementById('person-ninetyEightStatus')?.value || 'Нет';
-        rec.familyContact = document.getElementById('person-familyContact')?.value?.trim() || '';
-        rec.custom = collectCustomFields();
-        rec.family = collectFamilyFields();
-        rec.notes = document.getElementById('person-notes')?.value || '';
-
-        saveLocal();
-        closeModal();
-        renderApp();
-        setStatus('ok', 'Сохранено');
-      }
-
-      function deletePerson(personId) {
-        const db = currentDb();
-        if (!personId) return;
-        db.recs = (db.recs || []).filter((rec) => rec.id !== personId);
-        saveLocal();
-        closeModal();
-        renderApp();
-        setStatus('ok', 'Карточка удалена');
-      }
-
-      function addDb() {
-        if (!canGlobal('createDb')) return;
-        const name = prompt('Название новой базы:');
-        if (!name || !name.trim()) return;
-        const db = { id: uid(), name: name.trim(), recs: [] };
-        state.store.dbs.push(db);
-        state.activeDbId = db.id;
-        saveLocal();
-        renderApp();
-      }
-
-      function renameDb() {
-        const db = currentDb();
-        if (!canDb('renameDb', db.id)) return;
-        const next = prompt('Новое название базы:', db.name);
-        if (next === null) return;
-        const trimmed = next.trim();
-        if (!trimmed) return;
-        db.name = trimmed;
-        saveLocal();
-        renderApp();
-      }
-
-      function deleteDb() {
-        const db = currentDb();
-        if (!canDb('delDb', db.id)) return;
-        if (state.store.dbs.length <= 1) {
-          setStatus('error', 'Нельзя удалить последнюю базу');
-          return;
-        }
-        if (!window.confirm(`Удалить базу "${db.name}"?`)) return;
-        state.store.dbs = state.store.dbs.filter((item) => item.id !== db.id);
-        state.activeDbId = state.store.dbs[0]?.id || null;
-        saveLocal();
-        renderApp();
-        setStatus('ok', 'База удалена');
-      }
-
-      async function doAuth() {
-        const username = document.getElementById('login-user')?.value.trim();
-        const password = document.getElementById('login-pass')?.value || '';
-        const errEl = document.getElementById('auth-error');
-        const reg = state.mode === 'register';
-
-        if (!username || !password) {
-          errEl.textContent = 'Заполните логин и пароль';
-          return;
-        }
-
-        if (reg) {
-          const pass2 = document.getElementById('login-pass2')?.value || '';
-          if (password !== pass2) {
-            errEl.textContent = 'Пароли не совпадают';
-            return;
-          }
-          if (state.store.users[username]) {
-            errEl.textContent = 'Пользователь уже существует';
-            return;
-          }
-          state.store.users[username] = {
-            hash: await sha256(password),
-            perms: defaultPerms(),
-            dbPerms: {}
-          };
-          for (const db of state.store.dbs) ensureDbAccess(username, db.id);
-          state.currentUser = username;
-          saveLocal();
-          renderApp();
-          setStatus('ok', `Добро пожаловать, ${username}`);
-          return;
-        }
-
-        const user = state.store.users[username];
-        if (!user) {
-          errEl.textContent = 'Пользователь не найден';
-          return;
-        }
-        const hash = await sha256(password);
-        if (user.hash !== hash) {
-          errEl.textContent = 'Неверный пароль';
-          return;
-        }
-        if (user.perms.blocked) {
-          errEl.textContent = 'Пользователь заблокирован';
-          return;
-        }
-
-        state.currentUser = username;
-        errEl.textContent = '';
-        renderApp();
-        setStatus('ok', `Добро пожаловать, ${username}`);
-      }
-
-      function logout() {
-        state.currentUser = null;
-        renderAuth();
-        setStatus('ok', 'Вы вышли из системы');
-      }
-
-      function resetStore() {
-        if (!window.confirm('Сбросить данные приложения?')) return;
-        localStorage.removeItem(STORAGE_KEY);
-        state.store = { users: {}, dbs: [] };
-        state.currentUser = null;
-        state.activeDbId = null;
-        state.mode = 'login';
-        state.search = '';
-        renderAuth();
-        setStatus('ok', 'Данные сброшены');
-      }
-
-      function handleFileRead(file, onLoad) {
-        const reader = new FileReader();
-        reader.onload = (event) => onLoad(event.target.result, file);
-        reader.readAsDataURL(file);
-      }
-
-      function handleUploadChange(event) {
-        const pdfInput = event.target.closest('[data-role="pdf-upload"]');
-        if (!pdfInput || !pdfInput.files || !pdfInput.files.length) return;
-        const db = currentDb();
-        const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-        let rec = (db.recs || []).find((r) => r.id === personId);
-        if (!rec) {
-          rec = { id: uid() };
-          db.recs.push(rec);
-        }
-
-        rec.documents = rec.documents || [];
-        Array.from(pdfInput.files).forEach((file) => {
-          handleFileRead(file, (dataUrl, originalFile) => {
-            rec.documents.push({
-              id: uid(),
-              name: originalFile.name,
-              size: `${Math.round((originalFile.size || 0) / 1024)} KB`,
-              dataUrl: dataUrl
-            });
-            saveLocal();
-            closeModal();
-            openPersonModal(rec.id);
-          });
-        });
-      }
-
-      function handleImageUpload(event) {
-        const input = event.target.closest('[data-role="photo-upload"]');
-        if (!input || !input.files || !input.files.length) return;
-        const file = input.files[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-          const db = currentDb();
-          const personId = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-          let rec = (db.recs || []).find((r) => r.id === personId);
-          if (!rec) {
-            rec = { id: uid() };
-            db.recs.push(rec);
-          }
-          rec.photo = reader.result;
-          saveLocal();
-          closeModal();
-          openPersonModal(rec.id);
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function bindRootEvents() {
-        document.addEventListener('click', async (event) => {
-          const el = event.target.closest('[data-action]');
-          if (!el) return;
-          const action = el.dataset.action;
-
-          switch (action) {
-            case 'switch-mode':
-              state.mode = el.dataset.mode || 'login';
-              renderAuth();
-              break;
-            case 'do-auth':
-              await doAuth();
-              break;
-            case 'reset-store':
-              resetStore();
-              break;
-            case 'logout':
-              logout();
-              break;
-            case 'new-db':
-              addDb();
-              break;
-            case 'select-db':
-              state.activeDbId = el.dataset.dbId;
-              renderApp();
-              break;
-            case 'new-person':
-              openPersonModal();
-              break;
-            case 'open-person':
-              openPersonModal(el.dataset.personId);
-              break;
-            case 'save-person':
-              savePerson();
-              break;
-            case 'delete-person':
-              deletePerson(el.dataset.personId);
-              break;
-            case 'rename-db':
-              renameDb();
-              break;
-            case 'delete-db':
-              deleteDb();
-              break;
-            case 'open-admin':
-              openAdminPanel();
-              break;
-            case 'toggle-theme':
-              state.theme = state.theme === 'dark' ? 'light' : 'dark';
-              applyTheme();
-              saveLocal();
-              renderApp();
-              break;
-            case 'close-modal':
-              closeModal();
-              break;
-            case 'add-family-row':
-              addFamilyRow();
-              break;
-            case 'remove-family':
-              el.closest('.family-box')?.remove();
-              break;
-            case 'add-custom-row':
-              addCustomRow();
-              break;
-            case 'remove-custom':
-              el.closest('.custom-box')?.remove();
-              break;
-            case 'remove-photo':
-              const db2 = currentDb();
-              const personId2 = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-              const rec2 = (db2.recs || []).find((r) => r.id === personId2);
-              if (rec2) rec2.photo = '';
-              closeModal();
-              openPersonModal(personId2 || rec2?.id || null);
-              break;
-            case 'remove-document':
-              const db3 = currentDb();
-              const personId3 = document.querySelector('[data-action="save-person"]')?.getAttribute('data-person-id');
-              const rec3 = (db3.recs || []).find((r) => r.id === personId3);
-              if (rec3 && rec3.documents) {
-                rec3.documents = rec3.documents.filter((doc) => String(doc.id || '') !== String(el.dataset.docId));
-                saveLocal();
-                closeModal();
-                openPersonModal(personId3);
-              }
-              break;
-            case 'delete-user':
-              {
-                const user = el.dataset.user;
-                if (!user || user === ADMIN_USER) {
-                  setStatus('error', 'Нельзя удалить администратора');
-                  return;
-                }
-                if (window.confirm(`Удалить пользователя ${user}?`)) {
-                  delete state.store.users[user];
-                  saveLocal();
-                  closeModal();
-                  renderApp();
-                  setStatus('ok', 'Пользователь удалён');
-                }
-                break;
-              }
-          }
-        });
-
-        document.addEventListener('change', (event) => {
-          const block = event.target.closest('[data-role="toggle-block"]');
-          if (block) {
-            const user = block.dataset.user;
-            if (!user || user === ADMIN_USER) {
-              block.checked = false;
-              setStatus('error', 'Администратор не может быть заблокирован');
-              return;
-            }
-            state.store.users[user].perms.blocked = block.checked;
-            saveLocal();
-            setStatus('ok', 'Статус блокировки обновлён');
-            return;
-          }
-
-          const input = event.target.closest('[data-role="photo-upload"]');
-          if (input) {
-            handleImageUpload(event);
-            return;
-          }
-
-          const pdfInput = event.target.closest('[data-role="pdf-upload"]');
-          if (pdfInput) {
-            handleUploadChange(event);
-          }
-        });
-
-        document.addEventListener('input', (event) => {
-          const searchInput = event.target.closest('#person-search');
-          if (searchInput) {
-            state.search = searchInput.value;
-            const tbody = document.querySelector('tbody');
-            if (tbody) tbody.innerHTML = renderRows(currentDb().recs || []);
-          }
-        });
-      }
-
-      async function init() {
-        loadLocal();
-        ensureDefaultData();
-        await ensureAdminSeed();
-        saveLocal();
-        applyTheme();
-        bindRootEvents();
-        if (state.currentUser) {
-          renderApp();
-        } else {
-          renderAuth();
-        }
-      }
-
+      function openAdminPanel(){ const users=Object.keys(state.store.users).sort(); const html = users.map(username => { const perms = state.store.users[username].perms || defaultPerms(); const isProtected = username === ADMIN_USER; return `<div class="admin-row"><div><strong>${escapeHtml(username)}</strong><small>${isProtected ? 'Администратор' : 'Пользователь'}</small></div><label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" data-user="${escapeHtml(username)}" data-role="toggle-block" ${perms.blocked ? 'checked' : ''} ${isProtected ? 'disabled' : ''} /><span>Блок.</span></label><button class="danger" data-action="delete-user" data-user="${escapeHtml(username)}" ${isProtected ? 'disabled' : ''}>Удалить</button></div>`; }).join(''); document.getElementById('root').insertAdjacentHTML('beforeend', `<div class="modal-backdrop"><div class="modal" style="width:min(820px,100%);background:var(--panel-solid);border:1px solid var(--line);border-radius:26px;overflow:auto;max-height:90vh;box-shadow:var(--shadow-strong);"><div class="modal-header"><h3 style="margin:0;">Пользователи</h3><button data-action="close-modal">Закрыть</button></div><div class="modal-body" style="padding:18px 20px 12px;"><div class="admin-panel" style="background: var(--panel-soft); border:1px solid var(--line); border-radius:18px; padding:18px; max-width:700px; margin:0 auto;">${html || '<div class="muted">Пользователей нет</div>'}</div></div><div class="modal-footer" style="border-top:1px solid var(--line); border-bottom:0; justify-content:flex-end;"><button class="primary" data-action="close-modal">Готово</button></div></div></div>`); }
+      function closeModal(){ const modal=document.querySelector('.modal-backdrop'); if(modal) modal.remove(); }
+      function openPersonModal(personId = null, mode = 'view'){ const db=currentDb(); const rec=personId ? (db.recs || []).find(r => r.id === personId) : null; const item = rec || { id:uid(), fio:'', personalNumber:'', birth:'', phone:'', email:'', address:'', position:'', deathDate:'', militaryCommissariat:'', relativeContact:'', paymentStatus:'Не выплачено', exclusionStatus:'Не исключен', ninetyEightStatus:'Нет', familyContact:'', family:[], documents:[], custom:[], photo:'', notes:'' }; const isCreate=!personId; const isEdit=mode === 'edit'; const isReadOnly = !isCreate && !isEdit; const photoHtml = item.photo ? `<img src="${escapeHtml(item.photo)}" alt="Фото" class="person-photo" />` : `<div class="person-photo empty">Нет фото</div>`; const buttons = isCreate ? '<div class="modal-header-actions"><button class="primary" data-action="save-person" data-person-id="'+escapeHtml(item.id)+'">Сохранить</button><button data-action="close-modal">Отмена</button></div>' : isEdit ? '<div class="modal-header-actions"><button class="primary" data-action="save-person" data-person-id="'+escapeHtml(item.id)+'">Сохранить</button><button data-action="cancel-edit" data-person-id="'+escapeHtml(item.id)+'">Отмена</button></div>' : '<div class="modal-header-actions"><button data-action="toggle-edit" data-person-id="'+escapeHtml(item.id)+'">Изменить</button><button data-action="close-modal">Закрыть</button></div>'; document.getElementById('root').insertAdjacentHTML('beforeend', `<div class="modal-backdrop"><div class="person-modal"><div class="modal-header"><h3 style="margin:0;">${isCreate ? 'Новый человек' : (isEdit ? 'Редактирование карточки' : 'Карточка человека')}</h3>${buttons}</div><div class="person-modal-body"><div class="person-photo-box">${photoHtml}${!isReadOnly ? '<div style="margin-top:12px;"><input type="file" accept="image/*" data-role="photo-upload" /></div>' : ''}</div><div class="person-main-info"><h4 class="person-section-title">Основная информация</h4><div class="field-row"><label for="person-fio">ФИО</label><input id="person-fio" value="${escapeHtml(item.fio || '')}" ${isReadOnly ? 'disabled' : ''} /></div><div class="field-grid"><div class="field-row"><label for="person-personalNumber">Личный номер</label><input id="person-personalNumber" value="${escapeHtml(item.personalNumber || '')}" ${isReadOnly ? 'disabled' : ''} /></div><div class="field-row"><label for="person-birth">Дата рождения</label><input id="person-birth" type="date" value="${escapeHtml(item.birth || '')}" ${isReadOnly ? 'disabled' : ''} /></div></div><div class="field-grid"><div class="field-row"><label for="person-phone">Телефон</label><input id="person-phone" value="${escapeHtml(item.phone || '')}" ${isReadOnly ? 'disabled' : ''} /></div><div class="field-row"><label for="person-email">Email</label><input id="person-email" value="${escapeHtml(item.email || '')}" ${isReadOnly ? 'disabled' : ''} /></div></div><div class="field-grid"><div class="field-row"><label for="person-address">Адрес</label><input id="person-address" value="${escapeHtml(item.address || '')}" ${isReadOnly ? 'disabled' : ''} /></div><div class="field-row"><label for="person-position">Должность</label><input id="person-position" value="${escapeHtml(item.position || '')}" ${isReadOnly ? 'disabled' : ''} /></div></div><div class="field-row"><label for="person-notes">Примечание</label><textarea id="person-notes" rows="4" ${isReadOnly ? 'disabled' : ''}>${escapeHtml(item.notes || '')}</textarea></div></div><aside class="person-side-info"><h4 class="person-section-title">Дополнительно</h4><div class="side-block"><h4>Выплата</h4><p>${escapeHtml(item.paymentStatus || 'Не выплачено')}</p></div><div class="side-block"><h4>Исключение</h4><p>${escapeHtml(item.exclusionStatus || 'Не исключен')}</p></div><div class="side-block"><h4>Дата смерти</h4><p>${escapeHtml(item.deathDate || '—')}</p></div><div class="side-block"><h4>Военкомат</h4><p>${escapeHtml(item.militaryCommissariat || '—')}</p></div><div class="side-block"><h4>Контакт родственника</h4><p>${escapeHtml(item.relativeContact || '—')}</p></div></aside></div><div class="modal-footer">${personId && !isEdit ? '<button class="danger" data-action="delete-person" data-person-id="'+escapeHtml(item.id)+'">Удалить</button>' : ''}${isEdit || isCreate ? '<button class="primary" data-action="save-person" data-person-id="'+escapeHtml(item.id)+'">Сохранить</button>' : ''}<button data-action="close-modal">Закрыть</button></div></div></div>`); }
+      function addDb(){ if(!canGlobal('createDb')) return; const name=prompt('Название базы:'); if(!name || !name.trim()) return; const db={ id:uid(), name:name.trim(), recs:[] }; state.store.dbs.push(db); state.activeDbId=db.id; saveLocal(); renderApp(); }
+      function renameDb(){ const db=currentDb(); if(!canDb('renameDb', db.id)) return; const next=prompt('Новое название базы:', db.name); if(next === null) return; const value=next.trim(); if(!value) return; db.name=value; saveLocal(); renderApp(); }
+      function deleteDb(){ const db=currentDb(); if(!canDb('delDb', db.id)) return; if(state.store.dbs.length <= 1){ setStatus('error', 'Нельзя удалить последнюю базу'); return; } if(!window.confirm(`Удалить базу "${db.name}"?`)) return; state.store.dbs=state.store.dbs.filter(item => item.id !== db.id); state.activeDbId = state.store.dbs[0]?.id || null; saveLocal(); renderApp(); }
+      function savePerson(){ const db=currentDb(); const personId = document.querySelector('[data-action="save-person"]')?.dataset.personId || null; const rec=(db.recs || []).find(item => item.id === personId) || null; const next = rec || { id:uid(), photo:'' }; next.fio = document.getElementById('person-fio')?.value?.trim() || ''; if(!next.fio){ setStatus('error', 'ФИО обязательно'); return; } next.personalNumber = document.getElementById('person-personalNumber')?.value?.trim() || ''; next.birth = document.getElementById('person-birth')?.value || ''; next.phone = document.getElementById('person-phone')?.value?.trim() || ''; next.email = document.getElementById('person-email')?.value?.trim() || ''; next.address = document.getElementById('person-address')?.value?.trim() || ''; next.position = document.getElementById('person-position')?.value?.trim() || ''; next.notes = document.getElementById('person-notes')?.value || ''; next.paymentStatus = next.paymentStatus || 'Не выплачено'; next.exclusionStatus = next.exclusionStatus || 'Не исключен'; if(!rec) db.recs.push(next); saveLocal(); closeModal(); renderApp(); setStatus('ok', 'Карточка сохранена'); }
+      function deletePerson(personId){ const db=currentDb(); if(!personId) return; db.recs = (db.recs || []).filter(item => item.id !== personId); saveLocal(); closeModal(); renderApp(); }
+      async function doAuth(){ const username = document.getElementById('login-user')?.value.trim() || ''; const password = document.getElementById('login-pass')?.value || ''; const errEl=document.getElementById('auth-error'); if(!username || !password){ errEl.textContent='Введите логин и пароль'; return; } if(state.mode === 'register'){ const pass2=document.getElementById('login-pass2')?.value || ''; if(password !== pass2){ errEl.textContent='Пароли не совпадают'; return; } if(state.store.users[username]){ errEl.textContent='Такой логин уже есть'; return; } state.store.users[username] = { hash: await sha256(password), perms:defaultPerms(), dbPerms:{} }; for(const db of state.store.dbs) ensureDbAccess(username, db.id); state.currentUser=username; saveLocal(); renderApp(); setStatus('ok', 'Аккаунт создан'); return; }
+        const user = state.store.users[username]; if(!user){ errEl.textContent='Пользователь не найден'; return; } const hash = await sha256(password); if(user.hash !== hash){ errEl.textContent='Неверный пароль'; return; } if(user.perms.blocked){ errEl.textContent='Пользователь заблокирован'; return; } state.currentUser=username; errEl.textContent=''; renderApp(); setStatus('ok', 'Вход выполнен'); }
+      function logout(){ state.currentUser=null; renderAuth(); }
+      function resetStore(){ if(!window.confirm('Сбросить все данные?')) return; localStorage.removeItem(STORAGE_KEY); state.store={ users:{}, dbs:[] }; state.currentUser=null; state.activeDbId=null; state.search=''; state.mode='login'; renderAuth(); }
+      function handlePhotoUpload(event){ const input = event.target.closest('[data-role="photo-upload"]'); if(!input || !input.files || !input.files[0]) return; const file=input.files[0]; const reader = new FileReader(); reader.onload = () => { const db=currentDb(); const personId = document.querySelector('[data-action="save-person"]')?.dataset.personId || null; const rec = personId ? (db.recs || []).find(item => item.id === personId) : null; const next = rec || { id:uid(), fio:'' }; next.photo = reader.result; if(!rec) db.recs.push(next); saveLocal(); closeModal(); openPersonModal(next.id, 'view'); }; reader.readAsDataURL(file); }
+      function bindRootEvents(){ document.addEventListener('click', async (event) => { const action = event.target.closest('[data-action]')?.dataset.action; if(!action) return; switch(action){ case 'switch-mode': state.mode = event.target.closest('[data-action]').dataset.mode || 'login'; renderAuth(); break; case 'do-auth': await doAuth(); break; case 'reset-store': resetStore(); break; case 'toggle-theme': state.theme = state.theme === 'dark' ? 'light' : 'dark'; applyTheme(); saveLocal(); renderApp(); break; case 'logout': logout(); break; case 'new-db': addDb(); break; case 'rename-db': renameDb(); break; case 'delete-db': deleteDb(); break; case 'select-db': state.activeDbId = event.target.closest('[data-action="select-db"]').dataset.dbId; renderApp(); break; case 'new-person': openPersonModal(null, 'edit'); break; case 'open-person': openPersonModal(event.target.closest('[data-action="open-person"]').dataset.personId, 'view'); break; case 'toggle-edit': closeModal(); openPersonModal(event.target.closest('[data-action="toggle-edit"]').dataset.personId, 'edit'); break; case 'cancel-edit': closeModal(); openPersonModal(event.target.closest('[data-action="cancel-edit"]').dataset.personId, 'view'); break; case 'save-person': savePerson(); break; case 'delete-person': deletePerson(event.target.closest('[data-action="delete-person"]').dataset.personId); break; case 'close-modal': closeModal(); break; case 'open-admin': openAdminPanel(); break; default: break; } }); document.addEventListener('input', (event) => { if(event.target.id === 'person-search'){ state.search = event.target.value; const area=document.querySelector('.person-grid-wrap'); if(area){ area.innerHTML = renderRows(currentDb().recs || []); } } }); document.addEventListener('change', event => { if(event.target.matches('[data-role="photo-upload"]')) handlePhotoUpload(event); }); }
+      async function init(){ loadLocal(); ensureDefaultData(); await ensureAdminSeed(); saveLocal(); applyTheme(); bindRootEvents(); if(state.currentUser) renderApp(); else renderAuth(); }
       init();
     })();
   </script>
